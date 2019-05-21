@@ -29,7 +29,7 @@ app.controller('PrincipalCtrl', [ '$scope', '$http', function($s, $http){
   $s.interval = {
     scope: {},
     start: function (time){
-      $s.interval.scope = setTimeout(function(){ $s.mensagems.getMessage(); }, time);
+      // $s.interval.scope = setTimeout(function(){ $s.mensagems.getMessage(); }, time);
     },
     clear: function(){
       clearTimeout($s.interval.scope);

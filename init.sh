@@ -1,5 +1,7 @@
 #!/bin/bash
-cd /home/pi/workspace/raspberry-video
-nodemon --inspect server.coffee &
+# sudo nodemon --inspect /home/pi/workspace/player_tv_raspberry/server.coffee &
+xdotool mousemove 4000 4000
+cd /home/pi/workspace/player_tv_raspberry/
+sudo npm start &
 sleep 5
 chromium-browser --app=http://127.0.0.1:3001 --start-fullscreen

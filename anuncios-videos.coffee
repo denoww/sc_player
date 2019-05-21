@@ -90,11 +90,14 @@ module.exports = (opt={}) ->
     dateFormat = '0'+dateFormat if dateFormat.length <2
     dateFormat = dateFormat + '-' +moment().year()
 
-    request("http://staging.seucondominio.com.br/gerenciar/cd/#{ENV.CLIENTE_ID}/#{dateFormat}/midia_indoor.json?cliente=#{ENV.CLIENTE_ID}&midia_indoor_tv=#{ENV.TV_ID}", (error, response, body)->
+    url = "http://staging.seucondominio.com.br/gerenciar/cd/#{ENV.CLIENTE_ID}/#{dateFormat}/midia_indoor.json?cliente=#{ENV.CLIENTE_ID}&midia_indoor_tv=#{ENV.TV_ID}"
+    request(url, (error, response, body)->
+      console.log 'url', url
       if body[0] == '{'
         json = JSON.parse(body)
         listMensagems = json.list
-      else console.log '---------Error to Request-----------'
+      else
+        console.log '---------Error to Request-----------'
 
       params =
         index: 0
