@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Player Seu Condomínio
+Exec=lxterminal -e bash /home/$USER/workspace/raspberry-video/init.sh

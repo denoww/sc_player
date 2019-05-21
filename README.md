@@ -38,7 +38,7 @@ disable_overscan=1
 # uncomment to force a console size. By default it will be display's size minus
 # overscan.
 framebuffer_width=1920
-framebuffer_height=1080`
+framebuffer_height=1080
 ```
 
 ou
