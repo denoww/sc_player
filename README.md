@@ -48,3 +48,7 @@ ou
 `Advanced Option` > `Resolution` > Selecione a resolução desejada
 
 `reboot`
+
+# Compilar arquivos .coffee do assets
+
+`coffee -wc app/assets/javascripts/*.coffee`

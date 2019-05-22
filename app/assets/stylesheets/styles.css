@@ -1,0 +1,71 @@
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.content-main {
+  color: #333;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+}
+
+.content-top    { display: flex; }
+.content-video  { width:  85vw; height: 85vh; }
+.content-left   { width:  15vw; height: 85vh; padding: 1.5em; }
+.content-right  { width:  15vw; height: 85vh; padding: 1.5em; }
+.content-footer { width: 100vw; height: 15vh; padding: 1.5em; }
+
+/* --------------- LAYOUTS --------------- */
+.layout-1 .content-top    {}
+.layout-1 .content-video  { width: 100vw; height: 100vh; }
+.layout-1 .content-left   { display: none }
+.layout-1 .content-right  { display: none }
+.layout-1 .content-footer { display: none }
+
+.layout-2 .content-top    {}
+.layout-2 .content-video  { width: 85vw; height: 85vh; }
+.layout-2 .content-left   { width: 15vw; height: 85vh; }
+.layout-2 .content-right  { display: none }
+.layout-2 .content-footer { width: 100vw; height: 15vh; }
+
+.layout-3 .content-top    {}
+.layout-3 .content-video  { width: 85vw; height: 85vh; }
+.layout-3 .content-left   { display: none }
+.layout-3 .content-right  { width: 15vw; height: 85vh; }
+.layout-3 .content-footer { width: 100vw; height: 15vh; }
+
+/* --------------- CORES --------------- */
+.gray .content-left     { background: hsl(  0,  0%, 75%); color: #222; }
+.gray .content-right    { background: hsl(  0,  0%, 75%); color: #222; }
+.gray .content-footer   { background: hsl(  0,  0%, 85%); color: #222; }
+
+.black .content-left    { background: hsl(  0,  0%, 15%); color: #fff; }
+.black .content-right   { background: hsl(  0,  0%, 15%); color: #fff; }
+.black .content-footer  { background: hsl(  0,  0%, 20%); color: #fff; }
+
+.red .content-left      { background: hsl(  0, 55%, 15%); color: #fff; }
+.red .content-right     { background: hsl(  0, 55%, 15%); color: #fff; }
+.red .content-footer    { background: hsl(  0, 55%, 20%); color: #fff; }
+
+.blue .content-left     { background: hsl(226, 55%, 15%); color: #fff; }
+.blue .content-right    { background: hsl(226, 55%, 15%); color: #fff; }
+.blue .content-footer   { background: hsl(226, 55%, 20%); color: #fff; }
+
+.green .content-left    { background: hsl(110, 55%, 15%); color: #fff; }
+.green .content-right   { background: hsl(110, 55%, 15%); color: #fff; }
+.green .content-footer  { background: hsl(110, 55%, 20%); color: #fff; }
+
+.yellow .content-left   { background: hsl( 35, 55%, 15%); color: #fff; }
+.yellow .content-right  { background: hsl( 35, 55%, 15%); color: #fff; }
+.yellow .content-footer { background: hsl( 35, 55%, 20%); color: #fff; }

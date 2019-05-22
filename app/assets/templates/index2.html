@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="public/css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <title>HTML Video Tag Example</title>
+
+    <style type="text/css">
+      .scale-video {
+        width: 100%;
+        padding-top: 47.5%;
+        position: relative;
+      }
+
+      .scale-video video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div ng-app="AnunciosVideos" ng-controller="PrincipalCtrl">
+      <div class="flex-row flex-direction-row flex-nowrap">
+        <div class="sc-bg-grey-light fcol-order-xs-1" style="flex:0 0 84.38%; max-width: 84.38%">
+          <div class="flex-row flex-wrap flex-direction-column flex-nowrap">
+            <div class="sc-bg-green-light scale-video fcol-order-xs-1" style="max-height: 78%; height: 78%">
+              <video autoplay="autoplay">
+                <source src="http://localhost:3001/video?id=3" type="video/mp4">
+              </video>
+            </div>
+            <div class="sc-bg-yellow-light fcol-order-xs-2" style="max-height: 22%; height: 22%">MENSAGEM</div>
+          </div>
+        </div>
+        <div class="sc-bg-blue-light fcol-order-xs-2" style="flex:0 0 15.62%; max-width: 15.62%; max-height: 100%; height: 100%">ANUNCIO</div>
+      </div>
+    </div>
+  </body>
+</html>

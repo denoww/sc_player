@@ -7,16 +7,19 @@
     "node": ">=6.2.0"
   },
   "scripts": {
-    "start": "nodemon --inspect server.coffee"
+    "start": "nodemon --inspect server.coffee",
+    "compile-coffee": "coffee -wc app/assets/javascripts/*.coffee"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "coffee-script": "^1.12.7",
     "express": "^4.16.3",
     "moment": "^2.24.0",
     "node-env-file": "^0.1.8",
     "nodemon": "^1.11.0",
     "request": "^2.87.0"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.4.1"
   }
 }

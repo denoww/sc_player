@@ -2,16 +2,19 @@
 # require('./app/httpServer.coffee')
 ############# HOW TO USE ###############
 
-request = require('request')
-moment = require('moment')
-# express (like rails)
+request = require 'request'
+moment  = require 'moment'
 express = require 'express'
+
+fs      = require 'fs'
+url     = require 'url'
+http    = require 'http'
+https   = require 'https'
+
 module.exports = (opt={}) ->
   # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/RESUMO.mp4';
   # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/COMPRAS+-+COTA%C3%87%C3%83O.mp4';
   # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/Software+Seu+Condom%C3%ADnio-+Sistema+de+Administra%C3%A7%C3%A3o+Condominial+-+Aplicativo+de+Gest%C3%A3o+para+S%C3%ADndico.mp4';
-
-  VIDEO_ID = 0
 
   CLIENTE_ID = 46
   TV_ID = 3
@@ -56,8 +59,8 @@ module.exports = (opt={}) ->
 
   app = express()
   server = app.listen(ENV.HTTP_PORT)
-  # app.use(express.static("."))
-  app.use '/app/assets/javascripts', express.static(__dirname + '/app/assets/javascripts')
+
+  app.use express.static(__dirname + '/app/assets/')
 
   console.log("HTTP #{ENV.HTTP_PORT} STARTING")
 
@@ -76,14 +79,7 @@ module.exports = (opt={}) ->
     console.log "Request GET / params: #{JSON.stringify(req.body)}"
     res.type("text/html")
     # res.send("<p>Hellow world</p>")
-    res.sendFile(__dirname + '/app/assets/templates/reproduction_list/index.html')
-
-  app.get '/public/css', (req, res) ->
-    res.sendFile(__dirname + '/public/css/uikit.css')
-
-  app.get '/app.js', (req, res) ->
-    res.sendFile(__dirname + '/app/assets/templates/reproduction_list/app.js')
-
+    res.sendFile(__dirname + '/app/assets/templates/index.html')
 
   app.get '/messages', (req, res) ->
     dateFormat = moment().month()+1
@@ -123,34 +119,37 @@ module.exports = (opt={}) ->
 
 
   app.get '/video', (req, res) ->
-    VIDEO_ID = parseInt(req.query.id)
-    console.log 'ID'
-    console.log VIDEO_ID
-    list_videos = fs.readdirSync 'downloads/videos/'
-    VIDEO_ID = 0 if VIDEO_ID>=list_videos.length
-    console.log list_videos
-    console.log list_videos.length
-    path = 'downloads/videos/' + list_videos[VIDEO_ID]
-    stat = fs.statSync(path)
+    videoId = parseInt(req.query.id) || 0
+    console.log 'ID', videoId
+
+    listVideos = fs.readdirSync 'downloads/videos/'
+    videoId    = 0 if videoId >= listVideos.length
+
+    console.log 'listVideos', listVideos
+    console.log 'listVideos.length', listVideos.length
+
+    path     = 'downloads/videos/' + listVideos[videoId]
+    stat     = fs.statSync(path)
     fileSize = stat.size
-    range = req.headers.range
+    range    = req.headers.range
+
     if range
-      parts = range.replace(/bytes=/, '').split('-')
-      start = parseInt(parts[0], 10)
-      end = if parts[1] then parseInt(parts[1], 10) else fileSize - 1
+      parts     = range.replace(/bytes=/, '').split('-')
+      start     = parseInt(parts[0], 10)
+      end       = if parts[1] then parseInt(parts[1], 10) else fileSize - 1
       chunksize = end - start + 1
-      file = fs.createReadStream(path, {start: start, end: end})
-      string ="bytes #{start}-#{end}/#{fileSize}"
-      head =
+      file      = fs.createReadStream(path, {start: start, end: end})
+      string    ="bytes #{start}-#{end}/#{fileSize}"
+      head      =
         'Content-Range': string
         'Accept-Ranges': 'bytes'
         'Content-Length': chunksize
         'Content-Type': 'video/mp4'
       res.writeHead 206, head
       file.pipe res
-      console.log 'chunksize'
-      console.log chunksize
-      console.log('Começando o Video')
+      console.log 'chunksize', chunksize
+      console.log 'Começando o Video'
+
     else
       head =
         'Content-Length': fileSize
@@ -160,16 +159,11 @@ module.exports = (opt={}) ->
       console.log('Terminou o Video')
 
   app.get '/playlist', (req, res) ->
-    list_videos = fs.readdirSync 'downloads/videos/'
+    listVideos = fs.readdirSync 'downloads/videos/'
     params =
-      playlist_length: list_videos.length
+      playlist_length: listVideos.length
     res.send JSON.stringify params
 
-  # HTTPS
-  fs = require('fs')
-  url = require('url')
-  http = require('http')
-  https = require('https')
   httpsOpts =
     requestCert: false,
     rejectUnauthorized: false

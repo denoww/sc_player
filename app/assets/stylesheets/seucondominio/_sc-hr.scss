@@ -1,7 +1,0 @@
-@import "compass/css3";
-@import "_sc-colors.scss";
-
-@mixin sc-hr($color-name){
-  border-top-color: lighten(sc-color($color-name), 10);
-  border-bottom-color: lighten(sc-color($color-name), 50);
-}

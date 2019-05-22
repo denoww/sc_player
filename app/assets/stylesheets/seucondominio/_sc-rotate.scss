@@ -1,6 +1,0 @@
-@import "compass/css3";
-.sc-rotate-90  {@include transform(rotate(90deg)); }
-.sc-rotate-180 {@include transform(rotate(180deg));}
-.sc-rotate-270 {@include transform(rotate(270deg));}
-.sc-flip-h     {@include transform(scale(-1,1));   }
-.sc-flip-v     {@include transform(scale(1,-1));   }
