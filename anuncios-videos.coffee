@@ -12,88 +12,74 @@ http    = require 'http'
 https   = require 'https'
 
 module.exports = (opt={}) ->
-  # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/RESUMO.mp4';
-  # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/COMPRAS+-+COTA%C3%87%C3%83O.mp4';
-  # file_url = 'https://s3.amazonaws.com/rodrigo-erp/videos-exemplos-midia-indoor/Software+Seu+Condom%C3%ADnio-+Sistema+de+Administra%C3%A7%C3%A3o+Condominial+-+Aplicativo+de+Gest%C3%A3o+para+S%C3%ADndico.mp4';
-
   CLIENTE_ID = 46
   TV_ID = 3
 
-  listMensagems = []
+  listMensagens = []
 
-  download_file_httpget = (file_url)->
+  downloadFileHttpGet = (file_url)->
     options =
       port: 80
       host: url.parse(file_url).host
       path: url.parse(file_url).pathname
 
-    file_name = url.parse(file_url).pathname.split('/').pop()
-    DOWNLOAD_DIR = switch file_name.split('.').pop()
-                    when 'mp4' then ENV.DOWNLOAD_VIDEOS
-                    when 'jpg', 'png' then  ENV.DOWNLOAD_IMAGES
-                    else console.log('FORMATO DESCONHECIDO')
+    file_name   = url.parse(file_url).pathname.split('/').pop()
+    downloadDir = switch file_name.split('.').pop()
+      when 'mp4'        then ENV.DOWNLOAD_VIDEOS
+      when 'jpg', 'png' then ENV.DOWNLOAD_IMAGES
+      else console.log('FORMATO DESCONHECIDO')
 
-    file = fs.createWriteStream( DOWNLOAD_DIR + file_name)
+    file = fs.createWriteStream(downloadDir + file_name)
 
-    http.get(options, (res)->
-      res.on('data', (data)->
+    http.get options, (res)->
+      res.on 'data', (data)->
         file.write data
-      ).on('end', ()->
+      .on 'end', ()->
         file.end()
-        console.log file_name + ' downloaded to ' + DOWNLOAD_DIR
-      )
-    )
+        console.log file_name + ' downloaded to ' + downloadDir
 
-  check_list = (port, host)->
-    params =
-      port: port
-      host: host
-    http.get(params, (res)->
-      res.on('data', (data)->
-        for url in data.list
-          download_file_httpget(url)
-      ).on('end', ()->
-        setTimeout check_list(port, host), 1000
-      )
-    )
+  checkList = (port, host)->
+    params = port: port, host: host
+    http.get params, (res)->
+      res.on 'data', (data)->
+        downloadFileHttpGet(url) for url in data.list
+      .on 'end', ->
+        setTimeout checkList(port, host), 1000
 
   app = express()
   server = app.listen(ENV.HTTP_PORT)
-
-  app.use express.static(__dirname + '/app/assets/')
-
   console.log("HTTP #{ENV.HTTP_PORT} STARTING")
+
+  app.use express.static("#{__dirname}/app/assets/")
 
   # Resolve o erro do CROSS de Access-Control-Allow-Origin
   app.all '*', (req, res, next)->
-
     res.header 'Content-Type', 'application/json'
-    res.header "Access-Control-Allow-Origin", "*"
+    res.header 'Access-Control-Allow-Origin', '*'
     res.header 'Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE'
-    res.header "Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With"
-    if 'OPTIONS' == req.method
-      return res.sendStatus(200)
+    res.header 'Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With'
+    return res.sendStatus(200) if req.method == 'OPTIONS'
     next()
 
   app.get '/', (req, res) ->
     console.log "Request GET / params: #{JSON.stringify(req.body)}"
-    res.type("text/html")
-    # res.send("<p>Hellow world</p>")
-    res.sendFile(__dirname + '/app/assets/templates/index.html')
+    res.type "text/html"
+    res.sendFile "#{__dirname}/app/assets/templates/index.html"
 
   app.get '/messages', (req, res) ->
-    dateFormat = moment().month()+1
-    dateFormat = '0'+dateFormat if dateFormat.length <2
-    dateFormat = dateFormat + '-' +moment().year()
+    dateFormat = moment().month() + 1
+    dateFormat = "0#{dateFormat}" if dateFormat.length < 2
+    dateFormat = "#{dateFormat}-#{moment().year()}"
 
-    url = "http://staging.seucondominio.com.br/gerenciar/cd/#{ENV.CLIENTE_ID}/#{dateFormat}/midia_indoor.json?cliente=#{ENV.CLIENTE_ID}&midia_indoor_tv=#{ENV.TV_ID}"
+    url = "#{ENV.API_SERVER_URL}/gerenciar/cd/#{ENV.CLIENTE_ID}/#{dateFormat}"
+    url = "/midia_indoor.json?cliente=#{ENV.CLIENTE_ID}&midia_indoor_tv=#{ENV.TV_ID}"
     request(url, (error, response, body)->
       console.log 'url', url
       if body[0] == '{'
         json = JSON.parse(body)
-        listMensagems = json.list
+        listMensagens = json.list
       else
-        console.log '---------Error to Request-----------'
+        console.log '--------- Error to Request -----------'
 
       params =
         index: 0
@@ -103,10 +89,10 @@ module.exports = (opt={}) ->
           mensagem: 'quaisii'
           tipo_tempo: 'segundos'
 
-      if listMensagems.length != 0
+      if listMensagens.length != 0
         index = parseInt(req.query.index)
-        index = 0 if index > listMensagems.length-1
-        params.message = listMensagems[index]
+        index = 0 if index > listMensagens.length-1
+        params.message = listMensagens[index]
 
         params.message.tempo = switch params.message.tipo_tempo
                                when 'horas' then params.message.tempo*60*60*1000
@@ -170,5 +156,5 @@ module.exports = (opt={}) ->
 
   https.createServer(httpsOpts, app).listen ENV.HTTPS_PORT, ->
     console.log("HTTPS #{ENV.HTTPS_PORT} STARTING")
-    # download_file_httpget(file_url)
+    # downloadFileHttpGet(file_url)
 

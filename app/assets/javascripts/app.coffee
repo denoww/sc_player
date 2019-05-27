@@ -1,53 +1,63 @@
-app = angular.module('AnunciosVideos', [])
-app.controller('PrincipalCtrl', [
-  '$scope',
+app = angular.module('publicidade_app', [])
+app.controller('MainCtrl', [
   '$http'
-  ($s, $http) ->
-    $s.mensagems =
+  ($http)->
+    vm = @
+
+    vm.init = ->
+      vm.cor    = 'black'
+      vm.layout = 'layout-2'
+
+      video = document.getElementById('video-player')
+      video.onended = (event)-> vm.anuncioVideo.getPlaylist(video)
+
+    vm.mensagems =
       index: 0
       message:
         tempo: 1000
-        titulo: 'aa'
-        mensagem: ''
+        titulo: 'Globally envisioneer tactical web-readiness'
+        mensagem: 'Energistically integrate error-free opportunities and alternative applications. Authoritatively repurpose client-centered strategic theme areas via flexible metrics. Globally envisioneer tactical web-readiness via multidisciplinary functionalities. Compellingly plagiarize.'
       getMessage: ->
         $http
           method: 'GET'
           url: '/messages'
-          params: index: $s.mensagems.index
-        .then (resp) ->
-          $s.mensagems.index = resp.data.index
-          $s.mensagems.message = resp.data.message
-          $s.interval.clear()
-          $s.interval.start resp.data.message.tempo
-        , (error) ->
-          console.log 'Error :$'
+          params: index: vm.mensagems.index
+        .then (resp)->
+          vm.mensagems.index = resp.data.index
+          vm.mensagems.message = resp.data.message
+          vm.interval.clear()
+          vm.interval.start resp.data.message.tempo
+        , (error)->
+          console.log 'Error', error
 
-    $s.interval =
+    vm.interval =
       scope: {}
-      start: (time) ->
-        # $s.interval.scope = setTimeout(function(){ $s.mensagems.getMessage(); }, time);
+      start: (time)->
+        # vm.interval.scope = setTimeout(function(){ vm.mensagems.getMessage(); }, time);
         return
       clear: ->
-        clearTimeout $s.interval.scope
+        clearTimeout vm.interval.scope
         return
 
-    $s.interval.start $s.mensagems.message.tempo
+    vm.interval.start vm.mensagems.message.tempo
 
-    $s.anuncioVideo =
+    vm.anuncioVideo =
       index: 0
-      getPlaylist: (video) ->
+      getPlaylist: (video)->
         $http
           method: 'GET'
           url: '/playlist'
-        .then (resp) ->
-          $s.anuncioVideo.index++
-          if $s.anuncioVideo.index > resp.data.playlist_length - 1
-            $s.anuncioVideo.index = 0
-          video.src = '/video?id=' + $s.anuncioVideo.index
+        .then (resp)->
+          vm.anuncioVideo.index++
+          if vm.anuncioVideo.index > resp.data.playlist_length - 1
+            vm.anuncioVideo.index = 0
+          video.src = '/video?id=' + vm.anuncioVideo.index
           return
-        , (error) ->
-          console.log 'Error :$'
+        , (error)->
+          console.error 'Erro:', error
           return
         return
-    return
+
+    vm
 ])
+

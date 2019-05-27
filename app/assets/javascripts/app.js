@@ -2,65 +2,77 @@
 (function() {
   var app;
 
-  app = angular.module('AnunciosVideos', []);
+  app = angular.module('publicidade_app', []);
 
-  app.controller('PrincipalCtrl', [
-    '$scope',
+  app.controller('MainCtrl', [
     '$http',
-    function($s,
-    $http) {
-      $s.mensagems = {
+    function($http) {
+      var vm;
+      vm = this;
+      vm.init = function() {
+        var video;
+        vm.cor = 'black';
+        vm.layout = 'layout-2';
+        video = document.getElementById('video-player');
+        return video.onended = function(event) {
+          return vm.anuncioVideo.getPlaylist(video);
+        };
+      };
+      vm.mensagems = {
         index: 0,
         message: {
           tempo: 1000,
-          titulo: 'aa',
-          mensagem: ''
+          titulo: 'Globally envisioneer tactical web-readiness',
+          mensagem: 'Energistically integrate error-free opportunities and alternative applications. Authoritatively repurpose client-centered strategic theme areas via flexible metrics. Globally envisioneer tactical web-readiness via multidisciplinary functionalities. Compellingly plagiarize.'
         },
         getMessage: function() {
           return $http({
             method: 'GET',
             url: '/messages',
             params: {
-              index: $s.mensagems.index
+              index: vm.mensagems.index
             }
           }).then(function(resp) {
-            $s.mensagems.index = resp.data.index;
-            $s.mensagems.message = resp.data.message;
-            $s.interval.clear();
-            return $s.interval.start(resp.data.message.tempo);
+            vm.mensagems.index = resp.data.index;
+            vm.mensagems.message = resp.data.message;
+            vm.interval.clear();
+            return vm.interval.start(resp.data.message.tempo);
           },
     function(error) {
-            return console.log('Error :$');
+            return console.log('Error',
+    error);
           });
         }
       };
-      $s.interval = {
+      vm.interval = {
         scope: {},
         start: function(time) {},
-        // $s.interval.scope = setTimeout(function(){ $s.mensagems.getMessage(); }, time);
+        // vm.interval.scope = setTimeout(function(){ vm.mensagems.getMessage(); }, time);
         clear: function() {
-          clearTimeout($s.interval.scope);
+          clearTimeout(vm.interval.scope);
         }
       };
-      $s.interval.start($s.mensagems.message.tempo);
-      $s.anuncioVideo = {
+      vm.interval.start(vm.mensagems.message.tempo);
+      vm.anuncioVideo = {
         index: 0,
         getPlaylist: function(video) {
           $http({
             method: 'GET',
             url: '/playlist'
           }).then(function(resp) {
-            $s.anuncioVideo.index++;
-            if ($s.anuncioVideo.index > resp.data.playlist_length - 1) {
-              $s.anuncioVideo.index = 0;
+            vm.anuncioVideo.index++;
+            if (vm.anuncioVideo.index > resp.data.playlist_length - 1) {
+              vm.anuncioVideo.index = 0;
             }
-            video.src = '/video?id=' + $s.anuncioVideo.index;
+            video.src = '/video?id=' + vm.anuncioVideo.index;
           },
     function(error) {
-            console.log('Error :$');
+            console.error('Erro:',
+    error);
           });
         }
       };
+      return vm;
     }
   ]);
 

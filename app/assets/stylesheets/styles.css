@@ -21,51 +21,96 @@ html, body {
 }
 
 .content-top    { display: flex; }
-.content-video  { width:  85vw; height: 85vh; }
-.content-left   { width:  15vw; height: 85vh; padding: 1.5em; }
-.content-right  { width:  15vw; height: 85vh; padding: 1.5em; }
-.content-footer { width: 100vw; height: 15vh; padding: 1.5em; }
+.content-side   { width:  15vw; height: 85vh; order: 1 }
+.content-player { width:  85vw; height: 85vh; overflow: hidden; order: 2 }
+.content-footer { width: 100vw; height: 15vh; }
 
 /* --------------- LAYOUTS --------------- */
 .layout-1 .content-top    {}
-.layout-1 .content-video  { width: 100vw; height: 100vh; }
-.layout-1 .content-left   { display: none }
-.layout-1 .content-right  { display: none }
+.layout-1 .content-side   { display: none }
+.layout-1 .content-player { width: 100vw; height: 100vh; }
 .layout-1 .content-footer { display: none }
 
 .layout-2 .content-top    {}
-.layout-2 .content-video  { width: 85vw; height: 85vh; }
-.layout-2 .content-left   { width: 15vw; height: 85vh; }
-.layout-2 .content-right  { display: none }
+.layout-2 .content-side   { width:  15vw; height: 85vh; order: 1 }
+.layout-2 .content-player { width:  85vw; height: 85vh; }
 .layout-2 .content-footer { width: 100vw; height: 15vh; }
 
 .layout-3 .content-top    {}
-.layout-3 .content-video  { width: 85vw; height: 85vh; }
-.layout-3 .content-left   { display: none }
-.layout-3 .content-right  { width: 15vw; height: 85vh; }
+.layout-3 .content-side   { width:  15vw; height: 85vh; order: 3 }
+.layout-3 .content-player { width:  85vw; height: 85vh; }
 .layout-3 .content-footer { width: 100vw; height: 15vh; }
+/* --------------- LAYOUTS --------------- */
 
 /* --------------- CORES --------------- */
-.gray .content-left     { background: hsl(  0,  0%, 75%); color: #222; }
-.gray .content-right    { background: hsl(  0,  0%, 75%); color: #222; }
-.gray .content-footer   { background: hsl(  0,  0%, 85%); color: #222; }
+.gray   .content-side   { background: hsl(  0,  0%, 75%); color: #222; }
+.gray   .content-footer { background: hsl(  0,  0%, 85%); color: #222; }
 
-.black .content-left    { background: hsl(  0,  0%, 15%); color: #fff; }
-.black .content-right   { background: hsl(  0,  0%, 15%); color: #fff; }
-.black .content-footer  { background: hsl(  0,  0%, 20%); color: #fff; }
+.black  .content-side   { background: hsl(  0,  0%, 15%); color: #fff; }
+.black  .content-footer { background: hsl(  0,  0%, 20%); color: #fff; }
 
-.red .content-left      { background: hsl(  0, 55%, 15%); color: #fff; }
-.red .content-right     { background: hsl(  0, 55%, 15%); color: #fff; }
-.red .content-footer    { background: hsl(  0, 55%, 20%); color: #fff; }
+.red    .content-side   { background: hsl(  0, 55%, 15%); color: #fff; }
+.red    .content-footer { background: hsl(  0, 55%, 20%); color: #fff; }
 
-.blue .content-left     { background: hsl(226, 55%, 15%); color: #fff; }
-.blue .content-right    { background: hsl(226, 55%, 15%); color: #fff; }
-.blue .content-footer   { background: hsl(226, 55%, 20%); color: #fff; }
+.blue   .content-side   { background: hsl(226, 55%, 15%); color: #fff; }
+.blue   .content-footer { background: hsl(226, 55%, 20%); color: #fff; }
 
-.green .content-left    { background: hsl(110, 55%, 15%); color: #fff; }
-.green .content-right   { background: hsl(110, 55%, 15%); color: #fff; }
-.green .content-footer  { background: hsl(110, 55%, 20%); color: #fff; }
+.green  .content-side   { background: hsl(110, 55%, 15%); color: #fff; }
+.green  .content-footer { background: hsl(110, 55%, 20%); color: #fff; }
 
-.yellow .content-left   { background: hsl( 35, 55%, 15%); color: #fff; }
-.yellow .content-right  { background: hsl( 35, 55%, 15%); color: #fff; }
+.yellow .content-side   { background: hsl( 35, 55%, 15%); color: #fff; }
 .yellow .content-footer { background: hsl( 35, 55%, 20%); color: #fff; }
+/* --------------- CORES --------------- */
+
+/* --------------- PLAYER --------------- */
+.content-player video { width: 100%; height: 100% }
+/* --------------- PLAYER --------------- */
+
+/* --------------- LATERAIS --------------- */
+.content-side > * { padding: 1.25vh 1.25vw; }
+/* --------------- LATERAIS --------------- */
+
+/* --------------- FOOTER --------------- */
+.content-footer {
+  display: flex;
+  align-items: center;
+}
+
+.content-footer .content-logo {
+  flex: 1;
+  width: 15vw;
+  height: 100%;
+  padding: 1.8vh 1.25vw;
+  max-width: 15vw;
+}
+
+.content-footer .content-logo .logo {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.content-footer .content-mensagem {
+  flex: 1;
+  overflow: hidden;
+  max-width: 85vw;
+  max-height: 100%;
+  padding-left: 1.25vw;
+  padding-right: 1.25vw;
+}
+
+.content-footer .content-mensagem .titulo {
+  font-size: 1.6vw;
+  font-weight: 700;
+  padding-bottom: 0.6vw;
+  line-height: 1;
+}
+
+.content-footer .content-mensagem .mensagem {
+  font-size: 1.4vw;
+  font-weight: 400;
+  line-height: 1.2;
+}
+/* --------------- FOOTER --------------- */
