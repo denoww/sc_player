@@ -1,0 +1,3 @@
+{
+  "ignore": ["playlist.json", "playlist", "README.md", "README"]
+}

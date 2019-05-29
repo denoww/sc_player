@@ -1,13 +1,9 @@
-############# HOW TO USE ###############
-# require('./app/httpServer.coffee')
-############# HOW TO USE ###############
-
 request = require 'request'
 moment  = require 'moment'
 express = require 'express'
 
 fs      = require 'fs'
-url     = require 'url'
+Url     = require 'url'
 http    = require 'http'
 https   = require 'https'
 
@@ -17,34 +13,116 @@ module.exports = (opt={}) ->
 
   listMensagens = []
 
-  downloadFileHttpGet = (file_url)->
+  baixarArquivo = (opts={})->
     options =
       port: 80
-      host: url.parse(file_url).host
-      path: url.parse(file_url).pathname
+      host: Url.parse(opts.url).host
+      path: Url.parse(opts.url).pathname
 
-    file_name   = url.parse(file_url).pathname.split('/').pop()
-    downloadDir = switch file_name.split('.').pop()
-      when 'mp4'        then ENV.DOWNLOAD_VIDEOS
-      when 'jpg', 'png' then ENV.DOWNLOAD_IMAGES
-      else console.log('FORMATO DESCONHECIDO')
+    pasta = ENV.DOWNLOAD_VIDEOS if opts.is_video
+    pasta = ENV.DOWNLOAD_IMAGES if opts.is_image
+    pasta = ENV.DOWNLOAD_AUDIOS if opts.is_audio
 
-    file = fs.createWriteStream(downloadDir + file_name)
+    path = pasta + opts.nome
 
-    http.get options, (res)->
-      res.on 'data', (data)->
-        file.write data
-      .on 'end', ()->
-        file.end()
-        console.log file_name + ' downloaded to ' + downloadDir
+    fs.access path, fs.constants.F_OK, (error)->
+      if error
+        file = fs.createWriteStream(path)
+        http.get options, (res)->
+          res.on 'data', (data)->
+            console.log "Iniciando download do arquivo #{path}!"
+            file.write data
+          .on 'end', ->
+            file.end()
+            console.log "Download do arquivo #{path} concluído!"
+      else
+        console.log "Arquivo #{path} já existe!"
 
-  checkList = (port, host)->
-    params = port: port, host: host
-    http.get params, (res)->
-      res.on 'data', (data)->
-        downloadFileHttpGet(url) for url in data.list
-      .on 'end', ->
-        setTimeout checkList(port, host), 1000
+  # checkList = (port, host)->
+  #   params = port: port, host: host
+  #   http.get params, (res)->
+  #     res.on 'data', (data)->
+  #       baixarArquivo(url) for url in data.list
+  #     .on 'end', ->
+  #       setTimeout checkList(port, host), 1000
+
+  getGradeObj = ->
+    url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=1"
+
+    request url, (error, response, body)->
+      if error || response?.statusCode != 200
+        erro = 'Request Failed.'
+        erro += " Status Code: #{response.statusCode}." if response?.statusCode
+        erro += " #{error}" if error
+        err = new Error erro
+
+      return console.error err.message if err
+
+      data = JSON.parse(body)
+      return console.log 'Erro: Não existe Dados da Grade!' unless data
+
+      gradeObj =
+        id:        data.id
+        layout:    data.layout
+        musicas:   []
+        conteudos: []
+        mensagens: []
+        resolucao: data.resolucao
+
+      for vinculo in (data.vinculos || []).sortByField('ordem')
+        item =
+          id:         vinculo.id
+          ordem:      vinculo.ordem
+          titulo:     vinculo.titulo
+          ativado:    vinculo.ativado
+          horarios:   vinculo.horarios
+          segundos:   vinculo.segundos
+          tipo_midia: vinculo.tipo_midia
+
+        switch vinculo.tipo_midia
+          when 'musica', 'midia'
+            if vinculo.midia
+              item.url      = vinculo.midia.original
+              item.nome     = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
+              item.midia_id = vinculo.midia.id
+              item.extensao = vinculo.midia.extension
+              item.is_audio = vinculo.midia.is_audio
+              item.is_image = vinculo.midia.is_image
+              item.is_video = vinculo.midia.is_video
+
+              if item.is_audio
+                gradeObj.musicas.push item
+              else
+                gradeObj.conteudos.push item
+              baixarArquivo(item)
+          when 'mensagem'
+            if vinculo.mensagem
+              item.mensagem = vinculo.mensagem.texto
+            gradeObj.mensagens.push item
+          when 'clima'
+            if vinculo.clima
+              item.uf      = vinculo.clima.uf
+              item.nome    = vinculo.clima.nome
+              item.country = vinculo.clima.country
+            gradeObj.conteudos.push item
+          when 'feed'
+            if vinculo.feed
+              item.url       = vinculo.feed.url
+              item.fonte     = vinculo.feed.fonte
+              item.categoria = vinculo.feed.categoria
+            gradeObj.conteudos.push item
+
+      salvarGradeObj(gradeObj)
+
+  salvarGradeObj = (data)->
+    global.grade = data
+    dados = JSON.stringify data, null, 2
+
+    fs.writeFile 'playlist.json', dados, (err)->
+      return console.log err if err
+      console.log "The file was saved!"
+
+  getGradeObj()
 
   app = express()
   server = app.listen(ENV.HTTP_PORT)
@@ -64,7 +142,15 @@ module.exports = (opt={}) ->
   app.get '/', (req, res) ->
     console.log "Request GET / params: #{JSON.stringify(req.body)}"
     res.type "text/html"
+    getGradeObj()
     res.sendFile "#{__dirname}/app/assets/templates/index.html"
+
+  app.get '/grade', (req, res) ->
+    unless global.grade
+      getGradeObj()
+      res.status(400).send JSON.stringify { error: 'grade_indisponivel' }
+      return
+    res.send JSON.stringify global.grade
 
   app.get '/messages', (req, res) ->
     dateFormat = moment().month() + 1
@@ -102,7 +188,6 @@ module.exports = (opt={}) ->
         params.index = index+1
       res.send JSON.stringify params
     )
-
 
   app.get '/video', (req, res) ->
     videoId = parseInt(req.query.id) || 0
@@ -156,5 +241,5 @@ module.exports = (opt={}) ->
 
   https.createServer(httpsOpts, app).listen ENV.HTTPS_PORT, ->
     console.log("HTTPS #{ENV.HTTPS_PORT} STARTING")
-    # downloadFileHttpGet(file_url)
+    # baixarArquivo(file_url)
 

@@ -1,0 +1,235 @@
+{
+  "id": 1,
+  "layout": "anuncio_com_imagem",
+  "musicas": [
+    {
+      "id": 75,
+      "ordem": 1,
+      "titulo": "Awakening Music - Não Mais Escravos (No Longer Slaves).mp3",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 360,
+      "tipo_midia": "musica",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/026/original/Awakening_Music_-_N%C3%A3o_Mais_Escravos_%28No_Longer_Slaves%29.mp3?1558116568",
+      "nome": "26.mp3",
+      "midia_id": 26,
+      "extensao": "mp3",
+      "is_audio": true,
+      "is_image": false,
+      "is_video": false
+    }
+  ],
+  "conteudos": [
+    {
+      "id": 76,
+      "ordem": 1,
+      "titulo": "tesla-model-5_.jpg",
+      "ativado": false,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/018/original/tesla-model-5_.jpg?1558116493",
+      "nome": "18.jpg",
+      "midia_id": 18,
+      "extensao": "jpg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 77,
+      "ordem": 2,
+      "titulo": "hyundai_hb20x_2019_1_10052018_9549_960_720.jpg",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/016/original/hyundai_hb20x_2019_1_10052018_9549_960_720.jpg?1558116490",
+      "nome": "16.jpg",
+      "midia_id": 16,
+      "extensao": "jpg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 78,
+      "ordem": 3,
+      "titulo": "25630_1.jpeg",
+      "ativado": true,
+      "horarios": [
+        {
+          "data_fim": "2019-05-31",
+          "hora_fim": "2019-05-30T02:00:00.000Z",
+          "data_inicio": "2019-05-13",
+          "dias_semana": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "hora_inicio": "2019-05-29T14:00:00.000Z"
+        }
+      ],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/013/original/25630_1.jpeg?1558116485",
+      "nome": "13.jpeg",
+      "midia_id": 13,
+      "extensao": "jpeg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 82,
+      "ordem": 4,
+      "titulo": "Goiânia",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 10,
+      "tipo_midia": "clima",
+      "uf": "GO",
+      "nome": "Goiânia"
+    },
+    {
+      "id": 83,
+      "ordem": 5,
+      "titulo": "Tecnologia",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "feed",
+      "url": "http://rss.uol.com.br/feed/tecnologia.xml",
+      "fonte": "uol",
+      "categoria": "tecnologia"
+    },
+    {
+      "id": 84,
+      "ordem": 6,
+      "titulo": "Tecnologia",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "feed",
+      "url": "http://g1.globo.com/dynamo/tecnologia/rss2.xml",
+      "fonte": "g1",
+      "categoria": "tecnologia"
+    },
+    {
+      "id": 85,
+      "ordem": 7,
+      "titulo": "Economia",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "feed",
+      "url": "http://rss.uol.com.br/feed/economia.xml",
+      "fonte": "uol",
+      "categoria": "economia"
+    },
+    {
+      "id": 86,
+      "ordem": 8,
+      "titulo": "Economia",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "feed",
+      "url": "http://g1.globo.com/dynamo/economia/rss2.xml",
+      "fonte": "g1",
+      "categoria": "economia"
+    },
+    {
+      "id": 87,
+      "ordem": 9,
+      "titulo": "gm-tracker.jpg",
+      "ativado": true,
+      "horarios": [
+        {
+          "dias_semana": [
+            3,
+            5
+          ]
+        }
+      ],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/015/original/gm-tracker.jpg?1558116487",
+      "nome": "15.jpg",
+      "midia_id": 15,
+      "extensao": "jpg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 89,
+      "ordem": 10,
+      "titulo": "software2.mp4",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 70,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/028/original/software2.mp4?1559138805",
+      "nome": "28.mp4",
+      "midia_id": 28,
+      "extensao": "mp4",
+      "is_audio": false,
+      "is_image": false,
+      "is_video": true
+    },
+    {
+      "id": 90,
+      "ordem": 11,
+      "titulo": "software3.mp4",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 75,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/027/original/software3.mp4?1559138726",
+      "nome": "27.mp4",
+      "midia_id": 27,
+      "extensao": "mp4",
+      "is_audio": false,
+      "is_image": false,
+      "is_video": true
+    }
+  ],
+  "mensagens": [
+    {
+      "id": 81,
+      "ordem": 1,
+      "titulo": "Monotonectally incentivize compelling",
+      "ativado": true,
+      "horarios": [
+        {
+          "data_fim": "2019-05-23",
+          "data_inicio": "2019-05-07",
+          "dias_semana": [
+            2,
+            5,
+            7
+          ]
+        }
+      ],
+      "segundos": 15,
+      "tipo_midia": "mensagem",
+      "mensagem": "Professionally architect long-term high-impact niche markets whereas frictionless outsourcing. Objectively fabricate resource maximizing initiatives through interdependent partnerships. Monotonectally incentivize compelling products for multidisciplinary markets. Dramatically."
+    },
+    {
+      "id": 88,
+      "ordem": 2,
+      "titulo": "Distinctively fashion cross functional",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "mensagem",
+      "mensagem": "Conveniently seize excellent technologies before team building vortals. Quickly innovate proactive potentialities for resource maximizing experiences. Distinctively fashion cross functional best practices after dynamic users."
+    }
+  ],
+  "resolucao": "1280x720"
+}

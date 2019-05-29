@@ -40,6 +40,11 @@ html, body {
 .layout-3 .content-side   { width:  15vw; height: 85vh; order: 3 }
 .layout-3 .content-player { width:  85vw; height: 85vh; }
 .layout-3 .content-footer { width: 100vw; height: 15vh; }
+
+.layout-4 .content-top    {}
+.layout-4 .content-side   { display: none; }
+.layout-4 .content-player { width:  100vw; height: 50vh; }
+.layout-4 .content-footer { width: 100vw; height: 50vh; }
 /* --------------- LAYOUTS --------------- */
 
 /* --------------- CORES --------------- */

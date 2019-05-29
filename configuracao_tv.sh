@@ -8,6 +8,12 @@ echo -e "CLIENTE_ID=$CLIENTE_ID\nTV_ID=$TV_ID\n" | sudo tee /etc/environment
 source /etc/environment
 sh -c 'cp ~/workspace/player_tv_raspberry/.env_DEVELOPMENT_sample ~/workspace/player_tv_raspberry/.env_DEVELOPMENT'
 
+# criando pastas de downloads das midias
+echo '--- Criando pastas de downloads das mídias'
+sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/videos'
+sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/images'
+sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/audios'
+
 # configurando barra de tarefas
 echo '--- Configurando barra de tarefas'
 sh -c 'cp ~/workspace/player_tv_raspberry/device_configs/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel'
