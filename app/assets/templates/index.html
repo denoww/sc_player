@@ -9,18 +9,35 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
 </head>
 
-<body class="{{vm.layout}} {{vm.cor}}" ng-controller="MainCtrl as vm" ng-init="vm.init()">
+<body class="{{vm.grade.layout || 'layout-2'}} {{vm.grade.cor || 'black'}}" ng-controller="MainCtrl as vm" ng-init="vm.init()">
   <div class="content-main">
     <div class="content-top">
       <div class="content-side">
         <div>ANUNCIO</div>
       </div> <!-- content-side -->
 
-      <div class="content-player">
-        <video id="video-player" autoplay="autoplay">
-          <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
-          <source src="/video?id={{vm.anuncioVideo.index}}" type="video/mp4" />
-        </video>
+      <div class="content-player" ng-if="vm.timeline.current.conteudos"
+        ng-class="{'transicao': vm.timeline.transicao.conteudos}"
+        ng-switch="vm.timeline.current.conteudos.tipo_midia">
+        <div ng-switch-when="feed">
+          <div>{{vm.timeline.current.conteudos.titulo}}</div>
+          <div>{{vm.timeline.current.conteudos.url}}</div>
+        </div>
+
+        <div ng-switch-when="clima">
+          <div>{{vm.timeline.current.conteudos.titulo}}</div>
+        </div>
+
+        <div ng-switch-when="midia">
+          <div class="midia-imagem" ng-if="vm.timeline.current.conteudos.is_image"
+            style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
+          </div>
+
+          <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay">
+            <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
+            <source src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" />
+          </video>
+        </div>
       </div> <!-- content-player -->
     </div> <!-- content-top -->
 
@@ -30,8 +47,8 @@
       </div> <!-- content-logo -->
 
       <div class="content-mensagem">
-        <div class="titulo" ng-if="vm.mensagems.message.titulo">{{vm.mensagems.message.titulo}}</div>
-        <div class="mensagem" ng-if="vm.mensagems.message.mensagem">{{vm.mensagems.message.mensagem}}</div>
+        <div class="titulo" ng-if="vm.timeline.current.mensagens.titulo">{{vm.timeline.current.mensagens.titulo}}</div>
+        <div class="mensagem" ng-if="vm.timeline.current.mensagens.mensagem">{{vm.timeline.current.mensagens.mensagem}}</div>
       </div> <!-- content-mensagem -->
     </div> <!-- content-footer -->
   </div> <!-- content-main -->

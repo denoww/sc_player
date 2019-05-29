@@ -23,14 +23,18 @@ module.exports = (opt={}) ->
     pasta = ENV.DOWNLOAD_IMAGES if opts.is_image
     pasta = ENV.DOWNLOAD_AUDIOS if opts.is_audio
 
-    path = pasta + opts.nome
+    checkBySize = (size)->
+      margem = 1
+      size <= (opts.size + margem) &&
+      size >= (opts.size - margem)
 
-    fs.access path, fs.constants.F_OK, (error)->
-      if error
+    path = pasta + opts.nome
+    fs.stat path, (error, stats)->
+      if error || !checkBySize(stats.size)
         file = fs.createWriteStream(path)
+        console.log "Iniciando download do arquivo #{path}!"
         http.get options, (res)->
           res.on 'data', (data)->
-            console.log "Iniciando download do arquivo #{path}!"
             file.write data
           .on 'end', ->
             file.end()
@@ -84,6 +88,7 @@ module.exports = (opt={}) ->
             if vinculo.midia
               item.url      = vinculo.midia.original
               item.nome     = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
+              item.size     = vinculo.midia.size
               item.midia_id = vinculo.midia.id
               item.extensao = vinculo.midia.extension
               item.is_audio = vinculo.midia.is_audio
@@ -129,6 +134,7 @@ module.exports = (opt={}) ->
   console.log("HTTP #{ENV.HTTP_PORT} STARTING")
 
   app.use express.static("#{__dirname}/app/assets/")
+  app.use '/downloads/', express.static("#{__dirname}/downloads/")
 
   # Resolve o erro do CROSS de Access-Control-Allow-Origin
   app.all '*', (req, res, next)->
@@ -148,7 +154,7 @@ module.exports = (opt={}) ->
   app.get '/grade', (req, res) ->
     unless global.grade
       getGradeObj()
-      res.status(400).send JSON.stringify { error: 'grade_indisponivel' }
+      res.status(400).send JSON.stringify error: 'grade_indisponivel'
       return
     res.send JSON.stringify global.grade
 
@@ -198,6 +204,7 @@ module.exports = (opt={}) ->
 
     console.log 'listVideos', listVideos
     console.log 'listVideos.length', listVideos.length
+    return unless listVideos.length
 
     path     = 'downloads/videos/' + listVideos[videoId]
     stat     = fs.statSync(path)

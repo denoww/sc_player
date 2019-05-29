@@ -6,71 +6,109 @@
 
   app.controller('MainCtrl', [
     '$http',
-    function($http) {
+    '$timeout',
+    function($http,
+    $timeout) {
       var vm;
       vm = this;
+      vm.tentar = 10;
+      vm.tentativas = 0;
       vm.init = function() {
-        var video;
-        vm.cor = 'black';
-        vm.layout = 'layout-2';
-        video = document.getElementById('video-player');
-        return video.onended = function(event) {
-          return vm.anuncioVideo.getPlaylist(video);
-        };
-      };
-      vm.mensagems = {
-        index: 0,
-        message: {
-          tempo: 1000,
-          titulo: 'Globally envisioneer tactical web-readiness',
-          mensagem: 'Energistically integrate error-free opportunities and alternative applications. Authoritatively repurpose client-centered strategic theme areas via flexible metrics. Globally envisioneer tactical web-readiness via multidisciplinary functionalities. Compellingly plagiarize.'
+        vm.loading = true;
+        return vm.getGrade(function(data) {
+          vm.loading = false;
+          console.log(data);
+          vm.tentativas = 0;
+          return vm.timeline.init();
         },
-        getMessage: function() {
-          return $http({
-            method: 'GET',
-            url: '/messages',
-            params: {
-              index: vm.mensagems.index
-            }
-          }).then(function(resp) {
-            vm.mensagems.index = resp.data.index;
-            vm.mensagems.message = resp.data.message;
-            vm.interval.clear();
-            return vm.interval.start(resp.data.message.tempo);
-          },
-    function(error) {
-            return console.log('Error',
-    error);
-          });
+    function() {
+          vm.loading = false;
+          vm.tentativas++;
+          if (vm.tentativas > vm.tentar) {
+            console.log('Não foi possível comunicar com o servidor!');
+            return;
+          }
+          vm.tentarNovamenteEm = 1000 * vm.tentativas;
+          console.log(`tentando em ${vm.tentarNovamenteEm} segundos`);
+          return $timeout((function() {
+            return vm.init();
+          }),
+    vm.tentarNovamenteEm);
+        });
+      };
+      vm.timeline = {
+        next: {},
+        tipos: ['conteudos',
+    'musicas',
+    'mensagens'],
+        current: {},
+        nextIndex: {},
+        transicao: {},
+        init: function() {
+          var i,
+    len,
+    ref,
+    results,
+    tipo;
+          ref = this.tipos;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            tipo = ref[i];
+            this.nextIndex[tipo] = 0;
+            results.push(this.executar(tipo));
+          }
+          return results;
+        },
+        executar: function(tipo) {
+          var index,
+    lista,
+    segundos;
+          lista = vm.grade[tipo] || [];
+          this.transicao[tipo] = false;
+          if (!lista.length) {
+            return;
+          }
+          index = this.nextIndex[tipo];
+          if (index >= lista.length) {
+            index = 0;
+          }
+          this.nextIndex[tipo]++;
+          if (this.nextIndex[tipo] >= lista.length) {
+            this.nextIndex[tipo] = 0;
+          }
+          this.current[tipo] = lista[index];
+          this.next[tipo] = lista[this.nextIndex[tipo]];
+          console.log(this.current[tipo]);
+          console.log('segundos',
+    this.current[tipo].segundos * 10000);
+          segundos = (this.current[tipo].segundos * 1000) || 5000;
+          $timeout((function() {
+            return vm.timeline.transicao[tipo] = true;
+          }),
+    segundos - 250);
+          return $timeout((function() {
+            return vm.timeline.executar(tipo);
+          }),
+    segundos);
         }
       };
-      vm.interval = {
-        scope: {},
-        start: function(time) {},
-        // vm.interval.scope = setTimeout(function(){ vm.mensagems.getMessage(); }, time);
-        clear: function() {
-          clearTimeout(vm.interval.scope);
-        }
-      };
-      vm.interval.start(vm.mensagems.message.tempo);
-      vm.anuncioVideo = {
-        index: 0,
-        getPlaylist: function(video) {
-          $http({
-            method: 'GET',
-            url: '/playlist'
-          }).then(function(resp) {
-            vm.anuncioVideo.index++;
-            if (vm.anuncioVideo.index > resp.data.playlist_length - 1) {
-              vm.anuncioVideo.index = 0;
-            }
-            video.src = '/video?id=' + vm.anuncioVideo.index;
-          },
-    function(error) {
-            console.error('Erro:',
-    error);
-          });
-        }
+      vm.getGrade = function(callbackSuccess,
+    callbackError) {
+        return $http({
+          method: 'GET',
+          url: '/grade'
+        }).then(function(resp) {
+          vm.grade = resp.data;
+          return typeof callbackSuccess === "function" ? callbackSuccess(resp.data) : void 0;
+        },
+    function(resp) {
+          var ref;
+          console.error('Erro:',
+    (ref = resp.data) != null ? ref.error : void 0);
+          if (typeof callbackError === "function") {
+            callbackError();
+          }
+        });
       };
       return vm;
     }

@@ -10,6 +10,7 @@ sh -c 'cp ~/workspace/player_tv_raspberry/.env_DEVELOPMENT_sample ~/workspace/pl
 
 # criando pastas de downloads das midias
 echo '--- Criando pastas de downloads das mídias'
+sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/videos'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/images'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/audios'

@@ -1,6 +1,6 @@
 {
   "id": 1,
-  "layout": "anuncio_com_imagem",
+  "layout": "layout-2",
   "musicas": [
     {
       "id": 75,
@@ -12,6 +12,7 @@
       "tipo_midia": "musica",
       "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/026/original/Awakening_Music_-_N%C3%A3o_Mais_Escravos_%28No_Longer_Slaves%29.mp3?1558116568",
       "nome": "26.mp3",
+      "size": 14955602,
       "midia_id": 26,
       "extensao": "mp3",
       "is_audio": true,
@@ -21,24 +22,8 @@
   ],
   "conteudos": [
     {
-      "id": 76,
-      "ordem": 1,
-      "titulo": "tesla-model-5_.jpg",
-      "ativado": false,
-      "horarios": [],
-      "segundos": 15,
-      "tipo_midia": "midia",
-      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/018/original/tesla-model-5_.jpg?1558116493",
-      "nome": "18.jpg",
-      "midia_id": 18,
-      "extensao": "jpg",
-      "is_audio": false,
-      "is_image": true,
-      "is_video": false
-    },
-    {
       "id": 77,
-      "ordem": 2,
+      "ordem": 1,
       "titulo": "hyundai_hb20x_2019_1_10052018_9549_960_720.jpg",
       "ativado": true,
       "horarios": [],
@@ -46,6 +31,7 @@
       "tipo_midia": "midia",
       "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/016/original/hyundai_hb20x_2019_1_10052018_9549_960_720.jpg?1558116490",
       "nome": "16.jpg",
+      "size": 156787,
       "midia_id": 16,
       "extensao": "jpg",
       "is_audio": false,
@@ -53,8 +39,83 @@
       "is_video": false
     },
     {
-      "id": 78,
+      "id": 89,
+      "ordem": 2,
+      "titulo": "software2.mp4",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/028/original/software2.mp4?1559138805",
+      "nome": "28.mp4",
+      "size": 11589916,
+      "midia_id": 28,
+      "extensao": "mp4",
+      "is_audio": false,
+      "is_image": false,
+      "is_video": true
+    },
+    {
+      "id": 87,
       "ordem": 3,
+      "titulo": "gm-tracker.jpg",
+      "ativado": true,
+      "horarios": [
+        {
+          "dias_semana": [
+            3,
+            5
+          ]
+        }
+      ],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/015/original/gm-tracker.jpg?1558116487",
+      "nome": "15.jpg",
+      "size": 1344642,
+      "midia_id": 15,
+      "extensao": "jpg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 90,
+      "ordem": 4,
+      "titulo": "software3.mp4",
+      "ativado": true,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/027/original/software3.mp4?1559138726",
+      "nome": "27.mp4",
+      "size": 12903987,
+      "midia_id": 27,
+      "extensao": "mp4",
+      "is_audio": false,
+      "is_image": false,
+      "is_video": true
+    },
+    {
+      "id": 76,
+      "ordem": 5,
+      "titulo": "tesla-model-5_.jpg",
+      "ativado": false,
+      "horarios": [],
+      "segundos": 15,
+      "tipo_midia": "midia",
+      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/018/original/tesla-model-5_.jpg?1558116493",
+      "nome": "18.jpg",
+      "size": 45747,
+      "midia_id": 18,
+      "extensao": "jpg",
+      "is_audio": false,
+      "is_image": true,
+      "is_video": false
+    },
+    {
+      "id": 78,
+      "ordem": 6,
       "titulo": "25630_1.jpeg",
       "ativado": true,
       "horarios": [
@@ -78,6 +139,7 @@
       "tipo_midia": "midia",
       "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/013/original/25630_1.jpeg?1558116485",
       "nome": "13.jpeg",
+      "size": 54697,
       "midia_id": 13,
       "extensao": "jpeg",
       "is_audio": false,
@@ -86,7 +148,7 @@
     },
     {
       "id": 82,
-      "ordem": 4,
+      "ordem": 7,
       "titulo": "Goiânia",
       "ativado": true,
       "horarios": [],
@@ -97,7 +159,7 @@
     },
     {
       "id": 83,
-      "ordem": 5,
+      "ordem": 8,
       "titulo": "Tecnologia",
       "ativado": true,
       "horarios": [],
@@ -108,32 +170,8 @@
       "categoria": "tecnologia"
     },
     {
-      "id": 84,
-      "ordem": 6,
-      "titulo": "Tecnologia",
-      "ativado": true,
-      "horarios": [],
-      "segundos": 15,
-      "tipo_midia": "feed",
-      "url": "http://g1.globo.com/dynamo/tecnologia/rss2.xml",
-      "fonte": "g1",
-      "categoria": "tecnologia"
-    },
-    {
-      "id": 85,
-      "ordem": 7,
-      "titulo": "Economia",
-      "ativado": true,
-      "horarios": [],
-      "segundos": 15,
-      "tipo_midia": "feed",
-      "url": "http://rss.uol.com.br/feed/economia.xml",
-      "fonte": "uol",
-      "categoria": "economia"
-    },
-    {
       "id": 86,
-      "ordem": 8,
+      "ordem": 9,
       "titulo": "Economia",
       "ativado": true,
       "horarios": [],
@@ -142,68 +180,13 @@
       "url": "http://g1.globo.com/dynamo/economia/rss2.xml",
       "fonte": "g1",
       "categoria": "economia"
-    },
-    {
-      "id": 87,
-      "ordem": 9,
-      "titulo": "gm-tracker.jpg",
-      "ativado": true,
-      "horarios": [
-        {
-          "dias_semana": [
-            3,
-            5
-          ]
-        }
-      ],
-      "segundos": 15,
-      "tipo_midia": "midia",
-      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/015/original/gm-tracker.jpg?1558116487",
-      "nome": "15.jpg",
-      "midia_id": 15,
-      "extensao": "jpg",
-      "is_audio": false,
-      "is_image": true,
-      "is_video": false
-    },
-    {
-      "id": 89,
-      "ordem": 10,
-      "titulo": "software2.mp4",
-      "ativado": true,
-      "horarios": [],
-      "segundos": 70,
-      "tipo_midia": "midia",
-      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/028/original/software2.mp4?1559138805",
-      "nome": "28.mp4",
-      "midia_id": 28,
-      "extensao": "mp4",
-      "is_audio": false,
-      "is_image": false,
-      "is_video": true
-    },
-    {
-      "id": 90,
-      "ordem": 11,
-      "titulo": "software3.mp4",
-      "ativado": true,
-      "horarios": [],
-      "segundos": 75,
-      "tipo_midia": "midia",
-      "url": "https://vieiradh.s3.amazonaws.com/paperclip/gerenciar/cd/publicidade/arquivos/000/000/027/original/software3.mp4?1559138726",
-      "nome": "27.mp4",
-      "midia_id": 27,
-      "extensao": "mp4",
-      "is_audio": false,
-      "is_image": false,
-      "is_video": true
     }
   ],
   "mensagens": [
     {
       "id": 81,
       "ordem": 1,
-      "titulo": "Monotonectally incentivize compelling",
+      "titulo": "Taxa de Condomínio disponível na portaria",
       "ativado": true,
       "horarios": [
         {
@@ -218,18 +201,18 @@
       ],
       "segundos": 15,
       "tipo_midia": "mensagem",
-      "mensagem": "Professionally architect long-term high-impact niche markets whereas frictionless outsourcing. Objectively fabricate resource maximizing initiatives through interdependent partnerships. Monotonectally incentivize compelling products for multidisciplinary markets. Dramatically."
+      "mensagem": "A Taxa de Condomínio já está disponível na portaria, não deixe de pegar para não pagar o boleto com atraso e precisar pagar multa e juros. O Condomínio agradeçe sua disposição em pagar o boleto em dias."
     },
     {
       "id": 88,
       "ordem": 2,
-      "titulo": "Distinctively fashion cross functional",
+      "titulo": "Detetização das áreas comuns",
       "ativado": true,
       "horarios": [],
       "segundos": 15,
       "tipo_midia": "mensagem",
-      "mensagem": "Conveniently seize excellent technologies before team building vortals. Quickly innovate proactive potentialities for resource maximizing experiences. Distinctively fashion cross functional best practices after dynamic users."
+      "mensagem": "Caros condôminos, no dia 19 de Junho de 2019 será realizado o serviço de detetização do condomínio, nos corredores, escadas, piscina, salão de festa, garagem entre outros. Favor passar o final de semana em algum hotel de sua preferência."
     }
   ],
-  "resolucao": "1280x720"
+  "resolucao": "1920x1080"
 }
