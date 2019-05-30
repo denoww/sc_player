@@ -1,4 +1,4 @@
-app = angular.module('publicidade_app', [])
+app = angular.module('publicidade_app', ['ngSanitize'])
 app.controller('MainCtrl', [
   '$http', '$timeout'
   ($http, $timeout)->
@@ -9,14 +9,16 @@ app.controller('MainCtrl', [
     vm.init = ->
       vm.loading = true
 
-      vm.getGrade (data)->
+      onSuccess = (data)->
         vm.loading = false
         console.log data
         vm.tentativas = 0
         vm.timeline.init()
-      , ->
+
+      onError = ->
         vm.loading = false
         vm.tentativas++
+
         if vm.tentativas > vm.tentar
           console.log 'Não foi possível comunicar com o servidor!'
           return
@@ -24,6 +26,8 @@ app.controller('MainCtrl', [
         vm.tentarNovamenteEm = 1000 * vm.tentativas
         console.log "tentando em #{vm.tentarNovamenteEm} segundos"
         $timeout (-> vm.init()), vm.tentarNovamenteEm
+
+      vm.getGrade onSuccess, onError
 
     vm.timeline =
       next:      {}

@@ -2,7 +2,7 @@
 (function() {
   var app;
 
-  app = angular.module('publicidade_app', []);
+  app = angular.module('publicidade_app', ['ngSanitize']);
 
   app.controller('MainCtrl', [
     '$http',
@@ -14,14 +14,16 @@
       vm.tentar = 10;
       vm.tentativas = 0;
       vm.init = function() {
+        var onError,
+    onSuccess;
         vm.loading = true;
-        return vm.getGrade(function(data) {
+        onSuccess = function(data) {
           vm.loading = false;
           console.log(data);
           vm.tentativas = 0;
           return vm.timeline.init();
-        },
-    function() {
+        };
+        onError = function() {
           vm.loading = false;
           vm.tentativas++;
           if (vm.tentativas > vm.tentar) {
@@ -34,7 +36,9 @@
             return vm.init();
           }),
     vm.tentarNovamenteEm);
-        });
+        };
+        return vm.getGrade(onSuccess,
+    onError);
       };
       vm.timeline = {
         next: {},

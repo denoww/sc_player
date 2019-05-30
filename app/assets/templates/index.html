@@ -3,6 +3,7 @@
   <title>PLAYER - Seu Condomínio</title>
 
   <script type="text/javascript" src="/javascripts/angular.js"></script>
+  <script type="text/javascript" src="/javascripts/angular-sanitize.js"></script>
   <script type="text/javascript" src="/javascripts/app.js"></script>
 
   <link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
@@ -48,7 +49,7 @@
 
       <div class="content-mensagem">
         <div class="titulo" ng-if="vm.timeline.current.mensagens.titulo">{{vm.timeline.current.mensagens.titulo}}</div>
-        <div class="mensagem" ng-if="vm.timeline.current.mensagens.mensagem">{{vm.timeline.current.mensagens.mensagem}}</div>
+        <div class="mensagem" ng-if="vm.timeline.current.mensagens.mensagem" ng-bind-html="vm.timeline.current.mensagens.mensagem"></div>
       </div> <!-- content-mensagem -->
     </div> <!-- content-footer -->
   </div> <!-- content-main -->
