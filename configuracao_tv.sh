@@ -14,6 +14,7 @@ sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/videos'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/images'
 sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/audios'
+sh -c 'mkdir ~/workspace/player_tv_raspberry/downloads/feeds'
 
 # configurando barra de tarefas
 echo '--- Configurando barra de tarefas'

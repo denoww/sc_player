@@ -3,72 +3,124 @@ app.controller('MainCtrl', [
   '$http', '$timeout'
   ($http, $timeout)->
     vm = @
-    vm.tentar = 10
-    vm.tentativas = 0
 
     vm.init = ->
-      vm.loading = true
-
-      onSuccess = (data)->
-        vm.loading = false
-        console.log data
-        vm.tentativas = 0
-        vm.timeline.init()
-
-      onError = ->
-        vm.loading = false
-        vm.tentativas++
-
-        if vm.tentativas > vm.tentar
-          console.log 'Não foi possível comunicar com o servidor!'
-          return
-
-        vm.tentarNovamenteEm = 1000 * vm.tentativas
-        console.log "tentando em #{vm.tentarNovamenteEm} segundos"
-        $timeout (-> vm.init()), vm.tentarNovamenteEm
-
-      vm.getGrade onSuccess, onError
+      vm.grade.get ->
+        vm.feeds.get()
 
     vm.timeline =
-      next:      {}
       tipos:     ['conteudos', 'musicas', 'mensagens']
       current:   {}
+      promessa:  {}
       nextIndex: {}
       transicao: {}
       init: ->
+        return if vm.grade.loading || vm.feeds.loading
+
         for tipo in @tipos
           @nextIndex[tipo] = 0
           @executar(tipo)
       executar: (tipo)->
-        lista = vm.grade[tipo] || []
+        lista = vm.grade.items[tipo] || []
         @transicao[tipo] = false
         return unless lista.length
 
+        $timeout.cancel(@promessa[tipo]) if @promessa?[tipo]
         index = @nextIndex[tipo]
         index = 0 if index >= lista.length
 
         @nextIndex[tipo]++
         @nextIndex[tipo] = 0 if @nextIndex[tipo] >= lista.length
 
-        @current[tipo] = lista[index]
+        currentItem = lista[index]
         @next[tipo] = lista[@nextIndex[tipo]]
-        console.log @current[tipo]
+        if currentItem.tipo_midia == 'feed'
+          feeds = vm.feeds.items[currentItem.fonte]?[currentItem.categoria]
+          if feeds
+            item.exibido = 0 for item in feeds.lista when !item.exibido?
+            feed = feeds.lista.sortByField('exibido')[0]
+            feed.exibido ||= 0
+            feed.exibido++
+
+            currentItem.nome   = feed.nome
+            currentItem.data   = feed.data
+            currentItem.titulo = feed.titulo
+            currentItem.titulo_feed = feed.titulo_feed
+
+
+        @current[tipo] = currentItem
         console.log 'segundos', @current[tipo].segundos * 10000
 
         segundos = (@current[tipo].segundos * 1000) || 5000
         $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
-        $timeout (-> vm.timeline.executar(tipo)), segundos
+        @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
+        return
+      next: (tipo)->
+        @current[tipo] = {}
+        $timeout -> vm.timeline.executar(tipo)
 
-    vm.getGrade = (callbackSuccess, callbackError)->
-      $http
-        method: 'GET'
-        url: '/grade'
-      .then (resp)->
-        vm.grade = resp.data
-        callbackSuccess?(resp.data)
-      , (resp)->
-        console.error 'Erro:', resp.data?.error
-        callbackError?()
+    vm.grade =
+      items: {}
+      tentar: 10
+      tentativas: 0
+      get: (onSuccess, onError)->
+        return if @loading
+        @loading = true
+
+        success = (resp)=>
+          @loading = false
+          @items = resp.data
+          vm.timeline.init()
+          @tentativas = 0
+          onSuccess?()
+
+        error = (resp)=>
+          @loading = false
+          vm.timeline.init()
+          console.error 'Grade:', resp
+
+          @tentativas++
+          if @tentativas > @tentar
+            console.error 'Grade: Não foi possível comunicar com o servidor!'
+            return
+
+          @tentarNovamenteEm = 1000 * @tentativas
+          console.warn "Grade: Tentando em #{@tentarNovamenteEm} segundos"
+          $timeout (-> vm.grade.get()), @tentarNovamenteEm
+          onError?()
+
+        $http(method: 'GET', url: '/grade').then success, error
+        return
+
+    vm.feeds =
+      items: {}
+      tentar: 10
+      tentativas: 0
+      get: ->
+        return if @loading
+        @loading = true
+
+        success = (resp)=>
+          @loading = false
+          @items = resp.data
+          vm.timeline.init()
+          @tentativas = 0
+
+        error = (resp)=>
+          @loading = false
+          vm.timeline.init()
+          console.error 'Feeds:', resp
+
+          @tentativas++
+          if @tentativas > @tentar
+            console.error 'Feeds: Não foi possível comunicar com o servidor!'
+            return
+
+          @tentarNovamenteEm = 1000 * @tentativas
+          console.warn "Feeds: Tentando em #{@tentarNovamenteEm} segundos"
+          $timeout (-> vm.feeds.get()), @tentarNovamenteEm
+
+        $http(method: 'GET', url: '/feeds').then success, error
         return
 
     vm

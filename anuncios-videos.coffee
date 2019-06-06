@@ -3,27 +3,29 @@ moment  = require 'moment'
 express = require 'express'
 
 fs      = require 'fs'
+RSS     = require 'rss-parser'
 Url     = require 'url'
 http    = require 'http'
 https   = require 'https'
+UrlExists = require 'url-exists'
 
 module.exports = (opt={}) ->
   CLIENTE_ID = 46
   TV_ID = 3
 
   listMensagens = []
+  baixandoArquivo = false
+
+  global.filaBaixar = []
 
   baixarArquivo = (opts={})->
-    options =
-      port: 80
-      host: Url.parse(opts.url).host
-      path: Url.parse(opts.url).pathname
-
     pasta = ENV.DOWNLOAD_VIDEOS if opts.is_video
     pasta = ENV.DOWNLOAD_IMAGES if opts.is_image
     pasta = ENV.DOWNLOAD_AUDIOS if opts.is_audio
+    pasta = ENV.DOWNLOAD_FEEDS  if opts.is_feed
 
     checkBySize = (size)->
+      return size > 1024 if opts.is_feed
       margem = 1
       size <= (opts.size + margem) &&
       size >= (opts.size - margem)
@@ -31,27 +33,42 @@ module.exports = (opt={}) ->
     path = pasta + opts.nome
     fs.stat path, (error, stats)->
       if error || !checkBySize(stats.size)
+        if baixandoArquivo
+          return global.filaBaixar.push opts
+
+        baixandoArquivo = true
         file = fs.createWriteStream(path)
-        console.log "Iniciando download do arquivo #{path}!"
-        http.get options, (res)->
+
+        protocolo = http
+        protocolo = https if opts.url.match(/https/)
+
+        protocolo.get opts.url, (res)->
           res.on 'data', (data)->
             file.write data
           .on 'end', ->
+            baixandoArquivo = false
             file.end()
-            console.log "Download do arquivo #{path} concluído!"
+            if global.filaBaixar.length
+              baixarArquivo(global.filaBaixar.shift())
+          .on 'error', (error)->
+            baixandoArquivo = false
+            if global.filaBaixar.length
+              baixarArquivo(global.filaBaixar.shift())
+            console.error 'baixarArquivo -> Error:', error if error
+        .on 'error', (error)->
+          baixandoArquivo = false
+          if global.filaBaixar.length
+            baixarArquivo(global.filaBaixar.shift())
+          console.error 'baixarArquivo -> Error:', error if error
       else
-        console.log "Arquivo #{path} já existe!"
-
+        console.info "arquivo já existe -> #{opts.nome}"
+        if global.filaBaixar.length
   # checkList = (port, host)->
-  #   params = port: port, host: host
-  #   http.get params, (res)->
-  #     res.on 'data', (data)->
-  #       baixarArquivo(url) for url in data.list
-  #     .on 'end', ->
-  #       setTimeout checkList(port, host), 1000
+          baixarArquivo(global.filaBaixar.shift())
+  global.baixarArquivo = baixarArquivo
 
   getGradeObj = ->
-    url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=1"
+    url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=8"
 
     request url, (error, response, body)->
       if error || response?.statusCode != 200
@@ -63,7 +80,7 @@ module.exports = (opt={}) ->
       return console.error err.message if err
 
       data = JSON.parse(body)
-      return console.log 'Erro: Não existe Dados da Grade!' unless data
+      return console.error 'Erro: Não existe Dados da Grade!' unless data
 
       gradeObj =
         id:        data.id
@@ -74,6 +91,8 @@ module.exports = (opt={}) ->
         resolucao: data.resolucao
 
       for vinculo in (data.vinculos || []).sortByField('ordem')
+        continue unless vinculo.ativado
+
         item =
           id:         vinculo.id
           ordem:      vinculo.ordem
@@ -118,20 +137,121 @@ module.exports = (opt={}) ->
             gradeObj.conteudos.push item
 
       salvarGradeObj(gradeObj)
+      getFeeds()
 
-  salvarGradeObj = (data)->
-    global.grade = data
-    dados = JSON.stringify data, null, 2
+  salvarGradeObj = (params)->
+    global.grade = params
+    dados = JSON.stringify params, null, 2
 
     fs.writeFile 'playlist.json', dados, (err)->
-      return console.log err if err
-      console.log "The file was saved!"
+      return console.error err if err
+      console.info 'playlist.json salvo com sucesso!'
+
+  getFeeds = ->
+    return unless global.grade?.conteudos
+    feedsObj = global.grade.conteudos.select (item)-> item.tipo_midia == 'feed'
+    global.feeds ||= {}
+    baixarFeeds(feedObj) for feedObj in feedsObj
+
+  baixarFeeds = (params)->
+    global.feeds ||= {}
+    parserRSS = new RSS(defaultRSS: 2.0)
+
+    parserRSS.parseURL params.url,
+    (err, feeds)->
+      return console.error 'baixarFeeds -> ERRO:', err if err
+      return if (feeds.items || []).empty()
+
+      for feed in feeds.items || []
+        if feed.enclosure?.url && feed.enclosure?.type?.match(/image/)
+          imageURL = feed.enclosure.url
+        else
+          # pegando o src da imagem
+          imageURL = (feed.content || '').match(/<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/)?[2] || ''
+          # substituindo &amp; por &
+          imageURL = imageURL.replace(/(&amp;|amp;)+/g, '&')
+          # removendo dimensions e resize para pegar a imagem com mais qualidade
+          imageURL = imageURL.replace(/(dimensions=(\d+x\d+)|resize=(\d+x\d+))\W?/g, '')
+
+          # se eh uma imagem externa vamos pegar direto da fonte
+          if imageURL.match(/\/external_images\?/) && imageURL.match(/url=/)
+            imageURL = imageURL.match(/url=(.*)$/)?[1] || imageURL
+        continue unless imageURL
+
+        extension = imageURL.split('.').pop()
+        nome = imageURL.split('/').pop().removeSpecialCharacters()
+        imageNome = "#{params.fonte}-#{params.categoria}-#{nome}"
+        if ['jpg', 'jpeg', 'png', 'gif'].includes(extension)
+          imageNome = "#{imageNome}.#{extension}"
+
+        feedObj =
+          url:    imageURL
+          nome:   imageNome
+          data:   feed.pubDate
+          titulo: feed.title
+          is_feed: true
+          titulo_feed: params.titulo
+
+        # tratamento imagens UOL
+        opcoesURLs = []
+        if imageURL.match(/uol(.*)142x100/)
+          tamanhos = ['900x506', '956x500', '450x450', '450x600']
+          for tamanho in tamanhos
+            opcoesURLs.push imageURL.replace(/142x100/, tamanho)
+          opcoesURLs.push imageURL
+
+        if opcoesURLs.any()
+          verificarUrls.exec feedObj, opcoesURLs
+        else
+          baixarArquivo(feedObj)
+
+        global.feeds[params.fonte] ||= {}
+        global.feeds[params.fonte][params.categoria] ||= index: 0, lista: []
+        global.feeds[params.fonte][params.categoria].lista.push feedObj
+
+      salvarFeeds()
+
+  verificarUrls =
+    fila: []
+    exec: (opts, urls, index=0)->
+      if verificarUrls.loading
+        @fila.push opts: opts, urls: urls, index: index
+
+      verificarUrls.loading = true
+      return onError?() unless urls[index]
+
+      UrlExists urls[index], (error, existe)->
+        verificarUrls.loading = false
+        if verificarUrls.fila.any()
+          item = verificarUrls.fila.shift()
+          verificarUrls.exec(item.opts, item.urls, item.index)
+
+        return console.error 'UrlExists ERRO:', error if error
+
+        if existe
+          opts.url = urls[index]
+          baixarArquivo(opts)
+          return
+
+        onError?()
+        index++
+        verificarUrls.exec(opts, urls, index)
+
+  salvarFeeds = ->
+    unless global.feeds
+      return console.error 'ERROR: não existe feeds para salvar'
+
+    dados = JSON.stringify global.feeds, null, 2
+
+    fs.writeFile 'feeds.json', dados, (err)->
+      return console.error err if err
+      console.info 'feeds.json salvo com sucesso!'
 
   getGradeObj()
 
   app = express()
   server = app.listen(ENV.HTTP_PORT)
-  console.log("HTTP #{ENV.HTTP_PORT} STARTING")
+  console.info "HTTP #{ENV.HTTP_PORT} STARTING"
 
   app.use express.static("#{__dirname}/app/assets/")
   app.use '/downloads/', express.static("#{__dirname}/downloads/")
@@ -148,15 +268,22 @@ module.exports = (opt={}) ->
   app.get '/', (req, res) ->
     console.log "Request GET / params: #{JSON.stringify(req.body)}"
     res.type "text/html"
-    getGradeObj()
+    # getGradeObj()
     res.sendFile "#{__dirname}/app/assets/templates/index.html"
 
   app.get '/grade', (req, res) ->
     unless global.grade
       getGradeObj()
-      res.status(400).send JSON.stringify error: 'grade_indisponivel'
+      res.sendStatus(400)
       return
     res.send JSON.stringify global.grade
+
+  app.get '/feeds', (req, res) ->
+    if global.grade && !global.feeds
+      getFeeds()
+      res.sendStatus(400)
+      return
+    res.send JSON.stringify global.feeds || {}
 
   app.get '/messages', (req, res) ->
     dateFormat = moment().month() + 1

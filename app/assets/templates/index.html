@@ -2,8 +2,12 @@
 <head>
   <title>PLAYER - Seu Condomínio</title>
 
-  <script type="text/javascript" src="/javascripts/angular.js"></script>
-  <script type="text/javascript" src="/javascripts/angular-sanitize.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/angular.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/angular-sanitize.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/array.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/date.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/object.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/string.js"></script>
   <script type="text/javascript" src="/javascripts/app.js"></script>
 
   <link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
@@ -20,21 +24,28 @@
       <div class="content-player" ng-if="vm.timeline.current.conteudos"
         ng-class="{'transicao': vm.timeline.transicao.conteudos}"
         ng-switch="vm.timeline.current.conteudos.tipo_midia">
-        <div ng-switch-when="feed">
-          <div>{{vm.timeline.current.conteudos.titulo}}</div>
-          <div>{{vm.timeline.current.conteudos.url}}</div>
+        <div ng-switch-when="feed" class="content-feed">
+          <div class="feed-imagem"
+            style="background-image: url(/downloads/feeds/{{vm.timeline.current.conteudos.nome}})">
+            <div class="feed-info">
+              <div class="feed-fonte" style="background-image: url(/images/feeds/{{vm.timeline.current.conteudos.fonte}}.png)"></div>
+              <div class="feed-categoria">{{vm.timeline.current.conteudos.titulo_feed}}</div>
+              <div class="feed-out"></div>
+            </div>
+            <div class="feed-titulo">{{vm.timeline.current.conteudos.titulo}}</div>
+          </div>
         </div>
 
         <div ng-switch-when="clima">
           <div>{{vm.timeline.current.conteudos.titulo}}</div>
         </div>
 
-        <div ng-switch-when="midia">
+        <div ng-switch-when="midia" ng-if="vm.timeline.current.conteudos.segundos">
           <div class="midia-imagem" ng-if="vm.timeline.current.conteudos.is_image"
             style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
           </div>
 
-          <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay">
+          <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay" loop="">
             <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
             <source src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" />
           </video>

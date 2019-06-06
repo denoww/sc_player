@@ -69,19 +69,82 @@ html, body {
 /* --------------- CORES --------------- */
 
 /* --------------- PLAYER --------------- */
+.content-player .feed-imagem,
 .content-player .midia-imagem {
   width: 100%;
   height: 100%;
-  background-size: cover;
+  /*background-size: cover;*/
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.content-player .midia-video { width: 100%; height: 100% }
+.content-player .midia-video {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.content-player .feed-imagem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content-player .feed-info {
+  height: 7vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content-player .feed-fonte {
+  width: 5vw;
+  height: 100%;
+  flex: 0 0 5vw;
+  background-size: cover;
+  background-color: #333;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.content-player .feed-categoria {
+  text-align: right;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 1.8vw;
+  padding: 0 1.2vw;
+  border-bottom-right-radius: 1vw;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  text-shadow: 0px 2px 4px #000;
+}
+
+.content-player .feed-out {
+  flex: 1;
+}
+
+.content-player .feed-titulo {
+  width: 100%;
+  color: #fff;
+  padding: 1.2vw;
+  font-size: 2.5vw;
+  line-height: 1.1;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.6);
+  text-shadow: 0px 2px 4px #000;
+}
 
 .content-player .feed {
   width: 100%;
   height: 100%;
+}
+
+.content-player .content-feed {
+  background-image: url('../images/no-image.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .content-player .clima {

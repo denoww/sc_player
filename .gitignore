@@ -1,4 +1,6 @@
-playlist.json
 node_modules
 downloads
 .env_DEVELOPMENT
+feeds.json
+playlist.json
+package-lock.json
