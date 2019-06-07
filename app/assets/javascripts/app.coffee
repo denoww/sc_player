@@ -121,6 +121,15 @@ app.controller('MainCtrl', [
         $http(method: 'GET', url: '/feeds').then success, error
         return
 
+    vm.mouse =
+      onMove: ->
+        $timeout.cancel(@timeout) if @timeout
+        document.body.style.cursor = 'default'
+
+        @timeout = $timeout =>
+          document.body.style.cursor = 'none'
+        , 1000
+
     vm
 ])
 

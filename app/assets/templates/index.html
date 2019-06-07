@@ -14,7 +14,11 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
 </head>
 
-<body class="{{vm.grade.layout || 'layout-2'}} {{vm.grade.cor || 'black'}}" ng-controller="MainCtrl as vm" ng-init="vm.init()">
+<body class="{{vm.grade.layout || 'layout-2'}} {{vm.grade.cor || 'black'}}"
+  ng-controller="MainCtrl as vm"
+  ng-mousemove="vm.mouse.onMove()"
+  ng-init="vm.init()"
+  style="cursor: none">
   <div class="content-main">
     <div class="content-top">
       <div class="content-side">

@@ -19,7 +19,7 @@ module.exports = ->
         data = JSON.parse(body)
         return console.error 'Erro: Não existe Dados da Grade!' unless data
         @handlelist(data)
-        @salvarJson()
+        @saveDataJson()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -84,7 +84,7 @@ module.exports = ->
       item.fonte     = vinculo.feed.fonte
       item.categoria = vinculo.feed.categoria
       @data.conteudos.push item
-    salvarJson: ->
+    saveDataJson: ->
       dados = JSON.stringify @data, null, 2
 
       fs.writeFile 'playlist.json', dados, (error)->

@@ -195,6 +195,18 @@
     error);
         }
       };
+      vm.mouse = {
+        onMove: function() {
+          if (this.timeout) {
+            $timeout.cancel(this.timeout);
+          }
+          document.body.style.cursor = 'default';
+          return this.timeout = $timeout(() => {
+            return document.body.style.cursor = 'none';
+          },
+    1000);
+        }
+      };
       return vm;
     }
   ]);
