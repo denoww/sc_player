@@ -8,6 +8,9 @@ module.exports = ->
     getList: ->
       return unless global.grade?.data?.conteudos
       feeds = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'feed'
+      return if feeds.empty()
+
+      @getDataOffline()
       @baixarFeeds(feed) for feed in feeds
     baixarFeeds: (params)->
       parserRSS = new RSS(defaultRSS: 2.0)
@@ -92,6 +95,12 @@ module.exports = ->
         return console.error error if error
         console.info 'feeds.json salvo com sucesso!'
       return
+    getDataOffline: ->
+      console.info 'Feeds -> Pegando feeds de feeds.json'
+      try
+        @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8'))
+      catch e
+        console.error 'Feeds -> getDataOffline:', e
     getImageUol: (feedObj, image)->
       tamanhos   = ['1024x551', '900x506', '956x500', '450x450', '450x600']
       opcoesURLs = []

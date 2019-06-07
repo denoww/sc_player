@@ -13,6 +13,7 @@ module.exports = ->
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           console.error erro
+          @getDataOffline()
           return
 
         data = JSON.parse(body)
@@ -88,8 +89,15 @@ module.exports = ->
 
       fs.writeFile 'playlist.json', dados, (error)->
         return console.error error if error
-        console.info 'playlist.json salvo com sucesso!'
+        console.info 'Grade -> playlist.json salvo com sucesso!'
       return
+    getDataOffline: ->
+      console.info 'Grade -> Pegando grade de playlist.json'
+      try
+        @data = JSON.parse(fs.readFileSync('playlist.json', 'utf8'))
+        global.feeds.getList()
+      catch e
+        console.error 'Grade -> getDataOffline:', e
 
   ctrl.getList()
   global.grade = ctrl
