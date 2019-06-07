@@ -3,5 +3,8 @@ require('sc-node-tools')
 
 # servers
 console.log('STARTING SERVERS...')
-require('./anuncios-videos')()
+require('./app/classes/download')
+require('./app/classes/grade')()
+require('./app/classes/feeds')()
+require('./app/servers/web')()
 

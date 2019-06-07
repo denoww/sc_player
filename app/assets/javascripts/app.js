@@ -93,8 +93,6 @@
             }
           }
           this.current[tipo] = currentItem;
-          console.log('segundos',
-    this.current[tipo].segundos * 10000);
           segundos = (this.current[tipo].segundos * 1000) || 5000;
           $timeout((function() {
             return vm.timeline.transicao[tipo] = true;

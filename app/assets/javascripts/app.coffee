@@ -47,9 +47,7 @@ app.controller('MainCtrl', [
             currentItem.titulo = feed.titulo
             currentItem.titulo_feed = feed.titulo_feed
 
-
         @current[tipo] = currentItem
-        console.log 'segundos', @current[tipo].segundos * 10000
 
         segundos = (@current[tipo].segundos * 1000) || 5000
         $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
