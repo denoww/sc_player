@@ -45,6 +45,18 @@ html, body {
   text-align: center;
 }
 
+.offline {
+  background: url(../images/wifi-off.png) no-repeat center;
+  background-size: contain;
+  width: 2.5vw;
+  height: 2.5vw;
+  top: 0.3vw;
+  right: 0.5vw;
+  position: absolute;
+  z-index: 99;
+  opacity: .8;
+}
+
 .content-main {
   color: #333;
   width: 100vw;

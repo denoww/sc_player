@@ -36,7 +36,7 @@ app.controller('MainCtrl', [
         @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
         return
       getNextItem: (tipo)->
-        lista = vm.grade.items[tipo] || []
+        lista = vm.grade.data[tipo] || []
         return unless lista.length
 
         index = @nextIndex[tipo]
@@ -48,7 +48,7 @@ app.controller('MainCtrl', [
         currentItem = lista[index]
         return currentItem if currentItem.tipo_midia != 'feed'
 
-        feeds = vm.feeds.items[currentItem.fonte]?[currentItem.categoria]
+        feeds = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
         if feeds
           item.exibido = 0 for item in feeds.lista when !item.exibido?
           feed = feeds.lista.sortByField('exibido')[0]
@@ -66,7 +66,7 @@ app.controller('MainCtrl', [
         $timeout -> vm.timeline.executar(tipo)
 
     vm.grade =
-      items: {}
+      data: {}
       tentar: 10
       tentativas: 0
       get: (onSuccess, onError)->
@@ -75,7 +75,8 @@ app.controller('MainCtrl', [
 
         success = (resp)=>
           @loading = false
-          @items = resp.data
+          @data = resp.data
+          vm.offline = resp.data.offline
           vm.timeline.init()
           @tentativas = 0
           onSuccess?()
@@ -99,7 +100,7 @@ app.controller('MainCtrl', [
         return
 
     vm.feeds =
-      items: {}
+      data: {}
       tentar: 10
       tentativas: 0
       get: (onSuccess, onError)->
@@ -108,7 +109,7 @@ app.controller('MainCtrl', [
 
         success = (resp)=>
           @loading = false
-          @items = resp.data
+          @data = resp.data
           vm.timeline.init()
           @tentativas = 0
           onSuccess?()

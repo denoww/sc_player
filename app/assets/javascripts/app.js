@@ -78,7 +78,7 @@
     lista,
     ref,
     ref1;
-          lista = vm.grade.items[tipo] || [];
+          lista = vm.grade.data[tipo] || [];
           if (!lista.length) {
             return;
           }
@@ -94,7 +94,7 @@
           if (currentItem.tipo_midia !== 'feed') {
             return currentItem;
           }
-          feeds = (ref = vm.feeds.items[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
+          feeds = (ref = vm.feeds.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
           if (feeds) {
             ref1 = feeds.lista;
             for (i = 0, len = ref1.length; i < len; i++) {
@@ -121,7 +121,7 @@
         }
       };
       vm.grade = {
-        items: {},
+        data: {},
         tentar: 10,
         tentativas: 0,
         get: function(onSuccess,
@@ -134,7 +134,8 @@
           this.loading = true;
           success = (resp) => {
             this.loading = false;
-            this.items = resp.data;
+            this.data = resp.data;
+            vm.offline = resp.data.offline;
             vm.timeline.init();
             this.tentativas = 0;
             return typeof onSuccess === "function" ? onSuccess() : void 0;
@@ -165,7 +166,7 @@
         }
       };
       vm.feeds = {
-        items: {},
+        data: {},
         tentar: 10,
         tentativas: 0,
         get: function(onSuccess,
@@ -178,7 +179,7 @@
           this.loading = true;
           success = (resp) => {
             this.loading = false;
-            this.items = resp.data;
+            this.data = resp.data;
             vm.timeline.init();
             this.tentativas = 0;
             return typeof onSuccess === "function" ? onSuccess() : void 0;
