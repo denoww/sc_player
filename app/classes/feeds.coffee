@@ -124,7 +124,7 @@ module.exports = ->
 
         data = body.toString()
         imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || ''
-        return console.error 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
+        return console.warn 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
 
         image = ctrl.mountImageData(params, imageURL)
         feedObj.url  = image.url

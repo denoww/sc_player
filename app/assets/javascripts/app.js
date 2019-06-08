@@ -12,8 +12,12 @@
       var vm;
       vm = this;
       vm.init = function() {
+        vm.loading = true;
         return vm.grade.get(function() {
-          return vm.feeds.get();
+          return vm.feeds.get(function() {
+            vm.loading = false;
+            return vm.loaded = true;
+          });
         });
       };
       vm.timeline = {
@@ -43,6 +47,27 @@
           return results;
         },
         executar: function(tipo) {
+          var ref,
+    segundos;
+          this.transicao[tipo] = false;
+          if ((ref = this.promessa) != null ? ref[tipo] : void 0) {
+            $timeout.cancel(this.promessa[tipo]);
+          }
+          this.current[tipo] = this.getNextItem(tipo);
+          if (!this.current[tipo]) {
+            return;
+          }
+          segundos = (this.current[tipo].segundos * 1000) || 5000;
+          $timeout((function() {
+            return vm.timeline.transicao[tipo] = true;
+          }),
+    segundos - 250);
+          this.promessa[tipo] = $timeout((function() {
+            return vm.timeline.next(tipo);
+          }),
+    segundos);
+        },
+        getNextItem: function(tipo) {
           var currentItem,
     feed,
     feeds,
@@ -52,16 +77,10 @@
     len,
     lista,
     ref,
-    ref1,
-    ref2,
-    segundos;
+    ref1;
           lista = vm.grade.items[tipo] || [];
-          this.transicao[tipo] = false;
           if (!lista.length) {
             return;
-          }
-          if ((ref = this.promessa) != null ? ref[tipo] : void 0) {
-            $timeout.cancel(this.promessa[tipo]);
           }
           index = this.nextIndex[tipo];
           if (index >= lista.length) {
@@ -72,36 +91,27 @@
             this.nextIndex[tipo] = 0;
           }
           currentItem = lista[index];
-          this.next[tipo] = lista[this.nextIndex[tipo]];
-          if (currentItem.tipo_midia === 'feed') {
-            feeds = (ref1 = vm.feeds.items[currentItem.fonte]) != null ? ref1[currentItem.categoria] : void 0;
-            if (feeds) {
-              ref2 = feeds.lista;
-              for (i = 0, len = ref2.length; i < len; i++) {
-                item = ref2[i];
-                if (item.exibido == null) {
-                  item.exibido = 0;
-                }
-              }
-              feed = feeds.lista.sortByField('exibido')[0];
-              feed.exibido || (feed.exibido = 0);
-              feed.exibido++;
-              currentItem.nome = feed.nome;
-              currentItem.data = feed.data;
-              currentItem.titulo = feed.titulo;
-              currentItem.titulo_feed = feed.titulo_feed;
-            }
+          if (currentItem.tipo_midia !== 'feed') {
+            return currentItem;
           }
-          this.current[tipo] = currentItem;
-          segundos = (this.current[tipo].segundos * 1000) || 5000;
-          $timeout((function() {
-            return vm.timeline.transicao[tipo] = true;
-          }),
-    segundos - 250);
-          this.promessa[tipo] = $timeout((function() {
-            return vm.timeline.next(tipo);
-          }),
-    segundos);
+          feeds = (ref = vm.feeds.items[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
+          if (feeds) {
+            ref1 = feeds.lista;
+            for (i = 0, len = ref1.length; i < len; i++) {
+              item = ref1[i];
+              if (item.exibido == null) {
+                item.exibido = 0;
+              }
+            }
+            feed = feeds.lista.sortByField('exibido')[0];
+            feed.exibido || (feed.exibido = 0);
+            feed.exibido++;
+            currentItem.nome = feed.nome;
+            currentItem.data = feed.data;
+            currentItem.titulo = feed.titulo;
+            currentItem.titulo_feed = feed.titulo_feed;
+          }
+          return currentItem;
         },
         next: function(tipo) {
           this.current[tipo] = {};
@@ -158,7 +168,8 @@
         items: {},
         tentar: 10,
         tentativas: 0,
-        get: function() {
+        get: function(onSuccess,
+    onError) {
           var error,
     success;
           if (this.loading) {
@@ -169,7 +180,8 @@
             this.loading = false;
             this.items = resp.data;
             vm.timeline.init();
-            return this.tentativas = 0;
+            this.tentativas = 0;
+            return typeof onSuccess === "function" ? onSuccess() : void 0;
           };
           error = (resp) => {
             this.loading = false;
@@ -183,10 +195,11 @@
             }
             this.tentarNovamenteEm = 1000 * this.tentativas;
             console.warn(`Feeds: Tentando em ${this.tentarNovamenteEm} segundos`);
-            return $timeout((function() {
+            $timeout((function() {
               return vm.feeds.get();
             }),
     this.tentarNovamenteEm);
+            return typeof onError === "function" ? onError() : void 0;
           };
           $http({
             method: 'GET',

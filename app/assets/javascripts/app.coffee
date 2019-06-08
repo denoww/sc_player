@@ -5,8 +5,12 @@ app.controller('MainCtrl', [
     vm = @
 
     vm.init = ->
+      vm.loading = true
+
       vm.grade.get ->
-        vm.feeds.get()
+        vm.feeds.get ->
+          vm.loading = false
+          vm.loaded = true
 
     vm.timeline =
       tipos:     ['conteudos', 'musicas', 'mensagens']
@@ -21,11 +25,20 @@ app.controller('MainCtrl', [
           @nextIndex[tipo] = 0
           @executar(tipo)
       executar: (tipo)->
-        lista = vm.grade.items[tipo] || []
         @transicao[tipo] = false
+        $timeout.cancel(@promessa[tipo]) if @promessa?[tipo]
+
+        @current[tipo] = @getNextItem(tipo)
+        return unless @current[tipo]
+
+        segundos = (@current[tipo].segundos * 1000) || 5000
+        $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
+        @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
+        return
+      getNextItem: (tipo)->
+        lista = vm.grade.items[tipo] || []
         return unless lista.length
 
-        $timeout.cancel(@promessa[tipo]) if @promessa?[tipo]
         index = @nextIndex[tipo]
         index = 0 if index >= lista.length
 
@@ -33,26 +46,21 @@ app.controller('MainCtrl', [
         @nextIndex[tipo] = 0 if @nextIndex[tipo] >= lista.length
 
         currentItem = lista[index]
-        @next[tipo] = lista[@nextIndex[tipo]]
-        if currentItem.tipo_midia == 'feed'
-          feeds = vm.feeds.items[currentItem.fonte]?[currentItem.categoria]
-          if feeds
-            item.exibido = 0 for item in feeds.lista when !item.exibido?
-            feed = feeds.lista.sortByField('exibido')[0]
-            feed.exibido ||= 0
-            feed.exibido++
+        return currentItem if currentItem.tipo_midia != 'feed'
 
-            currentItem.nome   = feed.nome
-            currentItem.data   = feed.data
-            currentItem.titulo = feed.titulo
-            currentItem.titulo_feed = feed.titulo_feed
+        feeds = vm.feeds.items[currentItem.fonte]?[currentItem.categoria]
+        if feeds
+          item.exibido = 0 for item in feeds.lista when !item.exibido?
+          feed = feeds.lista.sortByField('exibido')[0]
+          feed.exibido ||= 0
+          feed.exibido++
 
-        @current[tipo] = currentItem
+          currentItem.nome   = feed.nome
+          currentItem.data   = feed.data
+          currentItem.titulo = feed.titulo
+          currentItem.titulo_feed = feed.titulo_feed
 
-        segundos = (@current[tipo].segundos * 1000) || 5000
-        $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
-        @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
-        return
+        currentItem
       next: (tipo)->
         @current[tipo] = {}
         $timeout -> vm.timeline.executar(tipo)
@@ -94,7 +102,7 @@ app.controller('MainCtrl', [
       items: {}
       tentar: 10
       tentativas: 0
-      get: ->
+      get: (onSuccess, onError)->
         return if @loading
         @loading = true
 
@@ -103,6 +111,7 @@ app.controller('MainCtrl', [
           @items = resp.data
           vm.timeline.init()
           @tentativas = 0
+          onSuccess?()
 
         error = (resp)=>
           @loading = false
@@ -117,6 +126,7 @@ app.controller('MainCtrl', [
           @tentarNovamenteEm = 1000 * @tentativas
           console.warn "Feeds: Tentando em #{@tentarNovamenteEm} segundos"
           $timeout (-> vm.feeds.get()), @tentarNovamenteEm
+          onError?()
 
         $http(method: 'GET', url: '/feeds').then success, error
         return
