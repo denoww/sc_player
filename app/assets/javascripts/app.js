@@ -13,12 +13,18 @@
       vm = this;
       vm.init = function() {
         vm.loading = true;
-        return vm.grade.get(function() {
+        vm.grade.get(function() {
           return vm.feeds.get(function() {
             vm.loading = false;
             return vm.loaded = true;
           });
         });
+        return setInterval(function() {
+          return vm.grade.get(function() {
+            return vm.feeds.get();
+          });
+        },
+    1000 * 60);
       };
       vm.timeline = {
         tipos: ['conteudos',
@@ -58,6 +64,11 @@
             return;
           }
           segundos = (this.current[tipo].segundos * 1000) || 5000;
+          vm.timeline.transicao[tipo] = true;
+          $timeout((function() {
+            return vm.timeline.transicao[tipo] = false;
+          }),
+    250);
           $timeout((function() {
             return vm.timeline.transicao[tipo] = true;
           }),
@@ -133,6 +144,8 @@
           }
           this.loading = true;
           success = (resp) => {
+            console.log('grade',
+    resp.data);
             this.loading = false;
             this.data = resp.data;
             vm.offline = resp.data.offline;
@@ -178,6 +191,8 @@
           }
           this.loading = true;
           success = (resp) => {
+            console.log('feed',
+    resp.data);
             this.loading = false;
             this.data = resp.data;
             vm.timeline.init();

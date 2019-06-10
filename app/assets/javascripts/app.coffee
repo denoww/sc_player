@@ -12,6 +12,10 @@ app.controller('MainCtrl', [
           vm.loading = false
           vm.loaded = true
 
+      setInterval ->
+        vm.grade.get -> vm.feeds.get()
+      , 1000 * 60
+
     vm.timeline =
       tipos:     ['conteudos', 'musicas', 'mensagens']
       current:   {}
@@ -32,6 +36,8 @@ app.controller('MainCtrl', [
         return unless @current[tipo]
 
         segundos = (@current[tipo].segundos * 1000) || 5000
+        vm.timeline.transicao[tipo] = true
+        $timeout (-> vm.timeline.transicao[tipo] = false), 250
         $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
         @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
         return

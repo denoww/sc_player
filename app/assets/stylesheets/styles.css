@@ -150,6 +150,8 @@ html, body {
   background-color: #333;
   background-repeat: no-repeat;
   background-position: center;
+  position: relative;
+  z-index: 2;
 }
 
 .content-player .feed-categoria {
@@ -163,6 +165,14 @@ html, body {
   align-items: center;
   line-height: 1;
   text-shadow: 0px 2px 4px #000;
+  transition: transform 0.3s;
+  transform: translateX(0);
+  position: relative;
+  z-index: 1;
+}
+
+.content-player.transicao .feed-categoria {
+  transform: translateX(-200%);
 }
 
 .content-player .feed-out {
@@ -178,6 +188,12 @@ html, body {
   font-weight: 500;
   background: rgba(0, 0, 0, 0.6);
   text-shadow: 0px 2px 4px #000;
+  transform: translateY(0);
+  transition: transform 0.3s;
+}
+
+.content-player.transicao .feed-titulo {
+  transform: translateY(100%);
 }
 
 .content-player .feed {
