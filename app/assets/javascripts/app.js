@@ -11,6 +11,7 @@
     $timeout) {
       var vm;
       vm = this;
+      vm.loading = true;
       vm.init = function() {
         vm.loading = true;
         vm.grade.get(function() {
@@ -144,8 +145,6 @@
           }
           this.loading = true;
           success = (resp) => {
-            console.log('grade',
-    resp.data);
             this.loading = false;
             this.data = resp.data;
             vm.offline = resp.data.offline;
@@ -191,8 +190,6 @@
           }
           this.loading = true;
           success = (resp) => {
-            console.log('feed',
-    resp.data);
             this.loading = false;
             this.data = resp.data;
             vm.timeline.init();

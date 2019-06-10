@@ -3,6 +3,7 @@ app.controller('MainCtrl', [
   '$http', '$timeout'
   ($http, $timeout)->
     vm = @
+    vm.loading = true
 
     vm.init = ->
       vm.loading = true
