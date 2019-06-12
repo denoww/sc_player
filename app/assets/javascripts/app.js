@@ -2,7 +2,14 @@
 (function() {
   var app;
 
-  app = angular.module('publicidade_app', ['ngSanitize']);
+  app = angular.module('publicidade_app', ['ngSanitize', 'ngLocale']);
+
+  app.config([
+    '$qProvider',
+    function($qProvider) {
+      return $qProvider.errorOnUnhandledRejections(false);
+    }
+  ]);
 
   app.controller('MainCtrl', [
     '$http',
@@ -17,13 +24,16 @@
         vm.grade.get(function() {
           return vm.feeds.get(function() {
             vm.loading = false;
-            return vm.loaded = true;
+            vm.loaded = true;
+            return vm.relogio();
           });
         });
+        vm.weather.get();
         return setInterval(function() {
-          return vm.grade.get(function() {
+          vm.grade.get(function() {
             return vm.feeds.get();
           });
+          return vm.weather.get();
         },
     1000 * 60);
       };
@@ -36,20 +46,39 @@
         nextIndex: {},
         transicao: {},
         init: function() {
-          var i,
+          var base,
+    i,
     len,
     ref,
+    ref1,
+    ref2,
+    ref3,
+    ref4,
+    ref5,
+    ref6,
+    ref7,
+    ref8,
+    ref9,
     results,
     tipo;
-          if (vm.grade.loading || vm.feeds.loading) {
+          if (!vm.loaded) {
             return;
           }
           ref = this.tipos;
           results = [];
           for (i = 0, len = ref.length; i < len; i++) {
             tipo = ref[i];
-            this.nextIndex[tipo] = 0;
-            results.push(this.executar(tipo));
+            (base = this.nextIndex)[tipo] || (base[tipo] = 0);
+            if (tipo === 'conteudos') {
+              console.log('------------------',
+    (ref1 = this.promessa) != null ? (ref2 = ref1[tipo]) != null ? (ref3 = ref2.$$state) != null ? ref3.status : void 0 : void 0 : void 0,
+    ((ref4 = this.promessa) != null ? (ref5 = ref4[tipo]) != null ? (ref6 = ref5.$$state) != null ? ref6.status : void 0 : void 0 : void 0) !== 0);
+            }
+            if (((ref7 = this.promessa) != null ? (ref8 = ref7[tipo]) != null ? (ref9 = ref8.$$state) != null ? ref9.status : void 0 : void 0 : void 0) !== 0) {
+              results.push(this.executar(tipo));
+            } else {
+              results.push(void 0);
+            }
           }
           return results;
         },
@@ -81,16 +110,11 @@
         },
         getNextItem: function(tipo) {
           var currentItem,
-    feed,
-    feeds,
-    i,
     index,
-    item,
-    len,
-    lista,
-    ref,
-    ref1;
-          lista = vm.grade.data[tipo] || [];
+    lista;
+          lista = (vm.grade.data[tipo] || []).select(function(e) {
+            return e.ativado;
+          });
           if (!lista.length) {
             return;
           }
@@ -98,31 +122,62 @@
           if (index >= lista.length) {
             index = 0;
           }
+          if (tipo === 'conteudos') {
+            console.log('---------------------------------------------------------');
+            console.log('getNextItem',
+    tipo,
+    this.nextIndex,
+    lista.length);
+          }
           this.nextIndex[tipo]++;
           if (this.nextIndex[tipo] >= lista.length) {
             this.nextIndex[tipo] = 0;
           }
           currentItem = lista[index];
           if (currentItem.tipo_midia !== 'feed') {
+            if (tipo === 'conteudos') {
+              console.log('currentItem',
+    currentItem);
+            }
             return currentItem;
           }
-          feeds = (ref = vm.feeds.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
-          if (feeds) {
-            ref1 = feeds.lista;
-            for (i = 0, len = ref1.length; i < len; i++) {
-              item = ref1[i];
-              if (item.exibido == null) {
-                item.exibido = 0;
-              }
-            }
-            feed = feeds.lista.sortByField('exibido')[0];
-            feed.exibido || (feed.exibido = 0);
-            feed.exibido++;
-            currentItem.nome = feed.nome;
-            currentItem.data = feed.data;
-            currentItem.titulo = feed.titulo;
-            currentItem.titulo_feed = feed.titulo_feed;
+          return this.getItemFeed(currentItem);
+        },
+        getItemFeed: function(currentItem) {
+          var base,
+    categ,
+    feed,
+    feedIndex,
+    feedsObj,
+    fonte,
+    ref;
+          feedsObj = (ref = vm.feeds.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
+          if (((feedsObj != null ? feedsObj.lista : void 0) || []).empty()) {
+            return currentItem;
           }
+          fonte = currentItem.fonte;
+          categ = currentItem.categoria;
+          (base = vm.feeds.nextIndex)[fonte] || (base[fonte] = {});
+          if ((vm.feeds.nextIndex[fonte][categ] == null) || vm.feeds.nextIndex[fonte][categ] >= feedsObj.lista.length) {
+            vm.feeds.nextIndex[fonte][categ] = 0;
+          } else {
+            vm.feeds.nextIndex[fonte][categ]++;
+          }
+          feedIndex = vm.feeds.nextIndex[fonte][categ];
+          feed = feedsObj.lista[feedIndex] || feedsObj.lista[0];
+          console.log('exibido ---->',
+    fonte,
+    categ,
+    feedIndex);
+          if (!feed) {
+            return;
+          }
+          currentItem.nome = feed.nome;
+          currentItem.data = feed.data;
+          currentItem.titulo = feed.titulo;
+          currentItem.titulo_feed = feed.titulo_feed;
+          console.log('currentItem',
+    currentItem);
           return currentItem;
         },
         next: function(tipo) {
@@ -146,11 +201,13 @@
           this.loading = true;
           success = (resp) => {
             this.loading = false;
-            this.data = resp.data;
-            vm.offline = resp.data.offline;
-            vm.timeline.init();
             this.tentativas = 0;
-            return typeof onSuccess === "function" ? onSuccess() : void 0;
+            vm.offline = resp.data.offline;
+            this.data = resp.data;
+            if (typeof onSuccess === "function") {
+              onSuccess();
+            }
+            return vm.timeline.init();
           };
           error = (resp) => {
             this.loading = false;
@@ -181,6 +238,7 @@
         data: {},
         tentar: 10,
         tentativas: 0,
+        nextIndex: {},
         get: function(onSuccess,
     onError) {
           var error,
@@ -191,10 +249,13 @@
           this.loading = true;
           success = (resp) => {
             this.loading = false;
-            this.data = resp.data;
-            vm.timeline.init();
             this.tentativas = 0;
-            return typeof onSuccess === "function" ? onSuccess() : void 0;
+            this.data = resp.data;
+            this.verificarNoticias();
+            if (typeof onSuccess === "function") {
+              onSuccess();
+            }
+            return vm.timeline.init();
           };
           error = (resp) => {
             this.loading = false;
@@ -219,6 +280,41 @@
             url: '/feeds'
           }).then(success,
     error);
+        },
+        verificarNoticias: function() {
+          var categoria,
+    categorias,
+    cont,
+    conteudos,
+    fonte,
+    i,
+    len,
+    ref,
+    valores;
+          ref = this.data;
+          for (fonte in ref) {
+            categorias = ref[fonte];
+            for (categoria in categorias) {
+              valores = categorias[categoria];
+              console.log('fonte',
+    fonte,
+    'categoria',
+    categoria,
+    ((valores != null ? valores.lista : void 0) || []).empty());
+              if (((valores != null ? valores.lista : void 0) || []).empty()) {
+                if (!vm.grade.data.conteudos) {
+                  return;
+                }
+                conteudos = vm.grade.data.conteudos.select(function(e) {
+                  return e.fonte === fonte && e.categoria === categoria;
+                });
+                for (i = 0, len = conteudos.length; i < len; i++) {
+                  cont = conteudos[i];
+                  cont.ativado = false;
+                }
+              }
+            }
+          }
         }
       };
       vm.mouse = {
@@ -231,6 +327,231 @@
             return document.body.style.cursor = 'none';
           },
     1000);
+        }
+      };
+      vm.relogio = function() {
+        var elem,
+    hour,
+    min,
+    sec;
+        vm.now = new Date;
+        hour = vm.now.getHours();
+        min = vm.now.getMinutes();
+        sec = vm.now.getSeconds();
+        hour = `${hour}`.rjust(2,
+    '0');
+        min = `${min}`.rjust(2,
+    '0');
+        sec = `${sec}`.rjust(2,
+    '0');
+        elem = document.getElementById('hora');
+        if (elem) {
+          elem.innerHTML = hour + ':' + min + ':' + sec;
+        }
+        setTimeout(vm.relogio,
+    1000);
+      };
+      vm.weather = {
+        apiKey: '163e87549d7123a2f1ee5d6ba165e40f',
+        url: 'http://api.openweathermap.org/data/2.5/weather?units=metric',
+        get: function() {
+          var error,
+    success,
+    url;
+          if (this.loading) {
+            return;
+          }
+          this.loading = true;
+          vm.lat = -16.682888;
+          vm.lon = -49.255665;
+          success = (resp) => {
+            this.loading = false;
+            console.log('resp.data',
+    resp.data);
+            this.handle(resp.data);
+            return console.log('weather',
+    this.data);
+          };
+          error = (resp) => {
+            this.loading = false;
+            return console.error('Weather:',
+    resp);
+          };
+          url = `${this.url}&lat=${vm.lat}&lon=${vm.lon}&appid=${this.apiKey}`;
+          return $http({
+            method: 'GET',
+            url: url
+          }).then(success,
+    error);
+        },
+        handle: function(dataObj) {
+          var weather;
+          if (!dataObj) {
+            return;
+          }
+          this.data || (this.data = {});
+          if (dataObj.main.temp) {
+            this.data.temperatura = parseInt(dataObj.main.temp);
+          }
+          if (dataObj.main.humidity) {
+            this.data.umidade = parseInt(dataObj.main.humidity);
+          }
+          if ((dataObj.weather || []).any()) {
+            weather = dataObj.weather[0];
+            this.data.icone = this.getIcon(weather.icon);
+            this.data.descricao = this.getDescricao(weather.description);
+          }
+          if (dataObj.wind.speed) {
+            // m/s * 3.6 = km/h
+            this.data.vento = Math.ceil(dataObj.wind.speed * 3.6);
+          }
+          console.log('weather ->',
+    this.data);
+        },
+        getIcon: function(icon) {
+          var icone;
+          icone = (function() {
+            switch (true) {
+              case /01/.test(icon):
+                return 'clear_sky';
+              case /02/.test(icon):
+                return 'few_clouds';
+              case /03/.test(icon):
+                return 'scattered_clouds';
+              case /04/.test(icon):
+                return 'broken_clouds';
+              case /09/.test(icon):
+                return 'shower_rain';
+              case /10/.test(icon):
+                return 'rain';
+              case /11/.test(icon):
+                return 'thunderstorm';
+              case /13/.test(icon):
+                return 'snow';
+              case /50/.test(icon):
+                return 'mist';
+              default:
+                return 'few_clouds';
+            }
+          })();
+          if (icon.match(/\d{2}n/)) {
+            icone += '_n';
+          }
+          return icone;
+        },
+        getDescricao: function(desc) {
+          switch (desc) {
+            case 'thunderstorm with light rain':
+              return 'Trovoada com chuva';
+            case 'thunderstorm with rain':
+              return 'Trovoada com chuva';
+            case 'thunderstorm with heavy rain':
+              return 'Trovoada com chuva';
+            case 'light thunderstorm':
+              return 'Trovoada e relâmpagos';
+            case 'thunderstorm':
+              return 'Trovoada';
+            case 'heavy thunderstorm':
+              return 'Trovoada pesada';
+            case 'ragged thunderstorm':
+              return 'Trovoada irregular';
+            case 'thunderstorm with light drizzle':
+              return 'Trovoada com leve garoa';
+            case 'thunderstorm with drizzle':
+              return 'Trovoada com chuvisco';
+            case 'thunderstorm with heavy drizzle':
+              return 'Trovoada com chuva';
+            case 'light intensity drizzle':
+              return 'Chuvisco leve';
+            case 'drizzle':
+              return 'Chuvisco';
+            case 'heavy intensity drizzle':
+              return 'Chuvisco forte';
+            case 'light intensity drizzle rain':
+              return 'Chuva leve';
+            case 'drizzle rain':
+              return 'Chuva';
+            case 'heavy intensity drizzle rain':
+              return 'Chuva forte';
+            case 'shower rain and drizzle':
+              return 'Chuva e chuvisco';
+            case 'heavy shower rain and drizzle':
+              return 'Chuva forte';
+            case 'shower drizzle':
+              return 'Chuvisco';
+            case 'light rain':
+              return 'Chuva leve';
+            case 'moderate rain':
+              return 'Chuva moderada';
+            case 'heavy intensity rain':
+              return 'Chuva intensa';
+            case 'very heavy rain':
+              return 'Chuva muito forte';
+            case 'extreme rain':
+              return 'Chuva extrema';
+            case 'freezing rain':
+              return 'Chuva';
+            case 'light intensity shower rain':
+              return 'Chuva leve';
+            case 'shower rain':
+              return 'Chuva de banho';
+            case 'heavy intensity shower rain':
+              return 'Chuva forte';
+            case 'ragged shower rain':
+              return 'Chuva irregular';
+            case 'light snow':
+              return 'Pouca neve';
+            case 'Snow':
+              return 'Neve';
+            case 'Heavy snow':
+              return 'Neve pesada';
+            case 'Sleet':
+              return 'Chuva com neve';
+            case 'Light shower sleet':
+              return 'Chuva de granizo';
+            case 'Shower sleet':
+              return 'Chuva de neve';
+            case 'Light rain and snow':
+              return 'Chuva leve e neve';
+            case 'Rain and snow':
+              return 'Chuva e neve';
+            case 'Light shower snow':
+              return 'Chuva de neve leve';
+            case 'Shower snow':
+              return 'Chuva de neve';
+            case 'Heavy shower snow':
+              return 'Neve pesada';
+            case 'mist':
+              return 'Névoa';
+            case 'Smoke':
+              return 'Enfumaçado';
+            case 'Haze':
+              return 'Neblina';
+            case 'sand/ dust whirls':
+              return 'Areia/redemoinhos';
+            case 'fog':
+              return 'Névoa';
+            case 'sand':
+              return 'Areia';
+            case 'dust':
+              return 'Poeira';
+            case 'volcanic ash':
+              return 'Cinza vulcanica';
+            case 'squalls':
+              return 'Rajadas';
+            case 'tornado':
+              return 'Tornado';
+            case 'clear sky':
+              return 'Céu limpo';
+            case 'few clouds':
+              return 'Poucas nuvens';
+            case 'scattered clouds':
+              return 'Nuvens dispersas';
+            case 'broken clouds':
+              return 'Nuvens dispersas';
+            case 'overcast clouds':
+              return 'Nuvens nubladas';
+          }
         }
       };
       return vm;

@@ -4,6 +4,7 @@
 
   <script type="text/javascript" src="/javascripts/lib/angular.js"></script>
   <script type="text/javascript" src="/javascripts/lib/angular-sanitize.js"></script>
+  <script type="text/javascript" src="/javascripts/lib/angular-locale_pt-br.js"></script>
   <script type="text/javascript" src="/javascripts/lib/array.js"></script>
   <script type="text/javascript" src="/javascripts/lib/date.js"></script>
   <script type="text/javascript" src="/javascripts/lib/object.js"></script>
@@ -33,20 +34,36 @@
     <div class="offline" ng-if="vm.offline"></div>
     <div class="content-top">
       <div class="content-side">
-        <div>ANUNCIO</div>
+        <div class="item-hora">
+          <div class="dia">{{vm.now | date:"dd 'de' MMMM"}}</div>
+          <div class="dia-semana">{{vm.now | date:"EEEE"}}</div>
+          <div id="hora"></div>
+        </div>
+
+        <div class="item-weather">
+          <div class="main-weather">
+            <div class="icone-weather" ng-style="{'background-image': 'url(/images/weather/' + vm.weather.data.icone + '.png)'}"></div>
+            <div class="temperatura-weather">{{vm.weather.data.temperatura}}&#176;</div>
+          </div>
+          <div class="descricao-weather">{{vm.weather.data.descricao}}</div>
+          <div class="info-weather">
+            <div class="umidade">Umidade <b>{{vm.weather.data.umidade + '%' || '--'}}</b></div>
+            <div class="vento">Vento <b>{{vm.weather.data.vento + ' Km/h' || '--'}}</b></div>
+          </div>
+        </div>
       </div> <!-- content-side -->
 
       <div class="content-player" ng-if="vm.timeline.current.conteudos"
         ng-class="{'transicao': vm.timeline.transicao.conteudos}"
         ng-switch="vm.timeline.current.conteudos.tipo_midia">
         <div ng-switch-when="feed" class="content-feed">
-          <div class="feed-imagem"
-            ng-style="{'background-image': 'url(' + (vm.timeline.current.conteudos.nome ? '/downloads/feeds/' + vm.timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">
+          <div class="feed-main">
             <div class="feed-info">
               <div class="feed-fonte" ng-style="{'background-image': 'url(/images/feeds/' + vm.timeline.current.conteudos.fonte + '.png)'}"></div>
               <div class="feed-categoria">{{vm.timeline.current.conteudos.titulo_feed}}</div>
               <div class="feed-out"></div>
             </div>
+            <div class="feed-imagem" ng-style="{'background-image': 'url(' + (vm.timeline.current.conteudos.nome ? '/downloads/feeds/' + vm.timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
             <div class="feed-titulo">{{vm.timeline.current.conteudos.titulo}}</div>
           </div>
         </div>
@@ -70,7 +87,7 @@
 
     <div class="content-footer">
       <div class="content-logo">
-        <div class="logo" style="background-image: url('/images/seucondominio-white.png')"></div>
+        <div class="logo" ng-style="{'background-image': 'url(/images/seucondominio' + (vm.grade.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
       </div> <!-- content-logo -->
 
       <div class="content-mensagem">

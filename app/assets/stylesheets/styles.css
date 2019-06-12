@@ -114,6 +114,15 @@ html, body {
 /* --------------- CORES --------------- */
 
 /* --------------- PLAYER --------------- */
+.content-player .feed-main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .content-player .feed-imagem,
 .content-player .midia-imagem {
   width: 100%;
@@ -124,16 +133,22 @@ html, body {
   background-position: center;
 }
 
+.content-player .feed-imagem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: zoom-image 30s;
+}
+
+@keyframes zoom-image {
+  0%   { transform: scale(1) }
+  100% { transform: scale(1.1) }
+}
+
 .content-player .midia-video {
   width: 100%;
   height: 100%;
   object-fit: fill;
-}
-
-.content-player .feed-imagem {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .content-player .feed-info {
@@ -219,6 +234,66 @@ html, body {
 
 /* --------------- LATERAIS --------------- */
 .content-side > * { padding: 1.25vh 1.25vw; }
+
+.content-side .item-hora {
+  text-align: center;
+}
+
+.content-side .item-hora .dia {
+  font-size: 1.5vw;
+  line-height: 1.2;
+}
+.content-side .item-hora .dia-semana {
+  font-size: 1.5vw;
+  font-weight: 600;
+}
+.content-side .item-hora #hora {
+  font-size: 2.5vw;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.2vw;
+}
+
+.content-side .item-weather {
+  display: flex;
+  flex-direction: column;
+  background: #154e6a;
+  padding: 1vh .5vw 1.75vh;
+  color: #fff;
+}
+
+.content-side .main-weather,
+.content-side .info-weather {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.content-side .info-weather {
+  font-size: 0.9vw;
+}
+
+.content-side .item-weather .icone-weather {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 5vw;
+  height: 5vw;
+}
+
+.content-side .item-weather .temperatura-weather {
+  font-size: 3.5vw;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.content-side .item-weather .descricao-weather {
+  font-size: 1.1vw;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1;
+  padding-bottom: 0.7vh;
+}
 /* --------------- LATERAIS --------------- */
 
 /* --------------- FOOTER --------------- */

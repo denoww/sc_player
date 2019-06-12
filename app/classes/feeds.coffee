@@ -108,7 +108,7 @@ module.exports = ->
     getDataOffline: ->
       console.info 'Feeds -> Pegando feeds de feeds.json'
       try
-        @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8'))
+        @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
         console.error 'Feeds -> getDataOffline:', e
     getImageUol: (feedObj, image)->
