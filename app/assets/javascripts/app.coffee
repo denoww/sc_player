@@ -20,11 +20,16 @@ app.controller('MainCtrl', [
           vm.relogio()
 
       vm.weather.get()
+      vm.finance.get()
 
       setInterval ->
         vm.grade.get -> vm.feeds.get()
         vm.weather.get()
-      , 1000 * 60
+      , 1000 * 60  # a cada minuto
+
+      setInterval ->
+        vm.finance.get()
+      , 1000 * 60 * 5 # a cada 5 minutos
 
     vm.timeline =
       tipos:     ['conteudos', 'musicas', 'mensagens']
@@ -67,22 +72,24 @@ app.controller('MainCtrl', [
           return currentItem
         @getItemFeed(currentItem)
       getItemFeed: (currentItem)->
-        feedsObj = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
-        return currentItem if (feedsObj?.lista || []).empty()
+        feedItems = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
+        return currentItem if (feedItems || []).empty()
 
         fonte = currentItem.fonte
         categ = currentItem.categoria
         vm.feeds.nextIndex[fonte] ||= {}
 
-        if !vm.feeds.nextIndex[fonte][categ]? ||
-           vm.feeds.nextIndex[fonte][categ] >= feedsObj.lista.length
+        if !vm.feeds.nextIndex[fonte][categ]?
           vm.feeds.nextIndex[fonte][categ] = 0
         else
           vm.feeds.nextIndex[fonte][categ]++
+
+        if vm.feeds.nextIndex[fonte][categ] >= feedItems.length
+          vm.feeds.nextIndex[fonte][categ] = 0
+
         feedIndex = vm.feeds.nextIndex[fonte][categ]
 
-        feed = feedsObj.lista[feedIndex] || feedsObj.lista[0]
-        if feeds
+        feed = feedItems[feedIndex] || feedItems[0]
 
         return unless feed
         currentItem.nome   = feed.nome
@@ -169,6 +176,7 @@ app.controller('MainCtrl', [
         for fonte, categorias of @data
           for categoria, valores of categorias
             if (valores?.lista || []).empty()
+            if (valores || []).empty()
               return unless vm.grade.data.conteudos
               conteudos = vm.grade.data.conteudos.select (e)->
                 e.fonte == fonte && e.categoria == categoria
@@ -206,11 +214,12 @@ app.controller('MainCtrl', [
         return if @loading
         @loading = true
 
-        vm.lat = -16.682888
-        vm.lon = -49.255665
+        vm.lat = -16.686902
+        vm.lon = -49.264788
 
         success = (resp)=>
           @loading = false
+          @loaded = true
           @handle(resp.data)
 
         error = (resp)=>
@@ -310,6 +319,43 @@ app.controller('MainCtrl', [
           when 'scattered clouds'                then 'Nuvens dispersas'
           when 'broken clouds'                   then 'Nuvens dispersas'
           when 'overcast clouds'                 then 'Nuvens nubladas'
+
+    vm.finance =
+      symbols: [
+        { key: 'dolar',    label: 'Dolar',    symbol: 'USD',      value: 'buy'}
+        { key: 'euro',     label: 'Euro',     symbol: 'EUR',      value: 'buy'}
+        { key: 'bitcoin',  label: 'Bitcoin',  symbol: 'BTC',      value: 'buy'}
+        { key: 'ibovespa', label: 'IBOVESPA', symbol: 'IBOVESPA', value: 'points'}
+        { key: 'nasdaq',   label: 'NASDAQ',   symbol: 'NASDAQ',   value: 'points'}
+      ]
+      keys: ['1d55022f', 'e2ea071f', 'd9f8b16b', 'b863ff04', 'ba0e2932']
+      url: 'http://api.hgbrasil.com/finance?format=json-cors&key=b863ff04'
+      get: ->
+        return if @loading
+        @loading = true
+
+        success = (resp)=>
+          @loading = false
+          @loaded = true
+          @handleHgb(resp.data)
+
+        error = (resp)=>
+          @loading = false
+          console.error 'Finance:', resp
+
+        $http.get(@url).then success, error
+      handleHgb: (dataObj)->
+        return unless dataObj
+        currencies = dataObj.results.currencies
+        stocks     = dataObj.results.stocks
+        @data ||= {}
+
+        for sym in @symbols
+          item = currencies[sym.symbol] || stocks[sym.symbol]
+          continue unless item
+
+          @data[sym.key] = valor: item[sym.value], variacao: item.variation
+        return
 
     vm
 ])

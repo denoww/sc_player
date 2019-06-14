@@ -2,9 +2,8 @@
 
 # configurando variaveis de ambiente
 echo '--- Configurando variáveis de ambiente'
-read -p 'Informe o ID do Cliente: ' CLIENTE_ID
 read -p 'Informe o ID da TV: ' TV_ID
-echo -e "CLIENTE_ID=$CLIENTE_ID\nTV_ID=$TV_ID\n" | sudo tee /etc/environment
+echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
 source /etc/environment
 sh -c 'cp ~/workspace/player_tv_raspberry/.env_DEVELOPMENT_sample ~/workspace/player_tv_raspberry/.env_DEVELOPMENT'
 

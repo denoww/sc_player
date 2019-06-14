@@ -47,8 +47,8 @@ module.exports = ->
         Download.exec(feedObj)
 
       @data[params.fonte] ||= {}
-      @data[params.fonte][params.categoria] ||= index: 0, lista: []
-      @data[params.fonte][params.categoria].lista.push feedObj
+      @data[params.fonte][params.categoria] ||= []
+      @data[params.fonte][params.categoria].push feedObj
     getImageData: (params, feed)->
       if feed.enclosure?.url && feed.enclosure?.type?.match(/image/)
         imageURL = feed.enclosure.url
@@ -132,8 +132,8 @@ module.exports = ->
         Download.exec(feedObj)
 
         ctrl.data[params.fonte] ||= {}
-        ctrl.data[params.fonte][params.categoria] ||= index: 0, lista: []
-        ctrl.data[params.fonte][params.categoria].lista.push feedObj
+        ctrl.data[params.fonte][params.categoria] ||= []
+        ctrl.data[params.fonte][params.categoria].push feedObj
       return
 
   global.feeds = ctrl

@@ -29,13 +29,18 @@
           });
         });
         vm.weather.get();
-        return setInterval(function() {
+        vm.finance.get();
+        setInterval(function() {
           vm.grade.get(function() {
             return vm.feeds.get();
           });
           return vm.weather.get();
         },
-    1000 * 60);
+    1000 * 60); // a cada minuto
+        return setInterval(function() {
+          return vm.finance.get();
+        },
+    1000 * 60 * 5); // a cada 5 minutos
       };
       vm.timeline = {
         tipos: ['conteudos',
@@ -53,12 +58,6 @@
     ref1,
     ref2,
     ref3,
-    ref4,
-    ref5,
-    ref6,
-    ref7,
-    ref8,
-    ref9,
     results,
     tipo;
           if (!vm.loaded) {
@@ -69,12 +68,8 @@
           for (i = 0, len = ref.length; i < len; i++) {
             tipo = ref[i];
             (base = this.nextIndex)[tipo] || (base[tipo] = 0);
-            if (tipo === 'conteudos') {
-              console.log('------------------',
-    (ref1 = this.promessa) != null ? (ref2 = ref1[tipo]) != null ? (ref3 = ref2.$$state) != null ? ref3.status : void 0 : void 0 : void 0,
-    ((ref4 = this.promessa) != null ? (ref5 = ref4[tipo]) != null ? (ref6 = ref5.$$state) != null ? ref6.status : void 0 : void 0 : void 0) !== 0);
-            }
-            if (((ref7 = this.promessa) != null ? (ref8 = ref7[tipo]) != null ? (ref9 = ref8.$$state) != null ? ref9.status : void 0 : void 0 : void 0) !== 0) {
+            if (((ref1 = this.promessa) != null ? (ref2 = ref1[tipo]) != null ? (ref3 = ref2.$$state) != null ? ref3.status : void 0 : void 0 : void 0) !== 0) {
+              // console.log '------------------', @promessa?[tipo]?.$$state?.status, @promessa?[tipo]?.$$state?.status != 0 if tipo == 'conteudos'
               results.push(this.executar(tipo));
             } else {
               results.push(void 0);
@@ -122,23 +117,16 @@
           if (index >= lista.length) {
             index = 0;
           }
-          if (tipo === 'conteudos') {
-            console.log('---------------------------------------------------------');
-            console.log('getNextItem',
-    tipo,
-    this.nextIndex,
-    lista.length);
-          }
+          // if tipo == 'conteudos'
+          // console.log '---------------------------------------------------------'
+          // console.log 'getNextItem', tipo, @nextIndex, lista.length
           this.nextIndex[tipo]++;
           if (this.nextIndex[tipo] >= lista.length) {
             this.nextIndex[tipo] = 0;
           }
           currentItem = lista[index];
           if (currentItem.tipo_midia !== 'feed') {
-            if (tipo === 'conteudos') {
-              console.log('currentItem',
-    currentItem);
-            }
+            // console.log 'currentItem', currentItem if tipo == 'conteudos'
             return currentItem;
           }
           return this.getItemFeed(currentItem);
@@ -148,27 +136,26 @@
     categ,
     feed,
     feedIndex,
-    feedsObj,
+    feedItems,
     fonte,
     ref;
-          feedsObj = (ref = vm.feeds.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
-          if (((feedsObj != null ? feedsObj.lista : void 0) || []).empty()) {
+          feedItems = (ref = vm.feeds.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0;
+          if ((feedItems || []).empty()) {
             return currentItem;
           }
           fonte = currentItem.fonte;
           categ = currentItem.categoria;
           (base = vm.feeds.nextIndex)[fonte] || (base[fonte] = {});
-          if ((vm.feeds.nextIndex[fonte][categ] == null) || vm.feeds.nextIndex[fonte][categ] >= feedsObj.lista.length) {
+          if (vm.feeds.nextIndex[fonte][categ] == null) {
             vm.feeds.nextIndex[fonte][categ] = 0;
           } else {
             vm.feeds.nextIndex[fonte][categ]++;
           }
+          if (vm.feeds.nextIndex[fonte][categ] >= feedItems.length) {
+            vm.feeds.nextIndex[fonte][categ] = 0;
+          }
           feedIndex = vm.feeds.nextIndex[fonte][categ];
-          feed = feedsObj.lista[feedIndex] || feedsObj.lista[0];
-          console.log('exibido ---->',
-    fonte,
-    categ,
-    feedIndex);
+          feed = feedItems[feedIndex] || feedItems[0];
           if (!feed) {
             return;
           }
@@ -176,7 +163,10 @@
           currentItem.data = feed.data;
           currentItem.titulo = feed.titulo;
           currentItem.titulo_feed = feed.titulo_feed;
-          console.log('currentItem',
+          console.log('exibido ---->',
+    fonte,
+    categ,
+    `${feedIndex}/${feedItems.length - 1}`,
     currentItem);
           return currentItem;
         },
@@ -296,12 +286,8 @@
             categorias = ref[fonte];
             for (categoria in categorias) {
               valores = categorias[categoria];
-              console.log('fonte',
-    fonte,
-    'categoria',
-    categoria,
-    ((valores != null ? valores.lista : void 0) || []).empty());
-              if (((valores != null ? valores.lista : void 0) || []).empty()) {
+              // console.log 'fonte', fonte, 'categoria', categoria, (valores || []).empty()
+              if ((valores || []).empty()) {
                 if (!vm.grade.data.conteudos) {
                   return;
                 }
@@ -362,16 +348,15 @@
             return;
           }
           this.loading = true;
-          vm.lat = -16.682888;
-          vm.lon = -49.255665;
+          vm.lat = -16.686902;
+          vm.lon = -49.264788;
           success = (resp) => {
             this.loading = false;
-            console.log('resp.data',
-    resp.data);
-            this.handle(resp.data);
-            return console.log('weather',
-    this.data);
+            this.loaded = true;
+            // console.log 'resp.data', resp.data
+            return this.handle(resp.data);
           };
+          // console.log 'weather', @data
           error = (resp) => {
             this.loading = false;
             return console.error('Weather:',
@@ -384,6 +369,7 @@
           }).then(success,
     error);
         },
+        // $http.get(url, requestOptions).then success, error
         handle: function(dataObj) {
           var weather;
           if (!dataObj) {
@@ -405,9 +391,8 @@
             // m/s * 3.6 = km/h
             this.data.vento = Math.ceil(dataObj.wind.speed * 3.6);
           }
-          console.log('weather ->',
-    this.data);
         },
+        // console.log 'weather ->', @data
         getIcon: function(icon) {
           var icone;
           icone = (function() {
@@ -552,6 +537,98 @@
             case 'overcast clouds':
               return 'Nuvens nubladas';
           }
+        }
+      };
+      vm.finance = {
+        symbols: [
+          {
+            key: 'dolar',
+            label: 'Dolar',
+            symbol: 'USD',
+            value: 'buy'
+          },
+          {
+            key: 'euro',
+            label: 'Euro',
+            symbol: 'EUR',
+            value: 'buy'
+          },
+          {
+            key: 'bitcoin',
+            label: 'Bitcoin',
+            symbol: 'BTC',
+            value: 'buy'
+          },
+          {
+            key: 'ibovespa',
+            label: 'IBOVESPA',
+            symbol: 'IBOVESPA',
+            value: 'points'
+          },
+          {
+            key: 'nasdaq',
+            label: 'NASDAQ',
+            symbol: 'NASDAQ',
+            value: 'points'
+          }
+        ],
+        // url: 'https://economia.awesomeapi.com.br/all/USD-BRL,EUR-BRL,BTC-BRL'
+        keys: ['1d55022f',
+    'e2ea071f',
+    'd9f8b16b',
+    'b863ff04',
+    'ba0e2932'],
+        url: 'http://api.hgbrasil.com/finance?format=json-cors&key=b863ff04',
+        get: function() {
+          var error,
+    success;
+          if (this.loading) {
+            return;
+          }
+          this.loading = true;
+          success = (resp) => {
+            this.loading = false;
+            this.loaded = true;
+            console.log('Finance data:',
+    resp.data);
+            return this.handleHgb(resp.data);
+          };
+          error = (resp) => {
+            this.loading = false;
+            return console.error('Finance:',
+    resp);
+          };
+          return $http.get(this.url).then(success,
+    error);
+        },
+        handleHgb: function(dataObj) {
+          var currencies,
+    i,
+    item,
+    len,
+    ref,
+    stocks,
+    sym;
+          if (!dataObj) {
+            return;
+          }
+          currencies = dataObj.results.currencies;
+          stocks = dataObj.results.stocks;
+          this.data || (this.data = {});
+          ref = this.symbols;
+          for (i = 0, len = ref.length; i < len; i++) {
+            sym = ref[i];
+            item = currencies[sym.symbol] || stocks[sym.symbol];
+            if (!item) {
+              continue;
+            }
+            this.data[sym.key] = {
+              valor: item[sym.value],
+              variacao: item.variation
+            };
+          }
+          console.log('FINANCE ->',
+    this.data);
         }
       };
       return vm;

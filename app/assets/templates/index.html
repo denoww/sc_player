@@ -34,13 +34,16 @@
     <div class="offline" ng-if="vm.offline"></div>
     <div class="content-top">
       <div class="content-side">
+        <!-- data e hora -->
         <div class="item-hora">
           <div class="dia">{{vm.now | date:"dd 'de' MMMM"}}</div>
           <div class="dia-semana">{{vm.now | date:"EEEE"}}</div>
-          <div id="hora"></div>
+          <div id="hora">--:--:--</div>
         </div>
+        <!-- data e hora -->
 
-        <div class="item-weather">
+        <!-- weather -->
+        <div class="item-weather" ng-if="vm.weather.loaded">
           <div class="main-weather">
             <div class="icone-weather" ng-style="{'background-image': 'url(/images/weather/' + vm.weather.data.icone + '.png)'}"></div>
             <div class="temperatura-weather">{{vm.weather.data.temperatura}}&#176;</div>
@@ -51,6 +54,23 @@
             <div class="vento">Vento <b>{{vm.weather.data.vento + ' Km/h' || '--'}}</b></div>
           </div>
         </div>
+        <!-- weather -->
+
+        <!-- finance -->
+        <div class="item-finance">
+          <div class="{{sym.key}}" ng-repeat="sym in vm.finance.symbols" ng-if="vm.finance.data[sym.key].valor">
+            <div class="titulo">{{sym.label}}</div>
+            <div class="valor-variacao">
+              <div class="valor" ng-if="sym.value == 'buy'">{{vm.finance.data[sym.key].valor | currency}}</div>
+              <div class="valor" ng-if="sym.value == 'points'">{{vm.finance.data[sym.key].valor | currency:'':2 }}</div>
+              <div class="variacao">
+                {{vm.finance.data[sym.key].variacao < 0 ? '&#9660;' : '&#9650;'}}
+                {{vm.finance.data[sym.key].variacao}}%
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- finance -->
       </div> <!-- content-side -->
 
       <div class="content-player" ng-if="vm.timeline.current.conteudos"
