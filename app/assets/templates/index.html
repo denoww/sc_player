@@ -43,34 +43,67 @@
         <!-- data e hora -->
 
         <!-- weather -->
-        <div class="item-weather" ng-if="vm.weather.loaded">
-          <div class="main-weather">
-            <div class="icone-weather" ng-style="{'background-image': 'url(/images/weather/' + vm.weather.data.icone + '.png)'}"></div>
-            <div class="temperatura-weather">{{vm.weather.data.temperatura}}&#176;</div>
+        <div class="item-weather" ng-if="vm.grade.data.weather.temperatura">
+          <div class="cidade">
+            {{vm.grade.data.cidade}}
           </div>
-          <div class="descricao-weather">{{vm.weather.data.descricao}}</div>
+          <div class="main-weather">
+            <div class="icone-weather" ng-style="{'background-image': 'url(/images/weather/' + vm.grade.data.weather.icone + '.png)'}"></div>
+            <div class="temperatura-weather">
+              <span>{{vm.grade.data.weather.temperatura}}</span>
+              <div class="min-max" ng-if="vm.grade.data.weather.min && vm.grade.data.weather.max">
+                Min: <b>{{vm.grade.data.weather.min}}&#176;</b> | Max: <b>{{vm.grade.data.weather.max}}&#176;</b>
+              </div>
+            </div>
+          </div>
+          <div class="descricao-weather">{{vm.grade.data.weather.descricao}}</div>
           <div class="info-weather">
-            <div class="umidade">Umidade <b>{{vm.weather.data.umidade + '%' || '--'}}</b></div>
-            <div class="vento">Vento <b>{{vm.weather.data.vento + ' Km/h' || '--'}}</b></div>
+            <div class="umidade">Umidade: <b>{{vm.grade.data.weather.umidade || '--'}}</b></div>
+            <div class="vento">Vento: <b>{{vm.grade.data.weather.vento || '--'}}</b></div>
+          </div>
+          <div class="proximos_dias">
+            <div ng-repeat="proximo in vm.grade.data.weather.proximos_dias  | limitTo: 4">
+              <!-- <div class="dia">{{proximo.dia}}</div> -->
+              <b class="data">{{proximo.data}}</b>
+              <div class="min-max">
+                <div>
+                  <div class="desc">MIN</div>
+                  <b>{{proximo.min}}&#176;</b>
+                </div>
+                <div>
+                  <div class="desc">MAX</div>
+                  <b>{{proximo.max}}&#176;</b>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- weather -->
 
         <!-- finance -->
         <div class="item-finance">
-          <div class="{{sym.key}}" ng-repeat="sym in vm.finance.symbols" ng-if="vm.finance.data[sym.key].valor">
-            <div class="titulo">{{sym.label}}</div>
-            <div class="valor-variacao">
-              <div class="valor" ng-if="sym.value == 'buy'">{{vm.finance.data[sym.key].valor | currency}}</div>
-              <div class="valor" ng-if="sym.value == 'points'">{{vm.finance.data[sym.key].valor | currency:'':2 }}</div>
-              <div class="variacao">
-                {{vm.finance.data[sym.key].variacao < 0 ? '&#9660;' : '&#9650;'}}
-                {{vm.finance.data[sym.key].variacao}}%
+          <div class="{{sym}}" ng-repeat="(sym, item) in vm.grade.data.finance" ng-if="item.valor">
+            <div class="titulo">
+              <div>
+                {{item.label}}
+                <span class="variacao">
+                  {{item.variacao < 0 ? '&#9660;' : '&#9650;'}}
+                  {{item.variacao}}%
+                </span>
+                <div class="valor" ng-if="item.tipo == 'moeda'"><span class="sifrao">R$</span>{{item.valor | currency:'':2}}</div>
+                <div class="valor" ng-if="item.tipo == 'indice'">{{item.valor | currency:'':2 }}</div>
               </div>
             </div>
           </div>
         </div>
         <!-- finance -->
+
+        <!-- anuncie -->
+        <div class="item-anuncie">
+          <div>ANUNCIE AQUI!</div>
+          <div class="telefone">(62) 3142-9759</div>
+        </div>
+        <!-- anuncie -->
       </div> <!-- content-side -->
 
       <div class="content-player" ng-if="vm.timeline.current.conteudos"
@@ -106,7 +139,7 @@
     </div> <!-- content-top -->
 
     <div class="content-footer">
-      <div class="content-logo">
+      <div class="content-logo {{vm.grade.cor == 'gray' ? 'black' : ''}}">
         <div class="logo" ng-style="{'background-image': 'url(/images/seucondominio' + (vm.grade.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
       </div> <!-- content-logo -->
 

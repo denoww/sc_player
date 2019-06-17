@@ -7,7 +7,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  font-size: 0.8vw;
   font-family: 'Open Sans', sans-serif;
   background: #333;
   cursor: default;
@@ -263,6 +263,16 @@ html, body {
   color: #fff;
 }
 
+.content-side .item-weather .cidade {
+  text-align: center;
+  font-size: 1.25em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
 .content-side .main-weather,
 .content-side .info-weather {
   display: flex;
@@ -283,22 +293,61 @@ html, body {
 }
 
 .content-side .item-weather .temperatura-weather {
+  text-align: center;
+}
+
+.content-side .item-weather .temperatura-weather span {
   font-size: 3.5vw;
   font-weight: 700;
   line-height: 1;
 }
 
+.content-side .item-weather .temperatura-weather .min-max {
+  font-size: 1em;
+  line-height: 1;
+}
+
 .content-side .item-weather .descricao-weather {
-  font-size: 1.1vw;
+  font-size: 1.4em;
   font-weight: 700;
   text-align: center;
   line-height: 1;
-  padding-bottom: 0.7vh;
+  padding-bottom: 0.35em;
+}
+
+.content-side .item-weather .proximos_dias {
+  display: flex;
+  text-align: center;
+  margin: 0.5em -0.5vw -1.75vh;
+}
+
+.content-side .item-weather .proximos_dias > * {
+  flex: 1;
+  padding: .3em;
+  background: rgba(0,0,0,0.1);
+}
+
+.content-side .item-weather .proximos_dias > *:nth-child(2n+1) {
+  background: rgba(0,0,0,0.2);
+}
+
+.content-side .item-weather .proximos_dias .min-max {
+  display: flex;
+}
+
+.content-side .item-weather .proximos_dias .min-max > * {
+  flex: 1;
+}
+
+.content-side .item-weather .proximos_dias .min-max .desc {
+  font-size: .8em
 }
 
 .content-side .item-finance {
   padding: 0;
+  color: #fff;
 }
+
 .content-side .item-finance > * {
   display: flex;
   line-height: 1;
@@ -309,38 +358,57 @@ html, body {
   font-size: 1vw;
   display: flex;
   font-weight: 500;
-  align-items: center;
+  /*align-items: center;*/
+  align-items: stretch;
   text-transform: uppercase;
+}
+.content-side .item-finance > * .titulo > * {
+  padding: .4em 0 .4em 0.3em;
 }
 .content-side .item-finance > * .titulo:before {
   content: '';
   display: block;
   width: 2.3vw;
-  height: 3vw;
+  /*height: 3vw;*/
   background-color: rgba(0,0,0,0.15);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   margin-right: 0.3vw;
 }
-.content-side .item-finance > * .valor-variacao {
-  padding-right: .3vw;
-  text-align: right;
+.content-side .item-finance > * .variacao {
+  font-size: .8em;
+  margin-left: .4em
 }
 .content-side .item-finance > * .valor {
-  font-size: 1.2vw;
-  font-weight: 600;
+  font-size: 2.2em;
+  font-weight: 500;
 }
-.content-side .item-finance .dolar { background: #187545; }
-.content-side .item-finance .dolar .titulo:before { background-image: url('../images/finance/dolar.png'); }
-.content-side .item-finance .euro { background: #146c3b; }
-.content-side .item-finance .euro .titulo:before { background-image: url('../images/finance/euro.png'); }
-.content-side .item-finance .bitcoin { background: #ad670c; }
-.content-side .item-finance .bitcoin .titulo:before { background-image: url('../images/finance/bitcoin.png'); }
-.content-side .item-finance .ibovespa { background: #1b5e6e; }
-.content-side .item-finance .ibovespa .titulo:before { background-image: url('../images/finance/ibovespa.png'); }
-.content-side .item-finance .nasdaq { background: #165261; }
-.content-side .item-finance .nasdaq .titulo:before { background-image: url('../images/finance/nasdaq.png'); }
+.content-side .item-finance > * .valor .sifrao {
+  font-size: .5em;
+  margin-right: .2em;
+}
+.content-side .item-finance .USD { background: #187545; }
+.content-side .item-finance .USD .titulo:before { background-image: url('../images/finance/dolar.png'); }
+.content-side .item-finance .EUR { background: #146c3b; }
+.content-side .item-finance .EUR .titulo:before { background-image: url('../images/finance/euro.png'); }
+.content-side .item-finance .BTC { background: #ad670c; }
+.content-side .item-finance .BTC .titulo:before { background-image: url('../images/finance/bitcoin.png'); }
+.content-side .item-finance .IBOVESPA { background: #1b5e6e; }
+.content-side .item-finance .IBOVESPA .titulo:before { background-image: url('../images/finance/ibovespa.png'); }
+.content-side .item-finance .NASDAQ { background: #165261; }
+.content-side .item-finance .NASDAQ .titulo:before { background-image: url('../images/finance/nasdaq.png'); }
+
+.content-side .item-anuncie {
+  font-size: 2em;
+  text-align: center;
+  line-height: 1;
+  font-weight: 700;
+  padding: 0.8em 0;
+}
+.content-side .item-anuncie .telefone {
+  font-size: 1.3em;
+}
 /* --------------- LATERAIS --------------- */
 
 /* --------------- FOOTER --------------- */
@@ -355,6 +423,7 @@ html, body {
   height: 100%;
   padding: 1.8vh 1.25vw;
   max-width: 15vw;
+  position: relative;
 }
 
 .content-footer .content-logo .logo {
@@ -363,6 +432,20 @@ html, body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.content-footer .content-logo:before {
+  content: '';
+  height: 80%;
+  width: 4px;
+  background-color: rgba(255,255,255, 0.3);
+  position: absolute;
+  top: 10%;
+  right: -2px;
+}
+
+.content-footer .content-logo.black:before {
+  background-color: rgba(0,0,0, 0.3);
 }
 
 .content-footer .content-mensagem {

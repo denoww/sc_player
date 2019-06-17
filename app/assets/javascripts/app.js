@@ -28,19 +28,12 @@
             return vm.relogio();
           });
         });
-        vm.weather.get();
-        vm.finance.get();
-        setInterval(function() {
-          vm.grade.get(function() {
+        return setInterval(function() {
+          return vm.grade.get(function() {
             return vm.feeds.get();
           });
-          return vm.weather.get();
         },
     1000 * 60); // a cada minuto
-        return setInterval(function() {
-          return vm.finance.get();
-        },
-    1000 * 60 * 5); // a cada 5 minutos
       };
       vm.timeline = {
         tipos: ['conteudos',
@@ -50,6 +43,7 @@
         promessa: {},
         nextIndex: {},
         transicao: {},
+        playlistIndex: {},
         init: function() {
           var base,
     i,
@@ -125,11 +119,14 @@
             this.nextIndex[tipo] = 0;
           }
           currentItem = lista[index];
-          if (currentItem.tipo_midia !== 'feed') {
-            // console.log 'currentItem', currentItem if tipo == 'conteudos'
-            return currentItem;
+          switch (currentItem.tipo_midia) {
+            case 'feed':
+              return this.getItemFeed(currentItem);
+            case 'playlist':
+              return this.getItemPlaylist(currentItem);
+            default:
+              return currentItem;
           }
-          return this.getItemFeed(currentItem);
         },
         getItemFeed: function(currentItem) {
           var base,
@@ -163,12 +160,31 @@
           currentItem.data = feed.data;
           currentItem.titulo = feed.titulo;
           currentItem.titulo_feed = feed.titulo_feed;
-          console.log('exibido ---->',
+          console.log('FEED ---->',
     fonte,
     categ,
     `${feedIndex}/${feedItems.length - 1}`,
     currentItem);
           return currentItem;
+        },
+        getItemPlaylist: function(playlist) {
+          var currentItem;
+          if (this.playlistIndex[playlist.id] == null) {
+            this.playlistIndex[playlist.id] = 0;
+          } else {
+            this.playlistIndex[playlist.id]++;
+          }
+          if (this.playlistIndex[playlist.id] >= playlist.conteudos.length) {
+            this.playlistIndex[playlist.id] = 0;
+          }
+          currentItem = playlist.conteudos[this.playlistIndex[playlist.id]];
+          console.log('PLAYLIST ---->',
+    `${this.playlistIndex[playlist.id]}/${playlist.conteudos.length - 1}`,
+    currentItem);
+          if (currentItem.tipo_midia !== 'feed') {
+            return currentItem;
+          }
+          return this.getItemFeed(currentItem);
         },
         next: function(tipo) {
           this.current[tipo] = {};
@@ -197,6 +213,7 @@
             if (typeof onSuccess === "function") {
               onSuccess();
             }
+            this.mountWeatherData();
             return vm.timeline.init();
           };
           error = (resp) => {
@@ -222,6 +239,26 @@
             url: '/grade'
           }).then(success,
     error);
+        },
+        mountWeatherData: function() {
+          var dataHoje,
+    dia,
+    mes;
+          if (!this.data.weather) {
+            return;
+          }
+          dataHoje = new Date;
+          dia = `${dataHoje.getDate()}`.rjust(2,
+    '0');
+          mes = `${dataHoje.getMonth() + 1}`.rjust(2,
+    '0');
+          dataHoje = `${dia}/${mes}`;
+          dia = this.data.weather.proximos_dias[0];
+          if (dia.data === dataHoje) {
+            dia = this.data.weather.proximos_dias.shift();
+            this.data.weather.max = dia.max;
+            this.data.weather.min = dia.min;
+          }
         }
       };
       vm.feeds = {
@@ -336,300 +373,6 @@
         }
         setTimeout(vm.relogio,
     1000);
-      };
-      vm.weather = {
-        apiKey: '163e87549d7123a2f1ee5d6ba165e40f',
-        url: 'http://api.openweathermap.org/data/2.5/weather?units=metric',
-        get: function() {
-          var error,
-    success,
-    url;
-          if (this.loading) {
-            return;
-          }
-          this.loading = true;
-          vm.lat = -16.686902;
-          vm.lon = -49.264788;
-          success = (resp) => {
-            this.loading = false;
-            this.loaded = true;
-            // console.log 'resp.data', resp.data
-            return this.handle(resp.data);
-          };
-          // console.log 'weather', @data
-          error = (resp) => {
-            this.loading = false;
-            return console.error('Weather:',
-    resp);
-          };
-          url = `${this.url}&lat=${vm.lat}&lon=${vm.lon}&appid=${this.apiKey}`;
-          return $http({
-            method: 'GET',
-            url: url
-          }).then(success,
-    error);
-        },
-        // $http.get(url, requestOptions).then success, error
-        handle: function(dataObj) {
-          var weather;
-          if (!dataObj) {
-            return;
-          }
-          this.data || (this.data = {});
-          if (dataObj.main.temp) {
-            this.data.temperatura = parseInt(dataObj.main.temp);
-          }
-          if (dataObj.main.humidity) {
-            this.data.umidade = parseInt(dataObj.main.humidity);
-          }
-          if ((dataObj.weather || []).any()) {
-            weather = dataObj.weather[0];
-            this.data.icone = this.getIcon(weather.icon);
-            this.data.descricao = this.getDescricao(weather.description);
-          }
-          if (dataObj.wind.speed) {
-            // m/s * 3.6 = km/h
-            this.data.vento = Math.ceil(dataObj.wind.speed * 3.6);
-          }
-        },
-        // console.log 'weather ->', @data
-        getIcon: function(icon) {
-          var icone;
-          icone = (function() {
-            switch (true) {
-              case /01/.test(icon):
-                return 'clear_sky';
-              case /02/.test(icon):
-                return 'few_clouds';
-              case /03/.test(icon):
-                return 'scattered_clouds';
-              case /04/.test(icon):
-                return 'broken_clouds';
-              case /09/.test(icon):
-                return 'shower_rain';
-              case /10/.test(icon):
-                return 'rain';
-              case /11/.test(icon):
-                return 'thunderstorm';
-              case /13/.test(icon):
-                return 'snow';
-              case /50/.test(icon):
-                return 'mist';
-              default:
-                return 'few_clouds';
-            }
-          })();
-          if (icon.match(/\d{2}n/)) {
-            icone += '_n';
-          }
-          return icone;
-        },
-        getDescricao: function(desc) {
-          switch (desc) {
-            case 'thunderstorm with light rain':
-              return 'Trovoada com chuva';
-            case 'thunderstorm with rain':
-              return 'Trovoada com chuva';
-            case 'thunderstorm with heavy rain':
-              return 'Trovoada com chuva';
-            case 'light thunderstorm':
-              return 'Trovoada e relâmpagos';
-            case 'thunderstorm':
-              return 'Trovoada';
-            case 'heavy thunderstorm':
-              return 'Trovoada pesada';
-            case 'ragged thunderstorm':
-              return 'Trovoada irregular';
-            case 'thunderstorm with light drizzle':
-              return 'Trovoada com leve garoa';
-            case 'thunderstorm with drizzle':
-              return 'Trovoada com chuvisco';
-            case 'thunderstorm with heavy drizzle':
-              return 'Trovoada com chuva';
-            case 'light intensity drizzle':
-              return 'Chuvisco leve';
-            case 'drizzle':
-              return 'Chuvisco';
-            case 'heavy intensity drizzle':
-              return 'Chuvisco forte';
-            case 'light intensity drizzle rain':
-              return 'Chuva leve';
-            case 'drizzle rain':
-              return 'Chuva';
-            case 'heavy intensity drizzle rain':
-              return 'Chuva forte';
-            case 'shower rain and drizzle':
-              return 'Chuva e chuvisco';
-            case 'heavy shower rain and drizzle':
-              return 'Chuva forte';
-            case 'shower drizzle':
-              return 'Chuvisco';
-            case 'light rain':
-              return 'Chuva leve';
-            case 'moderate rain':
-              return 'Chuva moderada';
-            case 'heavy intensity rain':
-              return 'Chuva intensa';
-            case 'very heavy rain':
-              return 'Chuva muito forte';
-            case 'extreme rain':
-              return 'Chuva extrema';
-            case 'freezing rain':
-              return 'Chuva';
-            case 'light intensity shower rain':
-              return 'Chuva leve';
-            case 'shower rain':
-              return 'Chuva de banho';
-            case 'heavy intensity shower rain':
-              return 'Chuva forte';
-            case 'ragged shower rain':
-              return 'Chuva irregular';
-            case 'light snow':
-              return 'Pouca neve';
-            case 'Snow':
-              return 'Neve';
-            case 'Heavy snow':
-              return 'Neve pesada';
-            case 'Sleet':
-              return 'Chuva com neve';
-            case 'Light shower sleet':
-              return 'Chuva de granizo';
-            case 'Shower sleet':
-              return 'Chuva de neve';
-            case 'Light rain and snow':
-              return 'Chuva leve e neve';
-            case 'Rain and snow':
-              return 'Chuva e neve';
-            case 'Light shower snow':
-              return 'Chuva de neve leve';
-            case 'Shower snow':
-              return 'Chuva de neve';
-            case 'Heavy shower snow':
-              return 'Neve pesada';
-            case 'mist':
-              return 'Névoa';
-            case 'Smoke':
-              return 'Enfumaçado';
-            case 'Haze':
-              return 'Neblina';
-            case 'sand/ dust whirls':
-              return 'Areia/redemoinhos';
-            case 'fog':
-              return 'Névoa';
-            case 'sand':
-              return 'Areia';
-            case 'dust':
-              return 'Poeira';
-            case 'volcanic ash':
-              return 'Cinza vulcanica';
-            case 'squalls':
-              return 'Rajadas';
-            case 'tornado':
-              return 'Tornado';
-            case 'clear sky':
-              return 'Céu limpo';
-            case 'few clouds':
-              return 'Poucas nuvens';
-            case 'scattered clouds':
-              return 'Nuvens dispersas';
-            case 'broken clouds':
-              return 'Nuvens dispersas';
-            case 'overcast clouds':
-              return 'Nuvens nubladas';
-          }
-        }
-      };
-      vm.finance = {
-        symbols: [
-          {
-            key: 'dolar',
-            label: 'Dolar',
-            symbol: 'USD',
-            value: 'buy'
-          },
-          {
-            key: 'euro',
-            label: 'Euro',
-            symbol: 'EUR',
-            value: 'buy'
-          },
-          {
-            key: 'bitcoin',
-            label: 'Bitcoin',
-            symbol: 'BTC',
-            value: 'buy'
-          },
-          {
-            key: 'ibovespa',
-            label: 'IBOVESPA',
-            symbol: 'IBOVESPA',
-            value: 'points'
-          },
-          {
-            key: 'nasdaq',
-            label: 'NASDAQ',
-            symbol: 'NASDAQ',
-            value: 'points'
-          }
-        ],
-        // url: 'https://economia.awesomeapi.com.br/all/USD-BRL,EUR-BRL,BTC-BRL'
-        keys: ['1d55022f',
-    'e2ea071f',
-    'd9f8b16b',
-    'b863ff04',
-    'ba0e2932'],
-        url: 'http://api.hgbrasil.com/finance?format=json-cors&key=b863ff04',
-        get: function() {
-          var error,
-    success;
-          if (this.loading) {
-            return;
-          }
-          this.loading = true;
-          success = (resp) => {
-            this.loading = false;
-            this.loaded = true;
-            console.log('Finance data:',
-    resp.data);
-            return this.handleHgb(resp.data);
-          };
-          error = (resp) => {
-            this.loading = false;
-            return console.error('Finance:',
-    resp);
-          };
-          return $http.get(this.url).then(success,
-    error);
-        },
-        handleHgb: function(dataObj) {
-          var currencies,
-    i,
-    item,
-    len,
-    ref,
-    stocks,
-    sym;
-          if (!dataObj) {
-            return;
-          }
-          currencies = dataObj.results.currencies;
-          stocks = dataObj.results.stocks;
-          this.data || (this.data = {});
-          ref = this.symbols;
-          for (i = 0, len = ref.length; i < len; i++) {
-            sym = ref[i];
-            item = currencies[sym.symbol] || stocks[sym.symbol];
-            if (!item) {
-              continue;
-            }
-            this.data[sym.key] = {
-              valor: item[sym.value],
-              variacao: item.variation
-            };
-          }
-          console.log('FINANCE ->',
-    this.data);
-        }
       };
       return vm;
     }

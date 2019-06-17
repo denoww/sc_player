@@ -10,6 +10,11 @@ module.exports = ->
     getList: ->
       return unless global.grade?.data?.conteudos
       feeds = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'feed'
+      playlists = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'playlist'
+
+      for playlist in playlists
+        feeds = feeds.concat playlist.conteudos.select (item)-> item.tipo_midia == 'feed'
+
       return if feeds.empty()
 
       @getDataOffline()
