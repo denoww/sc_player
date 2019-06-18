@@ -24,6 +24,7 @@ module.exports = ->
     handlelist: (data)->
       @data =
         id:        data.id
+        cor:       data.cor
         layout:    data.layout
         cidade:    data.cidade
         musicas:   []

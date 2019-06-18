@@ -17,7 +17,7 @@
   <link rel="stylesheet" type="text/css" href="stylesheets/sc-icons.css">
 </head>
 
-<body class="{{vm.grade.layout || 'layout-2'}} {{vm.grade.cor || 'black'}}"
+<body class="{{vm.grade.data.layout || 'layout-2'}} {{vm.grade.data.cor || 'black'}}"
   ng-controller="MainCtrl as vm"
   ng-mousemove="vm.mouse.onMove()"
   ng-init="vm.init()"
@@ -106,41 +106,43 @@
         <!-- anuncie -->
       </div> <!-- content-side -->
 
-      <div class="content-player" ng-if="vm.timeline.current.conteudos"
+      <div class="content-player" ng-if="vm.timeline.current.conteudos">
+        <div class="player-item"
         ng-class="{'transicao': vm.timeline.transicao.conteudos}"
         ng-switch="vm.timeline.current.conteudos.tipo_midia">
-        <div ng-switch-when="feed" class="content-feed">
-          <div class="feed-main">
-            <div class="feed-info">
-              <div class="feed-fonte" ng-style="{'background-image': 'url(/images/feeds/' + vm.timeline.current.conteudos.fonte + '.png)'}"></div>
-              <div class="feed-categoria">{{vm.timeline.current.conteudos.titulo_feed}}</div>
-              <div class="feed-out"></div>
+          <div ng-switch-when="feed" class="content-feed">
+            <div class="feed-main">
+              <div class="feed-info">
+                <div class="feed-fonte" ng-style="{'background-image': 'url(/images/feeds/' + vm.timeline.current.conteudos.fonte + '.png)'}"></div>
+                <div class="feed-categoria">{{vm.timeline.current.conteudos.titulo_feed}}</div>
+                <div class="feed-out"></div>
+              </div>
+              <div class="feed-imagem" ng-style="{'background-image': 'url(' + (vm.timeline.current.conteudos.nome ? '/downloads/feeds/' + vm.timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
+              <div class="feed-titulo">{{vm.timeline.current.conteudos.titulo}}</div>
             </div>
-            <div class="feed-imagem" ng-style="{'background-image': 'url(' + (vm.timeline.current.conteudos.nome ? '/downloads/feeds/' + vm.timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
-            <div class="feed-titulo">{{vm.timeline.current.conteudos.titulo}}</div>
-          </div>
-        </div>
-
-        <div ng-switch-when="clima">
-          <div>{{vm.timeline.current.conteudos.titulo}}</div>
-        </div>
-
-        <div ng-switch-when="midia" ng-if="vm.timeline.current.conteudos.segundos">
-          <div class="midia-imagem" ng-if="vm.timeline.current.conteudos.is_image"
-            style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
           </div>
 
-          <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay" loop="">
-            <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
-            <source ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" />
-          </video>
-        </div>
+          <div ng-switch-when="clima">
+            <div>{{vm.timeline.current.conteudos.titulo}}</div>
+          </div>
+
+          <div class="midia-main" ng-switch-when="midia" ng-if="vm.timeline.current.conteudos.segundos">
+            <div class="midia-imagem" ng-if="vm.timeline.current.conteudos.is_image"
+              style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
+            </div>
+
+            <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay" loop="">
+              <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
+              <source ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" />
+            </video>
+          </div>
+        </div> <!-- player-item -->
       </div> <!-- content-player -->
     </div> <!-- content-top -->
 
     <div class="content-footer">
-      <div class="content-logo {{vm.grade.cor == 'gray' ? 'black' : ''}}">
-        <div class="logo" ng-style="{'background-image': 'url(/images/seucondominio' + (vm.grade.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
+      <div class="content-logo {{vm.grade.data.cor == 'gray' ? 'black' : ''}}">
+        <div class="logo" ng-style="{'background-image': 'url(/images/seucondominio' + (vm.grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
       </div> <!-- content-logo -->
 
       <div class="content-mensagem">
