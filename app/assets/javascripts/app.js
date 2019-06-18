@@ -30,7 +30,10 @@
         });
         return setInterval(function() {
           return vm.grade.get(function() {
-            return vm.feeds.get();
+            return vm.feeds.get(function() {
+              vm.loading = false;
+              return vm.loaded = true;
+            });
           });
         },
     1000 * 60); // a cada minuto
@@ -63,7 +66,6 @@
             tipo = ref[i];
             (base = this.nextIndex)[tipo] || (base[tipo] = 0);
             if (((ref1 = this.promessa) != null ? (ref2 = ref1[tipo]) != null ? (ref3 = ref2.$$state) != null ? ref3.status : void 0 : void 0 : void 0) !== 0) {
-              // console.log '------------------', @promessa?[tipo]?.$$state?.status, @promessa?[tipo]?.$$state?.status != 0 if tipo == 'conteudos'
               results.push(this.executar(tipo));
             } else {
               results.push(void 0);
@@ -111,9 +113,6 @@
           if (index >= lista.length) {
             index = 0;
           }
-          // if tipo == 'conteudos'
-          // console.log '---------------------------------------------------------'
-          // console.log 'getNextItem', tipo, @nextIndex, lista.length
           this.nextIndex[tipo]++;
           if (this.nextIndex[tipo] >= lista.length) {
             this.nextIndex[tipo] = 0;
@@ -323,7 +322,6 @@
             categorias = ref[fonte];
             for (categoria in categorias) {
               valores = categorias[categoria];
-              // console.log 'fonte', fonte, 'categoria', categoria, (valores || []).empty()
               if ((valores || []).empty()) {
                 if (!vm.grade.data.conteudos) {
                   return;

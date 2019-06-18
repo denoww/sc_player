@@ -20,7 +20,10 @@ app.controller('MainCtrl', [
           vm.relogio()
 
       setInterval ->
-        vm.grade.get -> vm.feeds.get()
+        vm.grade.get ->
+          vm.feeds.get ->
+            vm.loading = false
+            vm.loaded = true
       , 1000 * 60  # a cada minuto
 
     vm.timeline =
@@ -35,7 +38,6 @@ app.controller('MainCtrl', [
 
         for tipo in @tipos
           @nextIndex[tipo] ||= 0
-          @executar(tipo)
           @executar(tipo) if @promessa?[tipo]?.$$state?.status != 0
       executar: (tipo)->
         @transicao[tipo] = false
@@ -197,7 +199,6 @@ app.controller('MainCtrl', [
       verificarNoticias: ->
         for fonte, categorias of @data
           for categoria, valores of categorias
-            if (valores?.lista || []).empty()
             if (valores || []).empty()
               return unless vm.grade.data.conteudos
               conteudos = vm.grade.data.conteudos.select (e)->

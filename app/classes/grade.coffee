@@ -125,7 +125,7 @@ module.exports = ->
     getDataOffline: ->
       console.info 'Grade -> Pegando grade de playlist.json'
       try
-        @data = JSON.parse(fs.readFileSync('playlist.json', 'utf8'))
+        @data = JSON.parse(fs.readFileSync('playlist.json', 'utf8') || '{}')
         @data.offline = true
         global.feeds.getList()
       catch e
