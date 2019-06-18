@@ -2,7 +2,7 @@
 
 # configurando variaveis de ambiente
 echo '--- Configurando variáveis de ambiente'
-read -p 'Informe o ID da TV: ' TV_ID
+read -p '--> Informe o ID da TV: ' TV_ID
 echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
 source /etc/environment
 sh -c 'cp ~/player_tv_raspberry/.env_DEVELOPMENT_sample ~/player_tv_raspberry/.env_DEVELOPMENT'
@@ -32,12 +32,17 @@ sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.png"'
 # sudo gedit /home/pi/.config/lxsession/LXDE-pi/autostart
 # lxterminal -e bash /home/pi/inicio.sh
 
-read -p 'Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
+read -p '--> Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
 if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
   sh -c 'sudo apt install xdotool'
 fi
 
-read -p 'Deseja Executar o npm install? (y/N) ' executar_npm
+read -p '--> Deseja Instalar nodejs? (y/N) ' instalar_node
+if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
+  sh -c 'sudo apt install nodejs'
+fi
+
+read -p '--> Deseja Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
 fi
