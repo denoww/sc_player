@@ -42,6 +42,11 @@ if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
   sh -c 'sudo apt install nodejs'
 fi
 
+read -p '--> Deseja Instalar npm? (y/N) ' instalar_npm
+if [[ "$instalar_npm" == "y" || "$instalar_npm" == "Y" ]] ; then
+  sh -c 'sudo apt install npm'
+fi
+
 read -p '--> Deseja Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
