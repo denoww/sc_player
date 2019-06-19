@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Player Seu Condomínio
-Exec=lxterminal -e bash /home/pi/workspace/player_tv_raspberry/init.sh
+Exec=lxterminal -e bash /home/pi/player_tv_raspberry/init.sh
 Type=Application
 Terminal=true
