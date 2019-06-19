@@ -34,17 +34,17 @@ sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.png"'
 
 read -p '--> Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
 if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
-  sh -c 'sudo apt install xdotool'
+  sh -c 'sudo apt install xdotool -y'
 fi
 
 read -p '--> Deseja Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
-  sh -c 'sudo apt install nodejs'
+  sh -c 'sudo apt install nodejs -y'
 fi
 
 read -p '--> Deseja Instalar npm? (y/N) ' instalar_npm
 if [[ "$instalar_npm" == "y" || "$instalar_npm" == "Y" ]] ; then
-  sh -c 'sudo apt install npm'
+  sh -c 'sudo apt install npm -y'
 fi
 
 read -p '--> Deseja Executar o npm install? (y/N) ' executar_npm
