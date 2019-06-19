@@ -67,7 +67,15 @@ html, body {
 }
 
 .content-top    { display: flex }
-.content-side   { width:  15vw; height: 85vh; order: 1; background: rgba(0,0,0,0.25); }
+.content-side   {
+  width:  15vw;
+  height: 85vh;
+  order: 1;
+  background: rgba(0,0,0,0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 .content-footer { width: 100vw; height: 15vh; }
 .content-player {
   width:  85vw;
@@ -238,17 +246,17 @@ html, body {
 }
 
 .content-side .item-hora .dia {
-  font-size: 1.5vw;
-  line-height: 1.2;
+  font-size: 1.5em;
+  line-height: 1;
 }
 .content-side .item-hora .dia-semana {
-  font-size: 1.5vw;
+  font-size: 1.5em;
   font-weight: 600;
 }
 .content-side .item-hora #hora {
-  font-size: 2.5vw;
+  font-size: 2.5em;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1;
   letter-spacing: 0.2vw;
 }
 
@@ -402,10 +410,14 @@ html, body {
   text-align: center;
   line-height: 1;
   font-weight: 700;
-  padding: 0.8em 0;
+  flex: 1;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
 }
 .content-side .item-anuncie .telefone {
   font-size: 1.3em;
+  letter-spacing: -1px;
 }
 /* --------------- LATERAIS --------------- */
 
