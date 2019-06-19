@@ -7,4 +7,3 @@ require('./app/classes/download')
 require('./app/classes/grade')()
 require('./app/classes/feeds')()
 require('./app/servers/web')()
-

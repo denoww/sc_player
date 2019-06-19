@@ -2,5 +2,5 @@ node_modules
 downloads
 .env_DEVELOPMENT
 feeds.json
-playlist.json
+grade.json
 package-lock.json

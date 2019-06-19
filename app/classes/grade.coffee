@@ -1,5 +1,6 @@
 fs      = require 'fs'
 request = require 'request'
+shell   = require 'shelljs'
 
 module.exports = ->
   ctrl =
@@ -14,12 +15,14 @@ module.exports = ->
           erro += " #{error}" if error
           console.error erro
           @getDataOffline()
+          startChromium()
           return
 
         data = JSON.parse(body)
         return console.error 'Erro: Não existe Dados da Grade!' unless data
         @handlelist(data)
         @saveDataJson()
+        startChromium()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -118,18 +121,23 @@ module.exports = ->
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
 
-      fs.writeFile 'playlist.json', dados, (error)->
+      fs.writeFile 'grade.json', dados, (error)->
         return console.error error if error
-        console.info 'Grade -> playlist.json salvo com sucesso!'
+        console.info 'Grade -> grade.json salvo com sucesso!'
       return
     getDataOffline: ->
-      console.info 'Grade -> Pegando grade de playlist.json'
+      console.info 'Grade -> Pegando grade de grade.json'
       try
-        @data = JSON.parse(fs.readFileSync('playlist.json', 'utf8') || '{}')
+        @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
         @data.offline = true
         global.feeds.getList()
       catch e
         console.error 'Grade -> getDataOffline:', e
+
+  startChromium = ->
+    console.info 'Iniciando Navegador...'
+    shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen', (code, stdout, stderr)->
+      console.info 'Navegador executando!', code, stdout, stderr
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'

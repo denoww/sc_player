@@ -20,6 +20,7 @@
     "request": "^2.87.0",
     "rss-parser": "^3.7.1",
     "sc-node-tools": "^1.1.9",
+    "shelljs": "^0.8.3",
     "url-exists": "^1.0.3"
   },
   "devDependencies": {
