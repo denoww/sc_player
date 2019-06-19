@@ -1,5 +1,20 @@
 # Publicidade
 
+# Configurações iniciais
+
+`ssh-keygen -t rsa -b 4096 -C "dev3.seucondominio@gmail.com"`
+
+`eval "$(ssh-agent -s)"`
+
+`ssh-add ~/.ssh/id_rsa`
+
+`git clone git@github.com:denoww/player_tv_raspberry.git`
+
+`cd player_tv_raspberry/`
+
+`./configuracao_tv.sh`
+
+
 # Conexão SSH no Raspberry
 
 Habilite o SSH nas configurações do Raspberry se não estiver habilitado.
