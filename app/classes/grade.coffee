@@ -15,14 +15,14 @@ module.exports = ->
           erro += " #{error}" if error
           console.error erro
           @getDataOffline()
-          startChromium()
+          @startChromium()
           return
 
         data = JSON.parse(body)
         return console.error 'Erro: Não existe Dados da Grade!' unless data
         @handlelist(data)
         @saveDataJson()
-        startChromium()
+        @startChromium()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -134,13 +134,13 @@ module.exports = ->
       catch e
         console.error 'Grade -> getDataOffline:', e
 
-  startChromium = ->
-    return if startedChromium
-    startedChromium = true
+    startChromium: ->
+      return if @startedChromium
+      @startedChromium = true
 
-    console.info 'Iniciando Navegador...'
-    shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen', (code, stdout, stderr)->
-      console.info 'Navegador executando!', code, stdout, stderr
+      console.info 'Iniciando Navegador...'
+      shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen', (code, stdout, stderr)->
+        console.info 'Navegador executando!', code, stdout, stderr
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
