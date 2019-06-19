@@ -82,7 +82,8 @@ html, body {
   height: 85vh;
   overflow: hidden;
   order: 2;
-  background: url(../images/logo-player.png) no-repeat center #000
+  background: url(../images/logo-player.png) no-repeat center #000;
+  background-size: auto 50%;
 }
 
 /* --------------- LAYOUTS --------------- */
