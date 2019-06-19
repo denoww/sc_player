@@ -135,6 +135,9 @@ module.exports = ->
         console.error 'Grade -> getDataOffline:', e
 
   startChromium = ->
+    return if startedChromium
+    startedChromium = true
+
     console.info 'Iniciando Navegador...'
     shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen', (code, stdout, stderr)->
       console.info 'Navegador executando!', code, stdout, stderr
