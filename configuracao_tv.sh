@@ -26,8 +26,8 @@ sh -c 'cp ~/player_tv_raspberry/device_configs/player.desktop /home/pi/.config/a
 
 # configurando wallpaper do dispo
 echo '--- Configurando wallpaper do dispositivo'
-sh -c 'cp ~/player_tv_raspberry/device_configs/wallpaper.jpg /home/pi/Pictures/'
-sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.jpg"'
+sh -c 'cp ~/player_tv_raspberry/device_configs/wallpaper.png /home/pi/Pictures/'
+sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.png"'
 
 # sudo gedit /home/pi/.config/lxsession/LXDE-pi/autostart
 # lxterminal -e bash /home/pi/inicio.sh
