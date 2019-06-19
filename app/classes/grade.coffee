@@ -7,6 +7,7 @@ module.exports = ->
     data: {}
     getList: ->
       url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=#{ENV.TV_ID}"
+      console.info "URL", url
 
       request url, (error, response, body)=>
         if error || response?.statusCode != 200
