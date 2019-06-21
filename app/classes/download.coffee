@@ -24,7 +24,13 @@ class Download
       file      = fs.createWriteStream(path)
       protocolo = http
       protocolo = https if params.url.match(/https/)
-      console.info "Download -> #{params.nome}"
+      console.info "Download -> #{params.nome}, URL: #{params.url}"
+
+      unless validURL(params.url)
+        console.info '! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '
+        console.info "URL INVÁLIDA: #{params.url}"
+        console.info '! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '
+        return next()
 
       protocolo.get params.url, (res)->
         res.on 'data', (data)->
@@ -41,6 +47,10 @@ class Download
         Download.loading = false
         next()
         console.error 'Download -> Error:', error if error
+
+  validURL = (url)->
+    pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
+    !!pattern.test(url)
 
   next = ->
     return unless Download.fila.length
