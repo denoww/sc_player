@@ -140,7 +140,7 @@ module.exports = ->
       @startedChromium = true
 
       console.info 'Iniciando Navegador...'
-      shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen', (code, stdout, stderr)->
+      shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen --incognito', (code, stdout, stderr)->
         console.info 'Navegador executando!', code, stdout, stderr
 
   setInterval ->
