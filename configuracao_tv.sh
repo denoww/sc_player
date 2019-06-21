@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# configurando variaveis de ambiente
-echo '--- Configurando variáveis de ambiente'
-read -p '--> Informe o ID da TV: ' TV_ID
-echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
-source /etc/environment
-sh -c 'cp ~/player_tv_raspberry/.env_DEVELOPMENT_sample ~/player_tv_raspberry/.env_DEVELOPMENT'
-
 # criando pastas de downloads das midias
 echo '--- Criando pastas de downloads das mídias'
 sh -c 'mkdir ~/player_tv_raspberry/downloads'
@@ -29,8 +22,14 @@ echo '--- Configurando wallpaper do dispositivo'
 sh -c 'cp ~/player_tv_raspberry/device_configs/wallpaper.png /home/pi/Pictures/'
 sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.png"'
 
-# sudo gedit /home/pi/.config/lxsession/LXDE-pi/autostart
-# lxterminal -e bash /home/pi/inicio.sh
+# configurando variaveis de ambiente
+read -p '--> Configurar variáveis de ambiente? (y/N) ' config_vars
+if [[ "$config_vars" == "y" || "$config_vars" == "Y" ]] ; then
+  read -p '--> Informe o ID da TV: ' TV_ID
+  echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
+  source /etc/environment
+  sh -c 'cp ~/player_tv_raspberry/.env_DEVELOPMENT_sample ~/player_tv_raspberry/.env_DEVELOPMENT'
+fi
 
 read -p '--> Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
 if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
