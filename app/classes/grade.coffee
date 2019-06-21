@@ -141,7 +141,7 @@ module.exports = ->
       shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
         # se nao tem nenhum processo entao inicia o chromium
         unless grepOut
-          shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito &', (code, stdout, stderr)->
+          shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito --disable-gpu & echo "FOOOIIII!!" ', (code, stdout, stderr)->
             console.info '### Navegador executando!', code, stdout, stderr
         else
           console.info '### Navegador já está aberto!'
