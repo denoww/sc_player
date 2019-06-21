@@ -47,6 +47,13 @@ if [[ "$instalar_npm" == "y" || "$instalar_npm" == "Y" ]] ; then
   sh -c 'sudo apt install npm -y'
 fi
 
+read -p '--> Deseja Instalar notification-daemon? (y/N) ' instalar_notif
+if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
+  sh -c 'sudo apt install notification-daemon -y'
+  echo '--- Criando org.freedesktop.Notifications'
+  sh -c 'cp ~/player_tv_raspberry/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
+fi
+
 read -p '--> Deseja Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
