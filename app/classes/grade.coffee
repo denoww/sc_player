@@ -136,12 +136,15 @@ module.exports = ->
         console.error 'Grade -> getDataOffline:', e
 
     startChromium: ->
-      return if @startedChromium
-      @startedChromium = true
-
-      console.info 'Iniciando Navegador...'
-      shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen --incognito', (code, stdout, stderr)->
-        console.info 'Navegador executando!', code, stdout, stderr
+      console.info '### Iniciando Navegador...'
+      # verificando se já não tem um chromium aberto
+      shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
+        # se nao tem nenhum processo entao inicia o chromium
+        unless grepOut
+          shell.exec 'chromium-browser --app=http://localhost:3001 --start-fullscreen --incognito', (code, stdout, stderr)->
+            console.info '### Navegador executando!', code, stdout, stderr
+        else
+          console.info '### Navegador já está aberto!'
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
