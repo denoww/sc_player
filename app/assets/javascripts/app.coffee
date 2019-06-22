@@ -11,7 +11,6 @@ app.controller('MainCtrl', [
     vm.loading = true
 
     vm.init = ->
-      vm.openFullScreen(document.getElementById('body-player'))
       vm.loading = true
 
       vm.grade.get ->
@@ -230,17 +229,6 @@ app.controller('MainCtrl', [
       elem.innerHTML = hour + ':' + min + ':' + sec if elem
       setTimeout vm.relogio, 1000
       return
-
-    vm.openFullScreen = (element)->
-      isInFullScreen = !!(element.fullscreenElement || element.mozFullScreenElement ||
-        element.webkitFullscreenElement || element.msFullscreenElement)
-      return console.log 'Já está em fullScreen' if isInFullScreen
-
-      element.requestFullscreen?()
-      element.msRequestFullscreen?()
-      element.mozRequestFullScreen?()
-      element.webkitRequestFullScreen?()
-      element.webkitRequestFullscreen?()
 
     vm
 ])

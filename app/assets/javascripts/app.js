@@ -20,7 +20,6 @@
       vm = this;
       vm.loading = true;
       vm.init = function() {
-        vm.openFullScreen(document.getElementById('body-player'));
         vm.loading = true;
         vm.grade.get(function() {
           return vm.feeds.get(function() {
@@ -364,26 +363,6 @@
         }
         setTimeout(vm.relogio,
     1000);
-      };
-      vm.openFullScreen = function(element) {
-        var isInFullScreen;
-        isInFullScreen = !!(element.fullscreenElement || element.mozFullScreenElement || element.webkitFullscreenElement || element.msFullscreenElement);
-        if (isInFullScreen) {
-          return console.log('Já está em fullScreen');
-        }
-        if (typeof element.requestFullscreen === "function") {
-          element.requestFullscreen();
-        }
-        if (typeof element.msRequestFullscreen === "function") {
-          element.msRequestFullscreen();
-        }
-        if (typeof element.mozRequestFullScreen === "function") {
-          element.mozRequestFullScreen();
-        }
-        if (typeof element.webkitRequestFullScreen === "function") {
-          element.webkitRequestFullScreen();
-        }
-        return typeof element.webkitRequestFullscreen === "function" ? element.webkitRequestFullscreen() : void 0;
       };
       return vm;
     }

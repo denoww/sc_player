@@ -143,7 +143,7 @@ module.exports = ->
         # se nao tem nenhum processo entao inicia o chromium
         unless grepOut
           # shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito --disable-gpu & echo "FOOOIIII!!" ', (code, stdout, stderr)->
-          shell.exec 'firefox http://localhost:3001 &', (code, stdout, stderr)->
+          shell.exec 'firefox http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11', (code, stdout, stderr)->
             console.info '### Navegador executando!', code, stdout, stderr
         else
           console.info '### Navegador já está aberto!'
