@@ -55,5 +55,5 @@ read -p '--> Deseja Instalar notification-daemon? (y/N) ' instalar_notif
 if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
   sh -c 'sudo apt install notification-daemon -y'
   echo '--- Criando org.freedesktop.Notifications'
-  sh -c 'cp ~/player_tv_raspberry/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
+  sh -c 'sudo cp ~/player_tv_raspberry/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
 fi

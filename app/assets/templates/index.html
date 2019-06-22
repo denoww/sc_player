@@ -17,7 +17,7 @@
   <link rel="stylesheet" type="text/css" href="stylesheets/sc-icons.css">
 </head>
 
-<body class="{{vm.grade.data.layout || 'layout-2'}} {{vm.grade.data.cor || 'black'}}"
+<body id="body-player" class="{{vm.grade.data.layout || 'layout-2'}} {{vm.grade.data.cor || 'black'}}"
   ng-controller="MainCtrl as vm"
   ng-mousemove="vm.mouse.onMove()"
   ng-init="vm.init()"

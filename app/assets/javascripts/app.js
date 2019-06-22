@@ -20,6 +20,7 @@
       vm = this;
       vm.loading = true;
       vm.init = function() {
+        vm.openFullScreen(document.getElementById('body-player'));
         vm.loading = true;
         vm.grade.get(function() {
           return vm.feeds.get(function() {
@@ -159,11 +160,6 @@
           currentItem.data = feed.data;
           currentItem.titulo = feed.titulo;
           currentItem.titulo_feed = feed.titulo_feed;
-          console.log('FEED ---->',
-    fonte,
-    categ,
-    `${feedIndex}/${feedItems.length - 1}`,
-    currentItem);
           return currentItem;
         },
         getItemPlaylist: function(playlist) {
@@ -177,9 +173,6 @@
             this.playlistIndex[playlist.id] = 0;
           }
           currentItem = playlist.conteudos[this.playlistIndex[playlist.id]];
-          console.log('PLAYLIST ---->',
-    `${this.playlistIndex[playlist.id]}/${playlist.conteudos.length - 1}`,
-    currentItem);
           if (currentItem.tipo_midia !== 'feed') {
             return currentItem;
           }
@@ -371,6 +364,26 @@
         }
         setTimeout(vm.relogio,
     1000);
+      };
+      vm.openFullScreen = function(element) {
+        var isInFullScreen;
+        isInFullScreen = !!(element.fullscreenElement || element.mozFullScreenElement || element.webkitFullscreenElement || element.msFullscreenElement);
+        if (isInFullScreen) {
+          return console.log('Já está em fullScreen');
+        }
+        if (typeof element.requestFullscreen === "function") {
+          element.requestFullscreen();
+        }
+        if (typeof element.msRequestFullscreen === "function") {
+          element.msRequestFullscreen();
+        }
+        if (typeof element.mozRequestFullScreen === "function") {
+          element.mozRequestFullScreen();
+        }
+        if (typeof element.webkitRequestFullScreen === "function") {
+          element.webkitRequestFullScreen();
+        }
+        return typeof element.webkitRequestFullscreen === "function" ? element.webkitRequestFullscreen() : void 0;
       };
       return vm;
     }
