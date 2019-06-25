@@ -8,6 +8,20 @@
 
 `./configuracao_tv.sh`
 
+# Desabilitar screensaver
+
+Adicione o código abaixo no arquivo `/etc/xdg/lxsession/LXDE-pi/autostart`
+
+```
+@xset s noblank
+@xset s off
+@xset -dpms
+```
+
+Adicione o código abaixo no arquivo `/etc/lightdm/lightdm.conf`
+
+`xserver-command=X -s 0 dpms`
+
 # Conexão SSH no Raspberry
 
 Habilite o SSH nas configurações do Raspberry se não estiver habilitado.
