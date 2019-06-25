@@ -1,7 +1,7 @@
 #!/bin/bash
-# sudo nodemon --inspect /home/pi/player_tv_raspberry/server.coffee &
+# sudo nodemon --inspect /home/pi/sc_player/server.coffee &
 xdotool mousemove 4000 4000
-cd /home/pi/player_tv_raspberry/
+cd /home/pi/sc_player/
 npm run start
 # sudo npm run start &
 # sleep 8

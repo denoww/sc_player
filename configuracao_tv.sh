@@ -2,24 +2,24 @@
 
 # criando pastas de downloads das midias
 echo '--- Criando pastas de downloads das mídias'
-sh -c 'mkdir ~/player_tv_raspberry/downloads'
-sh -c 'mkdir ~/player_tv_raspberry/downloads/videos'
-sh -c 'mkdir ~/player_tv_raspberry/downloads/images'
-sh -c 'mkdir ~/player_tv_raspberry/downloads/audios'
-sh -c 'mkdir ~/player_tv_raspberry/downloads/feeds'
+sh -c 'mkdir ~/sc_player/downloads'
+sh -c 'mkdir ~/sc_player/downloads/videos'
+sh -c 'mkdir ~/sc_player/downloads/images'
+sh -c 'mkdir ~/sc_player/downloads/audios'
+sh -c 'mkdir ~/sc_player/downloads/feeds'
 
 # configurando barra de tarefas
 echo '--- Configurando barra de tarefas'
-sh -c 'cp ~/player_tv_raspberry/device_configs/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel'
+sh -c 'cp ~/sc_player/device_configs/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel'
 
 # criando autostart
 echo '--- Criando autostart'
 sh -c 'mkdir /home/pi/.config/autostart'
-sh -c 'cp ~/player_tv_raspberry/device_configs/player.desktop /home/pi/.config/autostart/'
+sh -c 'cp ~/sc_player/device_configs/player.desktop /home/pi/.config/autostart/'
 
 # configurando wallpaper do dispo
 echo '--- Configurando wallpaper do dispositivo'
-sh -c 'cp ~/player_tv_raspberry/device_configs/wallpaper.png /home/pi/Pictures/'
+sh -c 'cp ~/sc_player/device_configs/wallpaper.png /home/pi/Pictures/'
 sh -c 'pcmanfm --set-wallpaper="/home/pi/Pictures/wallpaper.png"'
 
 # configurando variaveis de ambiente
@@ -28,7 +28,7 @@ if [[ "$config_vars" == "y" || "$config_vars" == "Y" ]] ; then
   read -p '--> Informe o ID da TV: ' TV_ID
   echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
   source /etc/environment
-  sh -c 'cp ~/player_tv_raspberry/.env_DEVELOPMENT_sample ~/player_tv_raspberry/.env_DEVELOPMENT'
+  sh -c 'cp ~/sc_player/.env_DEVELOPMENT_sample ~/sc_player/.env_DEVELOPMENT'
 fi
 
 read -p '--> Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
@@ -55,5 +55,5 @@ read -p '--> Deseja Instalar notification-daemon? (y/N) ' instalar_notif
 if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
   sh -c 'sudo apt install notification-daemon -y'
   echo '--- Criando org.freedesktop.Notifications'
-  sh -c 'sudo cp ~/player_tv_raspberry/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
+  sh -c 'sudo cp ~/sc_player/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
 fi

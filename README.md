@@ -2,23 +2,15 @@
 
 # Configurações iniciais
 
-`ssh-keygen -t rsa -b 4096 -C "dev3.seucondominio@gmail.com"`
+`git clone https://github.com/denoww/sc_player.git`
 
-`eval "$(ssh-agent -s)"`
-
-`ssh-add ~/.ssh/id_rsa`
-
-`git clone git@github.com:denoww/player_tv_raspberry.git`
-
-`cd player_tv_raspberry/`
+`cd sc_player/`
 
 `./configuracao_tv.sh`
-
 
 # Conexão SSH no Raspberry
 
 Habilite o SSH nas configurações do Raspberry se não estiver habilitado.
-
 
 `ssh pi@IP_DO_RASPBERRY`
 
@@ -27,7 +19,7 @@ Habilite o SSH nas configurações do Raspberry se não estiver habilitado.
 Execute `ssh-keygen` no seu PC.
 Faça upload do id_rsa.pub para o Raspberry PI.
 
-`scp id_rsa.pub pi@IP_DO_RASPBERRY:.ssh/authorized_keys`
+`scp ~/.ssh/id_rsa.pub pi@IP_DO_RASPBERRY:.ssh/authorized_keys`
 
 # Montar imagem do Raspberry
 
