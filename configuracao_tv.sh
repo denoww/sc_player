@@ -57,3 +57,8 @@ if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
   echo '--- Criando org.freedesktop.Notifications'
   sh -c 'sudo cp ~/sc_player/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
 fi
+
+read -p '--> Deseja iniciar o servidor? (y/N) ' instalar_server
+if [[ "$instalar_server" == "y" || "$instalar_server" == "Y" ]] ; then
+  sh -c 'npm run start'
+fi
