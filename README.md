@@ -6,7 +6,6 @@
 git clone https://github.com/denoww/sc_player.git
 cd sc_player/
 ./configuracao_tv.sh
-
 ```
 # Limpando
 
