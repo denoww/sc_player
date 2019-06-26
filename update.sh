@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd /home/pi/sc_player/
 git clean -f
 git pull

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 xdotool mousemove 4000 4000
 sleep 2
 xdotool windowminimize $(xdotool getactivewindow)

@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # configurar desktop
-read -p '--> Configurar Desktop? (y/N) ' desktop
-if [[ "$desktop" == "y" || "$desktop" == "Y" ]] ; then
+read -p '--> Configurar Desktop? (y/N) ' config_desktop
+if [[ "$config_desktop" == "y" || "$config_desktop" == "Y" ]] ; then
   # criando pastas de downloads das midias
   echo '--- Criando pastas de downloads das mídias'
   sh -c 'mkdir ~/sc_player/downloads'
