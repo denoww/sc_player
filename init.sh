@@ -1,8 +1,7 @@
-#!/bin/bash
-# sudo nodemon --inspect /home/pi/sc_player/server.coffee &
+#!/bin/sh
 xdotool mousemove 4000 4000
+sleep 2
+xdotool windowminimize $(xdotool getactivewindow)
+
 cd /home/pi/sc_player/
 npm run start
-# sudo npm run start &
-# sleep 8
-# chromium-browser --app=http://127.0.0.1:3001 --start-fullscreen

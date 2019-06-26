@@ -35,6 +35,13 @@ if [[ "$config_vars" == "y" || "$config_vars" == "Y" ]] ; then
   sh -c 'cp ~/sc_player/.env_DEVELOPMENT_sample ~/sc_player/.env_DEVELOPMENT'
 fi
 
+# configurando variaveis de ambiente
+read -p '--> Configurar Reinício Automático diário? (y/N) ' cron
+if [[ "$cron" == "y" || "$cron" == "Y" ]] ; then
+  sh -c 'sudo cp ~/sc_player/device_configs/tarefa_diaria /etc/cron.daily/'
+  sh -c 'sudo chown root:root /etc/cron.daily/tarefa_diaria'
+fi
+
 read -p '--> Atualizar autostart LXDE-pi? (y/N) ' atualizar_lxde
 if [[ "$atualizar_lxde" == "y" || "$atualizar_lxde" == "Y" ]] ; then
   sh -c 'sudo cp ~/sc_player/device_configs/lxde-autostart /etc/xdg/lxsession/LXDE-pi/autostart'
