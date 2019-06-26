@@ -1,6 +1,8 @@
 fs        = require 'fs'
 RSS       = require 'rss-parser'
+shell     = require 'shelljs'
 request   = require 'request'
+resolve   = require('path').resolve
 UrlExists = require 'url-exists'
 
 module.exports = ->
@@ -139,6 +141,19 @@ module.exports = ->
         ctrl.data[params.fonte] ||= {}
         ctrl.data[params.fonte][params.categoria] ||= []
         ctrl.data[params.fonte][params.categoria].push feedObj
+      return
+    deleteOldImages: ->
+      imagensAtuais = []
+      for fonte, categorias of @data || {}
+        for categoria, items of categorias
+          imagensAtuais.push "-name '#{item.nome}'" for item in items
+      imagensAtuais
+
+      caminho = resolve('downloads/feeds/')
+      command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
+      shell.exec command, (code, out, error)->
+        return console.log 'Feeds -> deleteOldImages:', error if error
+        console.log 'Feeds -> Imagens antigas APAGADAS!'
       return
 
   global.feeds = ctrl

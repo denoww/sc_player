@@ -16,14 +16,14 @@ module.exports = ->
           erro += " #{error}" if error
           console.error erro
           @getDataOffline()
-          @startChromium()
+          @startBrowser()
           return
 
         data = JSON.parse(body)
         return console.error 'Erro: Não existe Dados da Grade!' unless data
         @handlelist(data)
         @saveDataJson()
-        @startChromium()
+        @startBrowser()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -135,16 +135,17 @@ module.exports = ->
       catch e
         console.error 'Grade -> getDataOffline:', e
 
-    startChromium: ->
+    startBrowser: ->
       console.info '### Iniciando Navegador...'
       # verificando se já não tem um chromium aberto
       shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
       # shell.exec 'pgrep firefox', (code, grepOut, grepErr)->
         # se nao tem nenhum processo entao inicia o chromium
         unless grepOut
-          shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito --disable-gpu & echo "FOOOIIII!!" ', (code, stdout, stderr)->
+          # shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito --disable-gpu &" ', (code, stdout, stderr)->
+          shell.exec 'chromium-browser --noerrdialogs --kiosk http://localhost:3001 --incognito --disable-translate &', (code, stdout, stderr)->
           # shell.exec 'firefox http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11', (code, stdout, stderr)->
-            console.info '### Navegador executando!', code, stdout, stderr
+            console.info '### Navegador executando!'
         else
           console.info '### Navegador já está aberto!'
 

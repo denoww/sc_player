@@ -2,11 +2,18 @@
 
 # Configurações iniciais
 
-`git clone https://github.com/denoww/sc_player.git`
+```
+git clone https://github.com/denoww/sc_player.git
+cd sc_player/
+./configuracao_tv.sh
 
-`cd sc_player/`
+```
+# Limpando
 
-`./configuracao_tv.sh`
+```
+sudo apt-get remove --purge wolfram-engine scratch nuscratch sonic-pi idle3 smartsim java-common minecraft-pi python-minecraftpi python3-minecraftpi libreoffice python3-thonny geany claws-mail bluej greenfoot
+sudo apt-get autoremove
+```
 
 # Desabilitar screensaver
 
@@ -20,30 +27,40 @@ Adicione o código abaixo no arquivo `/etc/xdg/lxsession/LXDE-pi/autostart`
 
 Adicione o código abaixo no arquivo `/etc/lightdm/lightdm.conf`
 
-`xserver-command=X -s 0 dpms`
+```
+xserver-command=X -s 0 dpms
+```
 
 # Conexão SSH no Raspberry
 
 Habilite o SSH nas configurações do Raspberry se não estiver habilitado.
 
-`ssh pi@IP_DO_RASPBERRY`
+```
+ssh pi@IP_DO_RASPBERRY
+```
 
 # SSH sem senha
 
 Execute `ssh-keygen` no seu PC.
 Faça upload do id_rsa.pub para o Raspberry PI.
 
-`scp ~/.ssh/id_rsa.pub pi@IP_DO_RASPBERRY:.ssh/authorized_keys`
+```
+scp ~/.ssh/id_rsa.pub pi@IP_DO_RASPBERRY:.ssh/authorized_keys
+```
 
 # Montar imagem do Raspberry
 
 Crie a pasta Raspberry no diretório /home/$USER
 
-`mkdir /home/$USER/Raspberry/`
+```
+mkdir /home/$USER/Raspberry/
+```
 
 Agora é só executar o comando abaixo
 
-`sshfs pi@IP_DO_RASPBERRY: /home/$USER/Raspberry/`
+```
+sshfs pi@IP_DO_RASPBERRY: /home/$USER/Raspberry/
+```
 
 # Alterar a resolução do Raspbian
 
@@ -62,14 +79,8 @@ framebuffer_width=1920
 framebuffer_height=1080
 ```
 
-ou
-
-`sudo raspi-config`
-
-`Advanced Option` > `Resolution` > Selecione a resolução desejada
-
-`reboot`
-
 # Compilar arquivos .coffee do assets
 
-`coffee -wc app/assets/javascripts/*.coffee`
+```
+coffee -wc app/assets/javascripts/*.coffee
+```
