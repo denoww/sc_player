@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # configurar desktop
 read -p '--> Configurar Desktop? (y/N) ' desktop
