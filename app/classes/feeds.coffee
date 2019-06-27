@@ -117,6 +117,7 @@ module.exports = ->
       try
         @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
+        console.error 'JSON', fs.readFileSync('feeds.json', 'utf8')
         console.error 'Feeds -> getDataOffline:', e
     getImageUol: (feedObj, image)->
       tamanhos   = ['1024x551', '900x506', '956x500', '450x450', '450x600']
