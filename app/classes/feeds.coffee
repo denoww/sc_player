@@ -150,7 +150,7 @@ module.exports = ->
       for fonte, categorias of @data
         for categoria, items of categorias || []
           imagensAtuais.push "-name '#{item.nome}'" for item in items || []
-      return unless imagensAtuais.length
+      return if imagensAtuais.empty()
 
       caminho = resolve('downloads/feeds/')
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
