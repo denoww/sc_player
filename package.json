@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "nodemon --inspect server.coffee",
+    "start-coffee": "coffee server.coffee",
     "compile-coffee": "coffee -wc app/assets/**"
   },
   "author": "",

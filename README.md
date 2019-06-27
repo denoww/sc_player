@@ -5,9 +5,10 @@
 ```
 git clone https://github.com/denoww/sc_player.git
 cd sc_player/
-./configuracao_tv.sh
+./config.sh
 ```
-# Limpando
+
+# Removendo libs desnecessárias
 
 ```
 sudo apt-get remove --purge wolfram-engine scratch nuscratch sonic-pi idle3 smartsim java-common minecraft-pi python-minecraftpi python3-minecraftpi libreoffice python3-thonny geany claws-mail bluej greenfoot

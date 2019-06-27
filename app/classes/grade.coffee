@@ -134,7 +134,6 @@ module.exports = ->
         global.feeds.getList()
       catch e
         console.error 'Grade -> getDataOffline:', e
-
     startBrowser: ->
       console.info '### Iniciando Navegador...'
       # verificando se já não tem um chromium aberto
@@ -148,11 +147,24 @@ module.exports = ->
             console.info '### Navegador executando!'
         else
           console.info '### Navegador já está aberto!'
+    refreshBrowser: ->
+      console.info '### Atualizando Navegador...'
+      # atualizar chromium para limpar cache e sobrecarga de processos
+      shell.exec '~/sc_player/./refresh_browser.sh', (code, grepOut, grepErr)->
+        if grepErr
+          console.error 'Grade -> Erro ao atualizar navegador:', grepErr
+          return
+        console.info '### Navegador Atualizado!'
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
+
+  setInterval ->
+    console.info 'Grade ->  Navegador!'
+    ctrl.refreshBrowser()
+  , 1000 * 60 * 60 * 2 # 2 horas
 
   ctrl.getList()
   global.grade = ctrl

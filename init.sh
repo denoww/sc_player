@@ -4,4 +4,4 @@ sleep 2
 xdotool windowminimize $(xdotool getactivewindow)
 
 cd /home/pi/sc_player/
-npm run start
+npm start
