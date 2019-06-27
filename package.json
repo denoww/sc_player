@@ -9,6 +9,7 @@
   "scripts": {
     "start": "nodemon --inspect server.coffee",
     "start-coffee": "coffee server.coffee",
+    "delete-old-images": "coffee ./tasks/delete-old-images.coffee",
     "compile-coffee": "coffee -wc app/assets/**"
   },
   "author": "",

@@ -143,11 +143,14 @@ module.exports = ->
         ctrl.data[params.fonte][params.categoria].push feedObj
       return
     deleteOldImages: ->
+      @getDataOffline()
+      return if Object.empty(@data || {})
+
       imagensAtuais = []
-      for fonte, categorias of @data || {}
-        for categoria, items of categorias
-          imagensAtuais.push "-name '#{item.nome}'" for item in items
-      imagensAtuais
+      for fonte, categorias of @data
+        for categoria, items of categorias || []
+          imagensAtuais.push "-name '#{item.nome}'" for item in items || []
+      return unless imagensAtuais.length
 
       caminho = resolve('downloads/feeds/')
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"

@@ -1,2 +1,2 @@
 #!/bin/sh
-/home/pi/sc_player/./update.sh
+/home/pi/sc_player/tasks/./update.sh

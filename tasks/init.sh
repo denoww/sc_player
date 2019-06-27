@@ -1,7 +1,7 @@
 #!/bin/bash
 xdotool mousemove 4000 4000
-sleep 2
+sleep 1
 xdotool windowminimize $(xdotool getactivewindow)
 
-cd /home/pi/sc_player/
+cd ~/sc_player/
 npm start

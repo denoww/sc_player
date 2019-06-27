@@ -1,6 +1,7 @@
 fs      = require 'fs'
 shell   = require 'shelljs'
 request = require 'request'
+resolve = require('path').resolve
 
 module.exports = ->
   ctrl =
@@ -150,9 +151,11 @@ module.exports = ->
     refreshBrowser: ->
       console.info '### Atualizando Navegador...'
       # atualizar chromium para limpar cache e sobrecarga de processos
-      shell.exec '~/sc_player/./refresh_browser.sh', (code, grepOut, grepErr)->
+
+      caminho = resolve('tasks/')
+      shell.exec "#{caminho}./refresh_browser.sh", (code, grepOut, grepErr)->
         if grepErr
-          console.error 'Grade -> Erro ao atualizar navegador:', grepErr
+          console.error 'Grade -> refreshBrowser:', grepErr
           return
         console.info '### Navegador Atualizado!'
 
