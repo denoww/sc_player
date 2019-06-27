@@ -15,7 +15,6 @@ do ->
       return
 
     data = JSON.parse(body)
-    console.log 'data', data.timezone
     return unless data.timezone
 
     command = "sudo ln -f -s /usr/share/zoneinfo/#{data.timezone} /etc/localtime"
