@@ -1,10 +1,10 @@
-app = angular.module('publicidade_app', ['ngSanitize', 'ngLocale'])
+app = angular.module 'publicidade_app', ['ngSanitize', 'ngLocale']
 
 app.config ['$qProvider', ($qProvider)->
     $qProvider.errorOnUnhandledRejections(false)
 ]
 
-app.controller('MainCtrl', [
+app.controller 'MainCtrl', [
   '$http', '$timeout'
   ($http, $timeout)->
     vm = @
@@ -241,5 +241,4 @@ app.controller('MainCtrl', [
       return
 
     vm
-])
-
+]
