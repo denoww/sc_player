@@ -154,7 +154,7 @@ module.exports = ->
       # atualizar chromium para limpar cache e sobrecarga de processos
 
       caminho = resolve('tasks/')
-      shell.exec "#{caminho}./refresh_browser.sh", (code, grepOut, grepErr)->
+      shell.exec "#{caminho}/./refresh_browser.sh", (code, grepOut, grepErr)->
         if grepErr
           console.error 'Grade -> refreshBrowser:', grepErr
           return
