@@ -11,20 +11,31 @@ module.exports = ->
       console.info "URL", url
 
       request url, (error, response, body)=>
+        @getDataOffline()
+
         if error || response?.statusCode != 200
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           console.error erro
-          @getDataOffline()
           @startBrowser()
           return
 
         data = JSON.parse(body)
-        return console.error 'Erro: Não existe Dados da Grade!' unless data
+        if Object.empty(data || {})
+          return console.error 'Grade -> Erro: Não existe Dados da Grade!'
+
+        atualizarPlayer = @data?.versao_player? &&
+          @data.versao_player != data.versao_player
+
         @handlelist(data)
         @saveDataJson()
+
+        if atualizarPlayer
+          return @updatePlayer()
+
         @startBrowser()
+        @setTimerUpdateBrowser()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -36,6 +47,7 @@ module.exports = ->
         conteudos: []
         mensagens: []
         resolucao: data.resolucao
+        versao_player: data.versao_player
 
       @data.finance = data.finance if data.finance
       @data.weather = data.weather if data.weather
@@ -132,7 +144,6 @@ module.exports = ->
       try
         @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
         @data.offline = true
-        global.feeds.getList()
       catch e
         console.error 'Grade -> getDataOffline:', e
     startBrowser: ->
@@ -159,6 +170,23 @@ module.exports = ->
           console.error 'Grade -> refreshBrowser:', grepErr
           return
         console.info '### Navegador Atualizado!'
+    updatePlayer: ->
+      console.info '### Atualizando Player...'
+      # se a versao do player for alterada sera executado a atualizacao
+
+      caminho = resolve('tasks/')
+      shell.exec "#{caminho}/./update.sh", (code, grepOut, grepErr)->
+        if grepErr
+          console.error 'Grade -> updatePlayer:', grepErr
+          return
+    setTimerUpdateBrowser: ->
+      # para resolver o problema do 'Aw, Snap!' do Chromium
+      @clearTimerUpdateBrowser()
+      @timerUpdateBrowser = setTimeout ->
+        ctrl.refreshBrowser()
+      , 1000 * 60 * 2
+    clearTimerUpdateBrowser: ->
+      clearTimeout @timerUpdateBrowser if @timerUpdateBrowser
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
@@ -166,7 +194,7 @@ module.exports = ->
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
 
   setInterval ->
-    console.info 'Grade ->  Navegador!'
+    console.info 'Grade -> Atualizando Navegador!'
     ctrl.refreshBrowser()
   , 1000 * 60 * 60 * 2 # 2 horas
 

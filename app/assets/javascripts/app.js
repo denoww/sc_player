@@ -98,6 +98,18 @@
             return vm.timeline.next(tipo);
           }),
     segundos);
+          if (this.current[tipo].is_video) {
+            this.playVideo();
+          }
+        },
+        playVideo: function(tipo) {
+          $timeout(function() {
+            var video;
+            video = document.getElementById('video-player');
+            if (video != null ? video.paused : void 0) {
+              return video.play();
+            }
+          });
         },
         getNextItem: function(tipo) {
           var currentItem,

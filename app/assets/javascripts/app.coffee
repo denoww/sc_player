@@ -51,6 +51,12 @@ app.controller('MainCtrl', [
         $timeout (-> vm.timeline.transicao[tipo] = false), 250
         $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
         @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
+        @playVideo() if @current[tipo].is_video
+        return
+      playVideo: (tipo)->
+        $timeout ->
+          video = document.getElementById('video-player')
+          video.play() if video?.paused
         return
       getNextItem: (tipo)->
         lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado

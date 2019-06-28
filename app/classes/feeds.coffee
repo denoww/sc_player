@@ -10,7 +10,7 @@ module.exports = ->
     data: {}
     totalItensPorCategoria: 20
     getList: ->
-      return unless global.grade?.data?.conteudos
+      return unless global.grade?.data?.conteudos?.length
       feeds = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'feed'
       playlists = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'playlist'
 

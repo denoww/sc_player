@@ -132,9 +132,13 @@
               style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
             </div>
 
-            <video class="midia-video" ng-if="vm.timeline.current.conteudos.is_video" id="video-player" autoplay="autoplay" loop="">
+            <video class="midia-video"
+              ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}"
+              ng-if="vm.timeline.current.conteudos.is_video"
+              id="video-player"
+              autoplay="autoplay">
               <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
-              <source ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" />
+              <!-- <source ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" /> -->
             </video>
           </div>
         </div> <!-- player-item -->
