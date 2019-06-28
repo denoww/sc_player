@@ -3,6 +3,7 @@
   <!-- nao altere o title -->
   <title>page-player</title>
 
+  <script type="text/javascript" src="/javascripts/lib/jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="/javascripts/lib/angular.js"></script>
   <script type="text/javascript" src="/javascripts/lib/angular-sanitize.js"></script>
   <script type="text/javascript" src="/javascripts/lib/angular-locale_pt-br.js"></script>
@@ -39,7 +40,7 @@
         <div class="item-hora">
           <div class="dia">{{vm.now | date:"dd 'de' MMMM"}}</div>
           <div class="dia-semana">{{vm.now | date:"EEEE"}}</div>
-          <div id="hora">--:--:--</div>
+          <div id="hora">--:--</div>
         </div>
         <!-- data e hora -->
 

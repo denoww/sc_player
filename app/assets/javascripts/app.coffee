@@ -55,7 +55,9 @@ app.controller('MainCtrl', [
         return
       playVideo: (tipo)->
         $timeout ->
-          video = document.getElementById('video-player')
+          video = angular.element('#video-player')[0]
+          console.log(video)
+          console.log(video.paused)
           video.play() if video?.paused
         return
       getNextItem: (tipo)->
@@ -215,25 +217,27 @@ app.controller('MainCtrl', [
     vm.mouse =
       onMove: ->
         $timeout.cancel(@timeout) if @timeout
-        document.body.style.cursor = 'default'
+        @body ||= angular.element('#body-player')[0]
+        @body.style.cursor = 'default'
 
         @timeout = $timeout =>
-          document.body.style.cursor = 'none'
+          @body.style.cursor = 'none'
         , 1000
 
     vm.relogio = ->
       vm.now = new Date
       hour = vm.now.getHours()
       min  = vm.now.getMinutes()
-      sec  = vm.now.getSeconds()
+      # sec  = vm.now.getSeconds()
 
       hour = "#{hour}".rjust(2, '0')
       min  = "#{min}".rjust(2, '0')
-      sec  = "#{sec}".rjust(2, '0')
+      # sec  = "#{sec}".rjust(2, '0')
 
-      elem = document.getElementById('hora')
-      elem.innerHTML = hour + ':' + min + ':' + sec if elem
-      setTimeout vm.relogio, 1000
+      @elem ||= angular.element('#hora')[0]
+      # @elem.innerHTML = hour + ':' + min + ':' + sec if @elem
+      @elem.innerHTML = hour + ':' + min if @elem
+      setTimeout vm.relogio, 1000 * 60
       return
 
     vm

@@ -105,7 +105,9 @@
         playVideo: function(tipo) {
           $timeout(function() {
             var video;
-            video = document.getElementById('video-player');
+            video = angular.element('#video-player')[0];
+            console.log(video);
+            console.log(video.paused);
             if (video != null ? video.paused : void 0) {
               return video.play();
             }
@@ -347,34 +349,33 @@
           if (this.timeout) {
             $timeout.cancel(this.timeout);
           }
-          document.body.style.cursor = 'default';
+          this.body || (this.body = angular.element('#body-player')[0]);
+          this.body.style.cursor = 'default';
           return this.timeout = $timeout(() => {
-            return document.body.style.cursor = 'none';
+            return this.body.style.cursor = 'none';
           },
     1000);
         }
       };
       vm.relogio = function() {
-        var elem,
-    hour,
-    min,
-    sec;
+        var hour,
+    min;
         vm.now = new Date;
         hour = vm.now.getHours();
         min = vm.now.getMinutes();
-        sec = vm.now.getSeconds();
+        // sec  = vm.now.getSeconds()
         hour = `${hour}`.rjust(2,
     '0');
         min = `${min}`.rjust(2,
     '0');
-        sec = `${sec}`.rjust(2,
-    '0');
-        elem = document.getElementById('hora');
-        if (elem) {
-          elem.innerHTML = hour + ':' + min + ':' + sec;
+        // sec  = "#{sec}".rjust(2, '0')
+        this.elem || (this.elem = angular.element('#hora')[0]);
+        if (this.elem) {
+          // @elem.innerHTML = hour + ':' + min + ':' + sec if @elem
+          this.elem.innerHTML = hour + ':' + min;
         }
         setTimeout(vm.relogio,
-    1000);
+    1000 * 60);
       };
       return vm;
     }
