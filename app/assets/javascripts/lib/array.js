@@ -217,7 +217,7 @@
     if (idx === -1) {
       return this.push(obj);
     } else {
-      return angular.extend(this[idx], obj);
+      return Object.assign(this[idx], obj);
     }
   };
 

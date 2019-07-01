@@ -1,244 +1,271 @@
-app = angular.module 'publicidade_app', ['ngSanitize', 'ngLocale']
+data =
+  body:    undefined
+  loaded:  false
+  loading: true
 
-app.config ['$qProvider', ($qProvider)->
-    $qProvider.errorOnUnhandledRejections(false)
-]
+  grade:
+    data:
+      cor: 'black'
+      layout: 'layout-2'
+      weather: {}
 
-app.controller 'MainCtrl', [
-  '$http', '$timeout'
-  ($http, $timeout)->
-    vm = @
-    vm.loading = true
+  feeds:
+    data: {}
 
-    vm.init = ->
-      vm.loading = true
+  timeline:
+    conteudos: []
+    mensagens: []
+    musicas:   []
+    transicao:
+      conteudos: false
+      mensagens: false
+      musicas:   false
+    current:
+      conteudos: {}
+      mensagens: {}
+      musicas:   {}
 
-      vm.grade.get ->
-        vm.feeds.get ->
+grade =
+  data: {}
+  tentar: 10
+  tentativas: 0
+  get: (onSuccess, onError)->
+    return if @loading
+    @loading = true
+
+    success = (resp)=>
+      @loading    = false
+      @tentativas = 0
+
+      @data = resp.data
+      onSuccess?()
+      @mountWeatherData()
+      vm.grade.data = @data
+      timeline.init()
+
+    error = (resp)=>
+      @loading = false
+      timeline.init()
+      console.error 'Grade:', resp
+
+      @tentativas++
+      if @tentativas > @tentar
+        console.error 'Grade: Não foi possível comunicar com o servidor!'
+        return
+
+      @tentarNovamenteEm = 1000 * @tentativas
+      console.warn "Grade: Tentando em #{@tentarNovamenteEm} segundos"
+      setTimeout (-> grade.get()), @tentarNovamenteEm
+      onError?()
+
+    Vue.http.get('/grade').then success, error
+    return
+  mountWeatherData: ->
+    return unless @data.weather
+
+    dataHoje = new Date
+    dia = "#{dataHoje.getDate()}".rjust(2, '0')
+    mes = "#{dataHoje.getMonth() + 1}".rjust(2, '0')
+    dataHoje = "#{dia}/#{mes}"
+
+    dia = @data.weather.proximos_dias[0]
+    if dia.data == dataHoje
+      dia = @data.weather.proximos_dias.shift()
+      @data.weather.max = dia.max
+      @data.weather.min = dia.min
+
+    @data.weather.proximos_dias = @data.weather.proximos_dias.slice(0,4)
+    return
+
+feeds =
+  data: {}
+  tentar: 10
+  tentativas: 0
+  nextIndex: {}
+  get: (onSuccess, onError)->
+    return if @loading
+    @loading = true
+
+    success = (resp)=>
+      @loading    = false
+      @tentativas = 0
+
+      @data = resp.data
+      @verificarNoticias()
+      onSuccess?()
+      vm.feeds.data = @data
+      timeline.init()
+
+    error = (resp)=>
+      @loading = false
+      timeline.init()
+      console.error 'Feeds:', resp
+
+      @tentativas++
+      if @tentativas > @tentar
+        console.error 'Feeds: Não foi possível comunicar com o servidor!'
+        return
+
+      @tentarNovamenteEm = 1000 * @tentativas
+      console.warn "Feeds: Tentando em #{@tentarNovamenteEm} segundos"
+      setTimeout (-> feeds.get()), @tentarNovamenteEm
+      onError?()
+
+    Vue.http.get('/feeds').then success, error
+    return
+  verificarNoticias: ->
+    for fonte, categorias of @data
+      for categoria, valores of categorias
+        if (valores || []).empty()
+          return unless grade.data.conteudos
+          conteudos = grade.data.conteudos.select (e)->
+            e.fonte == fonte && e.categoria == categoria
+          cont.ativado = false for cont in conteudos
+    return
+
+timeline =
+  tipos:     ['conteudos', 'musicas', 'mensagens']
+  current:   {}
+  promessa:  {}
+  nextIndex: {}
+  transicao: {}
+  playlistIndex: {}
+  init: ->
+    return unless vm.loaded
+
+    for tipo in @tipos
+      @nextIndex[tipo] ||= 0
+      @executar(tipo) unless @promessa?[tipo]?
+  executar: (tipo)->
+    @transicao[tipo] = false
+    clearTimeout @promessa[tipo] if @promessa?[tipo]
+
+    vm.timeline.current[tipo] = @getNextItem(tipo)
+    return unless vm.timeline.current[tipo]
+
+    segundos = (vm.timeline.current[tipo].segundos * 1000) || 5000
+    vm.timeline.transicao[tipo] = true
+
+    setTimeout (-> vm.timeline.transicao[tipo] = false) , 250
+    setTimeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
+    @promessa[tipo] = setTimeout (-> timeline.executar(tipo)) , segundos
+    @playVideo() if vm.timeline.current[tipo].is_video
+    return
+  playVideo: (tipo)->
+    setTimeout ->
+      video = document.getElementById('video-player')
+      video.play() if video?.paused
+    return
+  getNextItem: (tipo)->
+    lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado
+    return unless lista.length
+
+    index = @nextIndex[tipo]
+    index = 0 if index >= lista.length
+
+    @nextIndex[tipo]++
+    @nextIndex[tipo] = 0 if @nextIndex[tipo] >= lista.length
+
+    currentItem = lista[index]
+    switch currentItem.tipo_midia
+      when 'feed'     then @getItemFeed(currentItem)
+      when 'playlist' then @getItemPlaylist(currentItem)
+      else currentItem
+  getItemFeed: (currentItem)->
+    feedItems = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
+    return currentItem if (feedItems || []).empty()
+
+    fonte = currentItem.fonte
+    categ = currentItem.categoria
+    feeds.nextIndex[fonte] ||= {}
+
+    if !feeds.nextIndex[fonte][categ]?
+      feeds.nextIndex[fonte][categ] = 0
+    else
+      feeds.nextIndex[fonte][categ]++
+
+    if feeds.nextIndex[fonte][categ] >= feedItems.length
+      feeds.nextIndex[fonte][categ] = 0
+
+    feedIndex = feeds.nextIndex[fonte][categ]
+
+    feed = feedItems[feedIndex] || feedItems[0]
+
+    return unless feed
+    currentItem.nome   = feed.nome
+    currentItem.data   = feed.data
+    currentItem.titulo = feed.titulo
+    currentItem.titulo_feed = feed.titulo_feed
+
+    currentItem
+  getItemPlaylist: (playlist)->
+    if !@playlistIndex[playlist.id]?
+      @playlistIndex[playlist.id] = 0
+    else
+      @playlistIndex[playlist.id]++
+
+    if @playlistIndex[playlist.id] >= playlist.conteudos.length
+      @playlistIndex[playlist.id] = 0
+
+    currentItem = playlist.conteudos[@playlistIndex[playlist.id]]
+
+    return currentItem if currentItem.tipo_midia != 'feed'
+    @getItemFeed(currentItem)
+
+relogio =
+  exec: ->
+    now = new Date
+    hour = now.getHours()
+    min  = now.getMinutes()
+    sec  = now.getSeconds()
+
+    hour = "#{hour}".rjust(2, '0')
+    min  = "#{min}".rjust(2, '0')
+    sec  = "#{sec}".rjust(2, '0')
+
+    @elemHora ||= document.getElementById('hora')
+    @elemHora.innerHTML = hour + ':' + min + ':' + sec if @elemHora
+    setTimeout relogio.exec, 1000
+    return
+
+vm = new Vue
+  el:   '#main-player'
+  data: data
+  methods:
+    mouse: ->
+      clearTimeout(@mouseTimeout) if @mouseTimeout
+      @body ||= document.getElementById('body-player')
+      @body.style.cursor = 'default'
+
+      @mouseTimeout = setTimeout =>
+        @body.style.cursor = 'none'
+      , 1000
+  computed:
+    now: -> Date.now()
+  created: ->
+    @loading = true
+    @mouse()
+    relogio.exec()
+
+    grade.get ->
+      feeds.get ->
+        vm.loading = false
+        vm.loaded = true
+
+    setInterval ->
+      grade.get ->
+        feeds.get ->
           vm.loading = false
           vm.loaded = true
-          vm.relogio()
+    , 1000 * 60 # a cada minuto
 
-      setInterval ->
-        vm.grade.get ->
-          vm.feeds.get ->
-            vm.loading = false
-            vm.loaded = true
-      , 1000 * 60  # a cada minuto
+  mounted: ->
 
-    vm.timeline =
-      tipos:     ['conteudos', 'musicas', 'mensagens']
-      current:   {}
-      promessa:  {}
-      nextIndex: {}
-      transicao: {}
-      playlistIndex: {}
-      init: ->
-        return unless vm.loaded
+Vue.filter 'formatDate', (value)->
+  moment(value).format('LL') if value
 
-        for tipo in @tipos
-          @nextIndex[tipo] ||= 0
-          @executar(tipo) if @promessa?[tipo]?.$$state?.status != 0
-      executar: (tipo)->
-        @transicao[tipo] = false
-        $timeout.cancel(@promessa[tipo]) if @promessa?[tipo]
+Vue.filter 'formatWeek', (value)->
+  moment(value).format('dddd') if value
 
-        @current[tipo] = @getNextItem(tipo)
-        return unless @current[tipo]
-
-        segundos = (@current[tipo].segundos * 1000) || 5000
-        vm.timeline.transicao[tipo] = true
-        $timeout (-> vm.timeline.transicao[tipo] = false), 250
-        $timeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
-        @promessa[tipo] = $timeout (-> vm.timeline.next(tipo)), segundos
-        @playVideo() if @current[tipo].is_video
-        return
-      playVideo: (tipo)->
-        $timeout ->
-          video = angular.element('#video-player')[0]
-          console.log(video)
-          console.log(video.paused)
-          video.play() if video?.paused
-        return
-      getNextItem: (tipo)->
-        lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado
-        return unless lista.length
-
-        index = @nextIndex[tipo]
-        index = 0 if index >= lista.length
-
-        @nextIndex[tipo]++
-        @nextIndex[tipo] = 0 if @nextIndex[tipo] >= lista.length
-
-        currentItem = lista[index]
-        switch currentItem.tipo_midia
-          when 'feed'     then @getItemFeed(currentItem)
-          when 'playlist' then @getItemPlaylist(currentItem)
-          else currentItem
-      getItemFeed: (currentItem)->
-        feedItems = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
-        return currentItem if (feedItems || []).empty()
-
-        fonte = currentItem.fonte
-        categ = currentItem.categoria
-        vm.feeds.nextIndex[fonte] ||= {}
-
-        if !vm.feeds.nextIndex[fonte][categ]?
-          vm.feeds.nextIndex[fonte][categ] = 0
-        else
-          vm.feeds.nextIndex[fonte][categ]++
-
-        if vm.feeds.nextIndex[fonte][categ] >= feedItems.length
-          vm.feeds.nextIndex[fonte][categ] = 0
-
-        feedIndex = vm.feeds.nextIndex[fonte][categ]
-
-        feed = feedItems[feedIndex] || feedItems[0]
-
-        return unless feed
-        currentItem.nome   = feed.nome
-        currentItem.data   = feed.data
-        currentItem.titulo = feed.titulo
-        currentItem.titulo_feed = feed.titulo_feed
-
-        currentItem
-      getItemPlaylist: (playlist)->
-        if !@playlistIndex[playlist.id]?
-          @playlistIndex[playlist.id] = 0
-        else
-          @playlistIndex[playlist.id]++
-
-        if @playlistIndex[playlist.id] >= playlist.conteudos.length
-          @playlistIndex[playlist.id] = 0
-
-        currentItem = playlist.conteudos[@playlistIndex[playlist.id]]
-
-        return currentItem if currentItem.tipo_midia != 'feed'
-        @getItemFeed(currentItem)
-      next: (tipo)->
-        @current[tipo] = {}
-        $timeout -> vm.timeline.executar(tipo)
-
-    vm.grade =
-      data: {}
-      tentar: 10
-      tentativas: 0
-      get: (onSuccess, onError)->
-        return if @loading
-        @loading = true
-
-        success = (resp)=>
-          @loading    = false
-          @tentativas = 0
-          vm.offline  = resp.data.offline
-
-          @data = resp.data
-          onSuccess?()
-          @mountWeatherData()
-          vm.timeline.init()
-
-        error = (resp)=>
-          @loading = false
-          vm.timeline.init()
-          console.error 'Grade:', resp
-
-          @tentativas++
-          if @tentativas > @tentar
-            console.error 'Grade: Não foi possível comunicar com o servidor!'
-            return
-
-          @tentarNovamenteEm = 1000 * @tentativas
-          console.warn "Grade: Tentando em #{@tentarNovamenteEm} segundos"
-          $timeout (-> vm.grade.get()), @tentarNovamenteEm
-          onError?()
-
-        $http(method: 'GET', url: '/grade').then success, error
-        return
-      mountWeatherData: ->
-        return unless @data.weather
-
-        dataHoje = new Date
-        dia = "#{dataHoje.getDate()}".rjust(2, '0')
-        mes = "#{dataHoje.getMonth() + 1}".rjust(2, '0')
-        dataHoje = "#{dia}/#{mes}"
-
-        dia = @data.weather.proximos_dias[0]
-        if dia.data == dataHoje
-          dia = @data.weather.proximos_dias.shift()
-          @data.weather.max = dia.max
-          @data.weather.min = dia.min
-        return
-
-    vm.feeds =
-      data: {}
-      tentar: 10
-      tentativas: 0
-      nextIndex: {}
-      get: (onSuccess, onError)->
-        return if @loading
-        @loading = true
-
-        success = (resp)=>
-          @loading    = false
-          @tentativas = 0
-
-          @data = resp.data
-          @verificarNoticias()
-          onSuccess?()
-          vm.timeline.init()
-
-        error = (resp)=>
-          @loading = false
-          vm.timeline.init()
-          console.error 'Feeds:', resp
-
-          @tentativas++
-          if @tentativas > @tentar
-            console.error 'Feeds: Não foi possível comunicar com o servidor!'
-            return
-
-          @tentarNovamenteEm = 1000 * @tentativas
-          console.warn "Feeds: Tentando em #{@tentarNovamenteEm} segundos"
-          $timeout (-> vm.feeds.get()), @tentarNovamenteEm
-          onError?()
-
-        $http(method: 'GET', url: '/feeds').then success, error
-        return
-      verificarNoticias: ->
-        for fonte, categorias of @data
-          for categoria, valores of categorias
-            if (valores || []).empty()
-              return unless vm.grade.data.conteudos
-              conteudos = vm.grade.data.conteudos.select (e)->
-                e.fonte == fonte && e.categoria == categoria
-              cont.ativado = false for cont in conteudos
-        return
-
-    vm.mouse =
-      onMove: ->
-        $timeout.cancel(@timeout) if @timeout
-        @body ||= angular.element('#body-player')[0]
-        @body.style.cursor = 'default'
-
-        @timeout = $timeout =>
-          @body.style.cursor = 'none'
-        , 1000
-
-    vm.relogio = ->
-      vm.now = new Date
-      hour = vm.now.getHours()
-      min  = vm.now.getMinutes()
-      # sec  = vm.now.getSeconds()
-
-      hour = "#{hour}".rjust(2, '0')
-      min  = "#{min}".rjust(2, '0')
-      # sec  = "#{sec}".rjust(2, '0')
-
-      @elem ||= angular.element('#hora')[0]
-      # @elem.innerHTML = hour + ':' + min + ':' + sec if @elem
-      @elem.innerHTML = hour + ':' + min if @elem
-      setTimeout vm.relogio, 1000 * 60
-      return
-
-    vm
-]
+Vue.filter 'currency', (value)->
+  (value || 0).toLocaleString('pt-Br', maximumFractionDigits: 2)

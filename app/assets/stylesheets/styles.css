@@ -57,6 +57,11 @@ html, body {
   opacity: .8;
 }
 
+#main-player {
+  width: 100vw;
+  height: 100vh;
+}
+
 .content-main {
   color: #333;
   width: 100vw;

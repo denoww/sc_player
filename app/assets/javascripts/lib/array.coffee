@@ -118,7 +118,7 @@ Array::addOrExtend = (obj)->
   if idx is -1
     @push obj
   else
-    angular.extend @[idx], obj
+    Object.assign @[idx], obj
 
 Array::somar = (field)->
   _arr = if field then @.map((e)-> e[field]) else @

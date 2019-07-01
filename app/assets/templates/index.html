@@ -1,165 +1,164 @@
-<html ng-app="publicidade_app">
-<head>
-  <!-- nao altere o title -->
-  <title>page-player</title>
+<html>
+  <head>
+    <!-- nao altere o title -->
+    <title>page-player</title>
 
-  <script type="text/javascript" src="/javascripts/lib/jquery-3.4.1.min.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/angular.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/angular-sanitize.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/angular-locale_pt-br.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/array.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/date.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/object.js"></script>
-  <script type="text/javascript" src="/javascripts/lib/string.js"></script>
-  <script type="text/javascript" src="/javascripts/app.js"></script>
+    <script src="/javascripts/lib/array.js"></script>
+    <script src="/javascripts/lib/date.js"></script>
+    <script src="/javascripts/lib/object.js"></script>
+    <script src="/javascripts/lib/string.js"></script>
 
-  <link rel="icon" href="/images/favicon.png">
-  <link rel="stylesheet" type="text/css" href="stylesheets/fonts.css">
-  <link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
-  <link rel="stylesheet" type="text/css" href="stylesheets/sc-icons.css">
-</head>
+    <link rel="icon" href="/images/favicon.png">
+    <link rel="stylesheet" type="text/css" href="stylesheets/fonts.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/sc-icons.css">
+  </head>
 
-<body id="body-player" class="{{vm.grade.data.layout || 'layout-2'}} {{vm.grade.data.cor || 'black'}}"
-  ng-controller="MainCtrl as vm"
-  ng-mousemove="vm.mouse.onMove()"
-  ng-init="vm.init()"
-  style="cursor: none">
-  <div class="loading" ng-if="vm.loading">
-      <div>&nbsp;</div>
-      <div class="logo" style="background-image: url('/images/seucondominio-white.png')"></div>
-      <div class="text">
-        <div><i class="sc-icon-carregando-1 sc-icon-spin"></i></div>
-        Carregando
-      </div>
-  </div>
-  <div class="content-main" ng-if="vm.loaded">
-    <!-- offline -->
-    <div class="offline" ng-if="vm.offline"></div>
-    <!-- offline -->
+  <body id="body-player">
+    <!-- style="cursor: none"> -->
+    <div id="main-player" :class="[grade.data.layout, grade.data.cor]" @mousemove="mouse">
+      <div id="content-main" class="content-main" v-if="loaded">
+        <!-- offline -->
+        <div class="offline" v-if="grade.data.offline"></div>
+        <!-- offline -->
 
-    <div class="content-top">
-
-      <div class="content-side">
-        <!-- data e hora -->
-        <div class="item-hora">
-          <div class="dia">{{vm.now | date:"dd 'de' MMMM"}}</div>
-          <div class="dia-semana">{{vm.now | date:"EEEE"}}</div>
-          <div id="hora">--:--</div>
-        </div>
-        <!-- data e hora -->
-
-        <!-- weather -->
-        <div class="item-weather" ng-if="vm.grade.data.weather.temperatura">
-          <div class="cidade">
-            {{vm.grade.data.cidade}}
-          </div>
-          <div class="main-weather">
-            <div class="icone-weather" ng-style="{'background-image': 'url(/images/weather/' + vm.grade.data.weather.icone + '.png)'}"></div>
-            <div class="temperatura-weather">
-              <span>{{vm.grade.data.weather.temperatura}}</span>
-              <div class="min-max" ng-if="vm.grade.data.weather.min && vm.grade.data.weather.max">
-                Min: <b>{{vm.grade.data.weather.min}}&#176;</b> | Max: <b>{{vm.grade.data.weather.max}}&#176;</b>
-              </div>
+        <div class="content-top">
+          <div class="content-side">
+            <!-- data e hora -->
+            <div class="item-hora">
+              <div class="dia">{{now | formatDate}}</div>
+              <div class="dia-semana">{{now | formatWeek}}</div>
+              <div id="hora">--:--:--</div>
             </div>
-          </div>
-          <div class="descricao-weather">{{vm.grade.data.weather.descricao}}</div>
-          <div class="info-weather">
-            <div class="umidade">Umidade: <b>{{vm.grade.data.weather.umidade || '--'}}</b></div>
-            <div class="vento">Vento: <b>{{vm.grade.data.weather.vento || '--'}}</b></div>
-          </div>
-          <div class="proximos_dias">
-            <div ng-repeat="proximo in vm.grade.data.weather.proximos_dias  | limitTo: 4">
-              <!-- <div class="dia">{{proximo.dia}}</div> -->
-              <b class="data">{{proximo.data}}</b>
-              <div class="min-max">
-                <div>
-                  <div class="desc">MIN</div>
-                  <b>{{proximo.min}}&#176;</b>
+            <!-- data e hora -->
+
+            <!-- weather -->
+            <div class="item-weather" v-if="grade.data.weather.temperatura">
+              <div class="cidade">
+                {{grade.data.cidade}}
+              </div>
+              <div class="main-weather">
+                <div class="icone-weather" :style="{'background-image': 'url(/images/weather/' + grade.data.weather.icone + '.png)'}"></div>
+                <div class="temperatura-weather">
+                  <span>{{grade.data.weather.temperatura}}</span>
+                  <div class="min-max" v-if="grade.data.weather.min && grade.data.weather.max">
+                    Min: <b>{{grade.data.weather.min}}&#176;</b> | Max: <b>{{grade.data.weather.max}}&#176;</b>
+                  </div>
                 </div>
-                <div>
-                  <div class="desc">MAX</div>
-                  <b>{{proximo.max}}&#176;</b>
+              </div>
+              <div class="descricao-weather">{{grade.data.weather.descricao}}</div>
+              <div class="info-weather">
+                <div class="umidade">Umidade: <b>{{grade.data.weather.umidade || '--'}}</b></div>
+                <div class="vento">Vento: <b>{{grade.data.weather.vento || '--'}}</b></div>
+              </div>
+              <div class="proximos_dias">
+                <div v-for="proximo in grade.data.weather.proximos_dias">
+                  <!-- <div class="dia">{{proximo.dia}}</div> -->
+                  <b class="data">{{proximo.data}}</b>
+                  <div class="min-max">
+                    <div>
+                      <div class="desc">MIN</div>
+                      <b>{{proximo.min}}&#176;</b>
+                    </div>
+                    <div>
+                      <div class="desc">MAX</div>
+                      <b>{{proximo.max}}&#176;</b>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <!-- weather -->
+            <!-- weather -->
 
-        <!-- finance -->
-        <div class="item-finance">
-          <div class="{{sym}}" ng-repeat="(sym, item) in vm.grade.data.finance" ng-if="item.valor">
-            <div class="titulo">
-              <div>
-                {{item.label}}
-                <span class="variacao">
-                  {{item.variacao < 0 ? '&#9660;' : '&#9650;'}}
-                  {{item.variacao}}%
-                </span>
-                <div class="valor" ng-if="item.tipo == 'moeda'"><span class="sifrao">R$</span>{{item.valor | currency:'':2}}</div>
-                <div class="valor" ng-if="item.tipo == 'indice'">{{item.valor | currency:'':2 }}</div>
+            <!-- finance -->
+            <div class="item-finance">
+              <div :class="sym" v-for="(item, sym) in grade.data.finance" v-if="item.valor">
+                <div class="titulo">
+                  <div>
+                    {{item.label}}
+                    <span class="variacao">
+                      {{item.variacao < 0 ? '&#9660;' : '&#9650;'}}
+                      {{item.variacao}}%
+                    </span>
+                    <div class="valor" v-if="item.tipo == 'moeda'"><span class="sifrao">R$</span>{{item.valor | currency}}</div>
+                    <div class="valor" v-if="item.tipo == 'indice'">{{item.valor | currency }}</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <!-- finance -->
+            <!-- finance -->
 
-        <!-- anuncie -->
-        <div class="item-anuncie">
-          <div>ANUNCIE AQUI!</div>
-          <div class="telefone">(62) 3142-9759</div>
-        </div>
-        <!-- anuncie -->
-      </div> <!-- content-side -->
+            <!-- anuncie -->
+            <div class="item-anuncie">
+              <div>ANUNCIE AQUI!</div>
+              <div class="telefone">(62) 3142-9759</div>
+            </div>
+            <!-- anuncie -->
+          </div> <!-- content-side -->
 
-      <div class="content-player">
-        <div class="player-item"
-        ng-class="{'transicao': vm.timeline.transicao.conteudos}"
-        ng-switch="vm.timeline.current.conteudos.tipo_midia">
-          <div ng-switch-when="feed" class="content-feed">
-            <div class="feed-main">
-              <div class="feed-info">
-                <div class="feed-fonte" ng-style="{'background-image': 'url(/images/feeds/' + vm.timeline.current.conteudos.fonte + '.png)'}"></div>
-                <div class="feed-categoria">{{vm.timeline.current.conteudos.titulo_feed}}</div>
-                <div class="feed-out"></div>
+          <div class="content-player">
+            <div class="player-item"
+            :class="{'transicao': timeline.transicao.conteudos}">
+              <div v-if="timeline.current.conteudos.tipo_midia === 'feed'" class="content-feed">
+                <div class="feed-main">
+                  <div class="feed-info">
+                    <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + timeline.current.conteudos.fonte + '.png)'}"></div>
+                    <div class="feed-categoria">{{timeline.current.conteudos.titulo_feed}}</div>
+                    <div class="feed-out"></div>
+                  </div>
+                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.current.conteudos.nome ? '/downloads/feeds/' + timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
+                  <div class="feed-titulo">{{timeline.current.conteudos.titulo}}</div>
+                </div>
               </div>
-              <div class="feed-imagem" ng-style="{'background-image': 'url(' + (vm.timeline.current.conteudos.nome ? '/downloads/feeds/' + vm.timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
-              <div class="feed-titulo">{{vm.timeline.current.conteudos.titulo}}</div>
-            </div>
-          </div>
 
-          <div ng-switch-when="clima">
-            <div>{{vm.timeline.current.conteudos.titulo}}</div>
-          </div>
+              <div v-else-if="timeline.current.conteudos.tipo_midia === 'clima'">
+                <div>{{timeline.current.conteudos.titulo}}</div>
+              </div>
 
-          <div class="midia-main" ng-switch-when="midia" ng-if="vm.timeline.current.conteudos.segundos">
-            <div class="midia-imagem" ng-if="vm.timeline.current.conteudos.is_image"
-              style="background-image: url(/downloads/images/{{vm.timeline.current.conteudos.nome}})">
-            </div>
+              <div class="midia-main" v-else-if="timeline.current.conteudos.tipo_midia === 'midia'">
+                <div class="midia-imagem" v-if="timeline.current.conteudos.is_image"
+                  :style="{'background-image': 'url(/downloads/images/' + timeline.current.conteudos.nome + ')'}">
+                </div>
 
-            <video class="midia-video"
-              ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}"
-              ng-if="vm.timeline.current.conteudos.is_video"
-              id="video-player"
-              autoplay="autoplay">
-              <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
-              <!-- <source ng-src="/downloads/videos/{{vm.timeline.current.conteudos.nome}}" type="video/mp4" /> -->
-            </video>
-          </div>
-        </div> <!-- player-item -->
-      </div> <!-- content-player -->
-    </div> <!-- content-top -->
+                <video class="midia-video"
+                  :src="'/downloads/videos/' + timeline.current.conteudos.nome"
+                  v-if="timeline.current.conteudos.is_video"
+                  id="video-player"
+                  autoplay="autoplay">
+                  <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
+                </video>
+              </div>
+            </div> <!-- player-item -->
+          </div> <!-- content-player -->
+        </div> <!-- content-top -->
 
-    <div class="content-footer">
-      <div class="content-logo {{vm.grade.data.cor == 'gray' ? 'black' : ''}}">
-        <div class="logo" ng-style="{'background-image': 'url(/images/seucondominio' + (vm.grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
-      </div> <!-- content-logo -->
+        <div class="content-footer">
+          <div class="content-logo" :class="[grade.data.cor == 'gray' ? 'black' : '']">
+            <div class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
+          </div> <!-- content-logo -->
 
-      <div class="content-mensagem">
-        <div class="titulo" ng-if="vm.timeline.current.mensagens.titulo">{{vm.timeline.current.mensagens.titulo}}</div>
-        <div class="mensagem" ng-if="vm.timeline.current.mensagens.mensagem" ng-bind-html="vm.timeline.current.mensagens.mensagem"></div>
-      </div> <!-- content-mensagem -->
-    </div> <!-- content-footer -->
-  </div> <!-- content-main -->
-</body>
+          <div class="content-mensagem">
+            <div class="titulo" v-if="timeline.current.mensagens.titulo">{{timeline.current.mensagens.titulo}}</div>
+            <div class="mensagem" v-if="timeline.current.mensagens.mensagem" v-html="timeline.current.mensagens.mensagem"></div>
+          </div> <!-- content-mensagem -->
+        </div> <!-- content-footer -->
+      </div> <!-- content-main -->
+
+      <div class="loading" v-if="loading">
+        <div>&nbsp;</div>
+        <div class="logo" style="background-image: url('/images/seucondominio-white.png')"></div>
+        <div class="text">
+          <div><i class="sc-icon-carregando-1 sc-icon-spin"></i></div>
+          Carregando
+        </div>
+      </div> <!-- loading -->
+
+    </div>
+  </body>
+
+  <script src="/javascripts/lib/moment.min.js"></script>
+  <script src="/javascripts/lib/moment_pt-br.js"></script>
+  <script src="/javascripts/lib/vue.min.js"></script>
+  <script src="/javascripts/lib/vue-resource.min.js"></script>
+  <script src="/javascripts/app.js"></script>
 </html>
