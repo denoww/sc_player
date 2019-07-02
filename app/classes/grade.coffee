@@ -17,13 +17,13 @@ module.exports = ->
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
-          console.error erro
+          global.logs.create("Grade -> getList -> ERRO: #{erro}")
           @startBrowser()
           return
 
         data = JSON.parse(body)
         if Object.empty(data || {})
-          return console.error 'Grade -> Erro: Não existe Dados da Grade!'
+          return global.logs.create('Grade -> Erro: Não existe Dados da Grade!')
 
         atualizarPlayer = @data?.versao_player? &&
           @data.versao_player != data.versao_player
@@ -136,7 +136,8 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
 
       fs.writeFile 'grade.json', dados, (error)->
-        return console.error error if error
+        if error
+          return global.logs.create("Grade -> saveDataJson -> ERRO: #{error}")
         console.info 'Grade -> grade.json salvo com sucesso!'
       return
     getDataOffline: ->
@@ -145,18 +146,34 @@ module.exports = ->
         @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
         @data.offline = true
       catch e
-        console.error 'Grade -> getDataOffline:', e
+        global.logs.create("Grade -> getDataOffline -> ERRO: #{e}")
     startBrowser: ->
       console.info '### Iniciando Navegador...'
       # verificando se já não tem um chromium aberto
       # shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
-      shell.exec 'xdotool search --onlyvisible --name page-player', (code, grepOut, grepErr)->
       # shell.exec 'pgrep firefox', (code, grepOut, grepErr)->
-        # se nao tem nenhum processo entao inicia o chromium
+      shell.exec 'xdotool search --onlyvisible --name page-player', (code, grepOut, grepErr)->
+        # se nao tem nenhum processo entao inicia o navegador
         unless grepOut
-          # shell.exec 'chromium-browser http://localhost:3001 --start-fullscreen --incognito --disable-gpu &" ', (code, stdout, stderr)->
-          shell.exec 'chromium-browser http://localhost:3001 --noerrdialogs --kiosk --incognito --disable-translate &', (code, stdout, stderr)->
-          # shell.exec 'firefox http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11', (code, stdout, stderr)->
+          ###
+            chromium-browser
+              --kiosk
+              --start-fullscreen
+              --incognito
+              --disable-gpu
+              --noerrdialogs
+              --disable-translate
+              --disable-sync
+              --no-first-run
+              --fast
+              --fast-start
+              --disable-infobars
+              --disable-features=TranslateUI
+          ###
+
+          # cmd = 'firefox http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11'
+          cmd = 'chromium-browser http://localhost:3001 --noerrdialogs --kiosk --incognito --disable-translate &'
+          shell.exec cmd, (code, stdout, stderr)->
             console.info '### Navegador executando!'
         else
           console.info '### Navegador já está aberto!'
@@ -167,9 +184,8 @@ module.exports = ->
       caminho = resolve('tasks/')
       shell.exec "#{caminho}/./refresh_browser.sh", (code, grepOut, grepErr)->
         if grepErr
-          console.error 'Grade -> refreshBrowser:', grepErr
-          return
-        console.info '### Navegador Atualizado!'
+          return global.logs.create("Grade -> refreshBrowser -> ERRO: #{grepErr}")
+        global.logs.create('Grade -> Navegador Atualizado!')
     updatePlayer: ->
       console.info '### Atualizando Player...'
       # se a versao do player for alterada sera executado a atualizacao
@@ -177,8 +193,8 @@ module.exports = ->
       caminho = resolve('tasks/')
       shell.exec "#{caminho}/./update.sh", (code, grepOut, grepErr)->
         if grepErr
-          console.error 'Grade -> updatePlayer:', grepErr
-          return
+          return global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
+        global.logs.create('Grade -> Atualizando Player!')
     setTimerUpdateBrowser: ->
       # para resolver o problema do 'Aw, Snap!' do Chromium
       @clearTimerUpdateBrowser()
@@ -191,15 +207,11 @@ module.exports = ->
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
-    global.logs.create('Grade -> Atualizando lista!')
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
 
   setInterval ->
-    console.info 'Grade -> Atualizando Navegador!'
     ctrl.refreshBrowser()
-    global.logs.create('Grade -> Atualizando Navegador!')
   , 1000 * 60 * 60 * 2 # 2 horas
-
 
   ctrl.getList()
   global.grade = ctrl

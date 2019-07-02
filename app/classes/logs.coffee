@@ -12,7 +12,9 @@ module.exports = ->
         grepOut
     create: (message)->
       return unless message
-      log = (new Date).toISOString() + ' >> ' + message
+      console.warn message
+
+      log = (new Date).toLocaleString() + ' >> ' + message
       shell.exec "echo '#{log}' >> #{@caminho}", (code, grepOut, grepErr)->
         return console.error 'Logs -> create:', grepErr if grepErr
   ctrl.init()

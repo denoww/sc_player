@@ -208,7 +208,7 @@
         if (video != null ? video.paused : void 0) {
           return video.play();
         }
-      });
+      }, 250);
     },
     getNextItem: function(tipo) {
       var currentItem, index, lista, total;
@@ -290,9 +290,15 @@
       hour = now.getHours();
       min = now.getMinutes();
       sec = now.getSeconds();
-      hour = `${hour}`.rjust(2, '0');
-      min = `${min}`.rjust(2, '0');
-      sec = `${sec}`.rjust(2, '0');
+      if (hour < 10) {
+        hour = `0${hour}`;
+      }
+      if (min < 10) {
+        min = `0${min}`;
+      }
+      if (sec < 10) {
+        sec = `0${sec}`;
+      }
       this.elemHora || (this.elemHora = document.getElementById('hora'));
       if (this.elemHora) {
         this.elemHora.innerHTML = hour + ':' + min + ':' + sec;

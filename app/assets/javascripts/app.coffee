@@ -154,6 +154,7 @@ timeline =
     setTimeout ->
       video = document.getElementById('video-player')
       video.play() if video?.paused
+    , 250
     return
   getNextItem: (tipo)->
     lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado
@@ -219,9 +220,9 @@ relogio =
     min  = now.getMinutes()
     sec  = now.getSeconds()
 
-    hour = "#{hour}".rjust(2, '0')
-    min  = "#{min}".rjust(2, '0')
-    sec  = "#{sec}".rjust(2, '0')
+    hour = "0#{hour}" if hour < 10
+    min  = "0#{min}"  if min < 10
+    sec  = "0#{sec}"  if sec < 10
 
     @elemHora ||= document.getElementById('hora')
     @elemHora.innerHTML = hour + ':' + min + ':' + sec if @elemHora

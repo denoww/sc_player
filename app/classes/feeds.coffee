@@ -26,7 +26,7 @@ module.exports = ->
 
       parserRSS.parseURL params.url,
       (error, feeds)=>
-        return console.error 'Feeds -> ERRO:', error if error
+        return global.logs.create("Feeds -> baixarFeeds -> ERRO: #{error}") if error
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}
@@ -92,7 +92,7 @@ module.exports = ->
         UrlExists urls[index], (error, existe)=>
           @loading = false
           @next()
-          return console.error 'UrlExists ERRO:', error if error
+          return global.logs.create("Feeds -> verificarUrls -> ERRO: #{error}") if error
 
           if existe
             params.url = urls[index]
@@ -109,7 +109,7 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
 
       fs.writeFile 'feeds.json', dados, (error)->
-        return console.error error if error
+        return global.logs.create("Feeds -> saveDataJson -> ERRO: #{error}") if error
         console.info 'feeds.json salvo com sucesso!'
       return
     getDataOffline: ->
@@ -117,8 +117,7 @@ module.exports = ->
       try
         @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
-        console.error 'JSON', fs.readFileSync('feeds.json', 'utf8')
-        console.error 'Feeds -> getDataOffline:', e
+        global.logs.create("Feeds -> getDataOffline -> ERRO: #{e}")
     getImageUol: (feedObj, image)->
       tamanhos   = ['1024x551', '900x506', '956x500', '450x450', '450x600']
       opcoesURLs = []
@@ -128,7 +127,7 @@ module.exports = ->
       @verificarUrls.exec feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
       request url, (error, res, body)->
-        return console.error 'Feeds -> InfoMoney Error:', error if error
+        return global.logs.create("Feeds -> getImageInfomoney -> ERRO: #{error}") if error
 
         data = body.toString()
         imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || ''
@@ -156,8 +155,8 @@ module.exports = ->
       caminho = resolve('downloads/feeds/')
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
       shell.exec command, (code, out, error)->
-        return console.log 'Feeds -> deleteOldImages:', error if error
-        console.log 'Feeds -> Imagens antigas APAGADAS!'
+        return global.logs.create("Feeds -> deleteOldImages -> ERRO: #{error}") if error
+        global.logs.create('Feeds -> Imagens antigas APAGADAS!')
       return
 
   global.feeds = ctrl
