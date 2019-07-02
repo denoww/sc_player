@@ -57,6 +57,10 @@ html, body {
   opacity: .8;
 }
 
+.layout-3 .offline {
+  right: 15.8vw;
+}
+
 #main-player {
   width: 100vw;
   height: 100vh;

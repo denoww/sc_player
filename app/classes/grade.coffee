@@ -134,11 +134,13 @@ module.exports = ->
       lista.conteudos.push item
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
-
-      fs.writeFile 'grade.json', dados, (error)->
-        if error
-          return global.logs.create("Grade -> saveDataJson -> ERRO: #{error}")
-        console.info 'Grade -> grade.json salvo com sucesso!'
+      try
+        fs.writeFile 'grade.json', dados, (error)->
+          if error
+            return global.logs.create("Grade -> saveDataJson -> ERRO: #{error}")
+          console.info 'Grade -> grade.json salvo com sucesso!'
+      catch e
+        global.logs.create("Grade -> saveDataJson -> ERRO: #{e}")
       return
     getDataOffline: ->
       console.info 'Grade -> Pegando grade de grade.json'
@@ -152,7 +154,7 @@ module.exports = ->
       # verificando se já não tem um chromium aberto
       # shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
       # shell.exec 'pgrep firefox', (code, grepOut, grepErr)->
-      shell.exec 'xdotool search --onlyvisible --name page-player', (code, grepOut, grepErr)->
+      shell.exec 'xdotool search --onlyvisible --name page-player &', (code, grepOut, grepErr)->
         # se nao tem nenhum processo entao inicia o navegador
         unless grepOut
           ###
@@ -182,7 +184,7 @@ module.exports = ->
       # atualizar chromium para limpar cache e sobrecarga de processos
 
       caminho = resolve('tasks/')
-      shell.exec "#{caminho}/./refresh_browser.sh", (code, grepOut, grepErr)->
+      shell.exec "#{caminho}/./refresh_browser.sh &", (code, grepOut, grepErr)->
         if grepErr
           return global.logs.create("Grade -> refreshBrowser -> ERRO: #{grepErr}")
         global.logs.create('Grade -> Navegador Atualizado!')
@@ -200,7 +202,7 @@ module.exports = ->
       @clearTimerUpdateBrowser()
       @timerUpdateBrowser = setTimeout ->
         ctrl.refreshBrowser()
-      , 1000 * 60 * 2
+      , 1000 * 60 * 1.7
     clearTimerUpdateBrowser: ->
       clearTimeout @timerUpdateBrowser if @timerUpdateBrowser
 

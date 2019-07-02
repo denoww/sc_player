@@ -107,10 +107,12 @@ module.exports = ->
         @exec(item.params, item.urls, item.index)
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
-
-      fs.writeFile 'feeds.json', dados, (error)->
-        return global.logs.create("Feeds -> saveDataJson -> ERRO: #{error}") if error
-        console.info 'feeds.json salvo com sucesso!'
+      try
+        fs.writeFile 'feeds.json', dados, (error)->
+          return global.logs.create("Feeds -> saveDataJson -> ERRO: #{error}") if error
+          console.info 'feeds.json salvo com sucesso!'
+      catch e
+        global.logs.create("Feeds -> saveDataJson -> ERRO: #{e}")
       return
     getDataOffline: ->
       console.info 'Feeds -> Pegando feeds de feeds.json'
