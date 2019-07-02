@@ -114,12 +114,12 @@ html, body {
 /* --------------- LAYOUTS --------------- */
 
 /* --------------- CORES --------------- */
-.gray   .content-main { background: hsl(  0,  0%, 85%); color: #222; }
-.black  .content-main { background: hsl(  0,  0%, 15%); color: #fff; }
-.red    .content-main { background: hsl(  0, 55%, 15%); color: #fff; }
-.blue   .content-main { background: hsl(226, 55%, 15%); color: #fff; }
-.green  .content-main { background: hsl(110, 55%, 15%); color: #fff; }
-.yellow .content-main { background: hsl(35,  73%, 17%); color: #fff; }
+.gray   .content-main { background: hsl(  0,   0%, 85%); color: #222; }
+.black  .content-main { background: hsl(  0,   0%, 10%); color: #fff; }
+.red    .content-main { background: hsl(  0,  35%, 10%); color: #fff; }
+.blue   .content-main { background: hsl(226,  35%, 10%); color: #fff; }
+.green  .content-main { background: hsl(110,  35%, 10%); color: #fff; }
+.yellow .content-main { background: hsl( 40, 100%, 12%); color: #fff; }
 /* --------------- CORES --------------- */
 
 /* --------------- PLAYER --------------- */
@@ -250,21 +250,46 @@ html, body {
 
 .content-side .item-hora {
   text-align: center;
+  padding: 0;
 }
 
-.content-side .item-hora .dia {
-  font-size: 1.5em;
-  line-height: 1;
-}
 .content-side .item-hora .dia-semana {
-  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+}
+.content-side .item-hora .dia {
+  font-size: 1.25em;
+  line-height: 0.85;
+  width: 3em;
+  padding: 0.2em 0;
+  font-weight: 700;
+  font-family: sans-serif;
+  background: #fff;
+}
+
+.gray   .content-side .item-hora .dia { color: hsl(  0,   0%, 10%); }
+.black  .content-side .item-hora .dia { color: hsl(  0,   0%, 10%); }
+.red    .content-side .item-hora .dia { color: hsl(  0,  35%, 10%); }
+.blue   .content-side .item-hora .dia { color: hsl(226,  35%, 10%); }
+.green  .content-side .item-hora .dia { color: hsl(110,  35%, 10%); }
+.yellow .content-side .item-hora .dia { color: hsl( 40, 100%, 12%); }
+
+.content-side .item-hora .dia::first-line {
+  font-size: 1.7em;
+  font-weight: 900;
+}
+.content-side .item-hora .semana {
+  flex: 1;
+  font-size: 1.9em;
   font-weight: 600;
 }
 .content-side .item-hora #hora {
   font-size: 2.5em;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.2vw;
+  letter-spacing: 0.2em;
+  padding: 0.25em 0;
 }
 
 .content-side .item-weather {

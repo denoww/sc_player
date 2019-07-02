@@ -191,12 +191,15 @@ module.exports = ->
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
+    global.logs.create('Grade -> Atualizando lista!')
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
 
   setInterval ->
     console.info 'Grade -> Atualizando Navegador!'
     ctrl.refreshBrowser()
+    global.logs.create('Grade -> Atualizando Navegador!')
   , 1000 * 60 * 60 * 2 # 2 horas
+
 
   ctrl.getList()
   global.grade = ctrl

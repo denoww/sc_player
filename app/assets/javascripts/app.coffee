@@ -128,7 +128,6 @@ timeline =
   current:   {}
   promessa:  {}
   nextIndex: {}
-  transicao: {}
   playlistIndex: {}
   init: ->
     return unless vm.loaded
@@ -137,17 +136,17 @@ timeline =
       @nextIndex[tipo] ||= 0
       @executar(tipo) unless @promessa?[tipo]?
   executar: (tipo)->
-    @transicao[tipo] = false
+    # vm.timeline.transicao[tipo] = false
     clearTimeout @promessa[tipo] if @promessa?[tipo]
 
     vm.timeline.current[tipo] = @getNextItem(tipo)
     return unless vm.timeline.current[tipo]
 
     segundos = (vm.timeline.current[tipo].segundos * 1000) || 5000
-    vm.timeline.transicao[tipo] = true
+    # vm.timeline.transicao[tipo] = true
 
-    setTimeout (-> vm.timeline.transicao[tipo] = false) , 250
-    setTimeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
+    # setTimeout (-> vm.timeline.transicao[tipo] = false) , 250
+    # setTimeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
     @promessa[tipo] = setTimeout (-> timeline.executar(tipo)) , segundos
     @playVideo() if vm.timeline.current[tipo].is_video
     return
@@ -158,13 +157,14 @@ timeline =
     return
   getNextItem: (tipo)->
     lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado
-    return unless lista.length
+    total = lista.length
+    return unless total
 
     index = @nextIndex[tipo]
-    index = 0 if index >= lista.length
+    index = 0 if index >= total
 
     @nextIndex[tipo]++
-    @nextIndex[tipo] = 0 if @nextIndex[tipo] >= lista.length
+    @nextIndex[tipo] = 0 if @nextIndex[tipo] >= total
 
     currentItem = lista[index]
     switch currentItem.tipo_midia
@@ -259,10 +259,8 @@ vm = new Vue
           vm.loaded = true
     , 1000 * 60 # a cada minuto
 
-  mounted: ->
-
 Vue.filter 'formatDate', (value)->
-  moment(value).format('LL') if value
+  moment(value).format('DD MMM') if value
 
 Vue.filter 'formatWeek', (value)->
   moment(value).format('dddd') if value

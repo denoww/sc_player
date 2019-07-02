@@ -26,8 +26,10 @@
           <div class="content-side">
             <!-- data e hora -->
             <div class="item-hora">
-              <div class="dia">{{now | formatDate}}</div>
-              <div class="dia-semana">{{now | formatWeek}}</div>
+              <div class="dia-semana">
+                <div class="dia">{{now | formatDate}}</div>
+                <div class="semana">{{now | formatWeek}}</div>
+              </div>
               <div id="hora">--:--:--</div>
             </div>
             <!-- data e hora -->

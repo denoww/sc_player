@@ -160,7 +160,6 @@
     current: {},
     promessa: {},
     nextIndex: {},
-    transicao: {},
     playlistIndex: {},
     init: function() {
       var base, i, len, ref, ref1, results, tipo;
@@ -182,8 +181,8 @@
     },
     executar: function(tipo) {
       var ref, segundos;
-      this.transicao[tipo] = false;
       if ((ref = this.promessa) != null ? ref[tipo] : void 0) {
+        // vm.timeline.transicao[tipo] = false
         clearTimeout(this.promessa[tipo]);
       }
       vm.timeline.current[tipo] = this.getNextItem(tipo);
@@ -191,13 +190,10 @@
         return;
       }
       segundos = (vm.timeline.current[tipo].segundos * 1000) || 5000;
-      vm.timeline.transicao[tipo] = true;
-      setTimeout((function() {
-        return vm.timeline.transicao[tipo] = false;
-      }), 250);
-      setTimeout((function() {
-        return vm.timeline.transicao[tipo] = true;
-      }), segundos - 250);
+      // vm.timeline.transicao[tipo] = true
+
+      // setTimeout (-> vm.timeline.transicao[tipo] = false) , 250
+      // setTimeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
       this.promessa[tipo] = setTimeout((function() {
         return timeline.executar(tipo);
       }), segundos);
@@ -215,19 +211,20 @@
       });
     },
     getNextItem: function(tipo) {
-      var currentItem, index, lista;
+      var currentItem, index, lista, total;
       lista = (vm.grade.data[tipo] || []).select(function(e) {
         return e.ativado;
       });
-      if (!lista.length) {
+      total = lista.length;
+      if (!total) {
         return;
       }
       index = this.nextIndex[tipo];
-      if (index >= lista.length) {
+      if (index >= total) {
         index = 0;
       }
       this.nextIndex[tipo]++;
-      if (this.nextIndex[tipo] >= lista.length) {
+      if (this.nextIndex[tipo] >= total) {
         this.nextIndex[tipo] = 0;
       }
       currentItem = lista[index];
@@ -342,13 +339,12 @@
           });
         });
       }, 1000 * 60); // a cada minuto
-    },
-    mounted: function() {}
+    }
   });
 
   Vue.filter('formatDate', function(value) {
     if (value) {
-      return moment(value).format('LL');
+      return moment(value).format('DD MMM');
     }
   });
 

@@ -13,14 +13,14 @@
 }(function (moment) {
     return moment.defineLocale('pt-br', {
         months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-        monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        monthsShort: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'],
         weekdays: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
         weekdaysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
         weekdaysMin: ['Dom', '2ª', '3ª', '4ª', '5ª', '6ª', 'Sáb'],
         longDateFormat: {
             LT: 'HH:mm',
             L: 'DD/MM/YYYY',
-            LL: 'DD [de] MMMM',
+            LL: 'DD [de] MMMM [de] YYYY',
             LLL: 'D [de] MMMM [de] YYYY [às] LT',
             LLLL: 'dddd, D [de] MMMM [de] YYYY [às] LT'
         },
