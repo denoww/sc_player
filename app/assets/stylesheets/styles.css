@@ -119,11 +119,11 @@ html, body {
 
 /* --------------- CORES --------------- */
 .gray   .content-main { background: hsl(  0,   0%, 85%); color: #222; }
-.black  .content-main { background: hsl(  0,   0%, 10%); color: #fff; }
-.red    .content-main { background: hsl(  0,  35%, 10%); color: #fff; }
-.blue   .content-main { background: hsl(226,  35%, 10%); color: #fff; }
-.green  .content-main { background: hsl(110,  35%, 10%); color: #fff; }
-.yellow .content-main { background: hsl( 40, 100%, 12%); color: #fff; }
+.black  .content-main { background: hsl(  0,   0%, 15%); color: #fff; }
+.red    .content-main { background: hsl(  0,  45%, 15%); color: #fff; }
+.blue   .content-main { background: hsl(226,  45%, 15%); color: #fff; }
+.green  .content-main { background: hsl(110,  45%, 15%); color: #fff; }
+.yellow .content-main { background: hsl( 40, 100%, 17%); color: #fff; }
 /* --------------- CORES --------------- */
 
 /* --------------- PLAYER --------------- */
@@ -272,12 +272,12 @@ html, body {
   background: #fff;
 }
 
-.gray   .content-side .item-hora .dia { color: hsl(  0,   0%, 10%); }
-.black  .content-side .item-hora .dia { color: hsl(  0,   0%, 10%); }
-.red    .content-side .item-hora .dia { color: hsl(  0,  35%, 10%); }
-.blue   .content-side .item-hora .dia { color: hsl(226,  35%, 10%); }
-.green  .content-side .item-hora .dia { color: hsl(110,  35%, 10%); }
-.yellow .content-side .item-hora .dia { color: hsl( 40, 100%, 12%); }
+.gray   .content-side .item-hora .dia { color: hsl(  0,   0%, 15%); }
+.black  .content-side .item-hora .dia { color: hsl(  0,   0%, 15%); }
+.red    .content-side .item-hora .dia { color: hsl(  0,  45%, 15%); }
+.blue   .content-side .item-hora .dia { color: hsl(226,  45%, 15%); }
+.green  .content-side .item-hora .dia { color: hsl(110,  45%, 15%); }
+.yellow .content-side .item-hora .dia { color: hsl( 40, 100%, 17%); }
 
 .content-side .item-hora .dia::first-line {
   font-size: 1.7em;
