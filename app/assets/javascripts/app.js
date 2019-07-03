@@ -197,10 +197,8 @@
       this.promessa[tipo] = setTimeout((function() {
         return timeline.executar(tipo);
       }), segundos);
-      if (vm.timeline.current[tipo].is_video) {
-        this.playVideo();
-      }
     },
+    // @playVideo() if vm.timeline.current[tipo].is_video
     playVideo: function(tipo) {
       setTimeout(function() {
         var video;
@@ -208,7 +206,7 @@
         if (video != null ? video.paused : void 0) {
           return video.play();
         }
-      }, 250);
+      }, 1000);
     },
     getNextItem: function(tipo) {
       var currentItem, index, lista, total;
@@ -311,6 +309,7 @@
     el: '#main-player',
     data: data,
     methods: {
+      playVideo: timeline.playVideo,
       mouse: function() {
         if (this.mouseTimeout) {
           clearTimeout(this.mouseTimeout);

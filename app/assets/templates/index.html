@@ -99,8 +99,9 @@
           </div> <!-- content-side -->
 
           <div class="content-player">
-            <div class="player-item"
-            :class="{'transicao': timeline.transicao.conteudos}">
+            <div class="player-item" :class="{'transicao': timeline.transicao.conteudos}">
+
+              <!-- feeds -->
               <div v-if="timeline.current.conteudos.tipo_midia === 'feed'" class="content-feed">
                 <div class="feed-main">
                   <div class="feed-info">
@@ -112,24 +113,24 @@
                   <div class="feed-titulo">{{timeline.current.conteudos.titulo}}</div>
                 </div>
               </div>
+              <!-- feeds -->
 
-              <div v-else-if="timeline.current.conteudos.tipo_midia === 'clima'">
-                <div>{{timeline.current.conteudos.titulo}}</div>
-              </div>
-
+              <!-- midia -->
               <div class="midia-main" v-else-if="timeline.current.conteudos.tipo_midia === 'midia'">
                 <div class="midia-imagem" v-if="timeline.current.conteudos.is_image"
                   :style="{'background-image': 'url(/downloads/images/' + timeline.current.conteudos.nome + ')'}">
                 </div>
 
                 <video class="midia-video"
-                  :src="'/downloads/videos/' + timeline.current.conteudos.nome"
                   v-if="timeline.current.conteudos.is_video"
                   id="video-player"
-                  autoplay="autoplay">
-                  <!-- TESTAR OUTROS FORMATOS DE VIDEO -->
+                  :oncanplay="playVideo()"
+                  autoplay>
+                  <source :src="'/downloads/videos/' + timeline.current.conteudos.nome" :type="timeline.current.conteudos.content_type">
                 </video>
               </div>
+              <!-- midia -->
+
             </div> <!-- player-item -->
           </div> <!-- content-player -->
         </div> <!-- content-top -->
@@ -139,7 +140,7 @@
             <div class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
           </div> <!-- content-logo -->
 
-          <div class="content-mensagem">
+          <div class="content-mensagem" v-if="timeline.current.mensagens">
             <div class="titulo" v-if="timeline.current.mensagens.titulo">{{timeline.current.mensagens.titulo}}</div>
             <div class="mensagem" v-if="timeline.current.mensagens.mensagem" v-html="timeline.current.mensagens.mensagem"></div>
           </div> <!-- content-mensagem -->

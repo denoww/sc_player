@@ -148,13 +148,13 @@ timeline =
     # setTimeout (-> vm.timeline.transicao[tipo] = false) , 250
     # setTimeout (-> vm.timeline.transicao[tipo] = true), segundos - 250
     @promessa[tipo] = setTimeout (-> timeline.executar(tipo)) , segundos
-    @playVideo() if vm.timeline.current[tipo].is_video
+    # @playVideo() if vm.timeline.current[tipo].is_video
     return
   playVideo: (tipo)->
     setTimeout ->
       video = document.getElementById('video-player')
       video.play() if video?.paused
-    , 250
+    , 1000
     return
   getNextItem: (tipo)->
     lista = (vm.grade.data[tipo] || []).select (e)-> e.ativado
@@ -233,6 +233,7 @@ vm = new Vue
   el:   '#main-player'
   data: data
   methods:
+    playVideo: timeline.playVideo
     mouse: ->
       clearTimeout(@mouseTimeout) if @mouseTimeout
       @body ||= document.getElementById('body-player')

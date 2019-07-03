@@ -82,6 +82,7 @@ module.exports = ->
       item.is_audio = vinculo.midia.is_audio
       item.is_image = vinculo.midia.is_image
       item.is_video = vinculo.midia.is_video
+      item.content_type = vinculo.midia.content_type
 
       lista ||= @data
 
@@ -189,14 +190,13 @@ module.exports = ->
           return global.logs.create("Grade -> refreshBrowser -> ERRO: #{grepErr}")
         global.logs.create('Grade -> Navegador Atualizado!')
     updatePlayer: ->
-      console.info '### Atualizando Player...'
+      global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
 
       caminho = resolve('tasks/')
       shell.exec "#{caminho}/./update.sh", (code, grepOut, grepErr)->
         if grepErr
-          return global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
-        global.logs.create('Grade -> Atualizando Player!')
+          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
     setTimerUpdateBrowser: ->
       # para resolver o problema do 'Aw, Snap!' do Chromium
       @clearTimerUpdateBrowser()
