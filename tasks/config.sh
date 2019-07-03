@@ -50,7 +50,7 @@ if [[ "$logo" == "y" || "$logo" == "Y" ]] ; then
   # adiciona 'logo.nologo' no /boot/cmdline.txt para remover a logo do raspberry
   TEM_LOGO=$(grep -rnw /boot/cmdline.txt -e 'logo.nologo')
   if [[ !$TEM_LOGO ]]; then
-    sh -c 'sed -i "s/$/ logo.nologo/" /boot/cmdline.txt'
+    sh -c 'sudo sed -i "s/$/ logo.nologo/" /boot/cmdline.txt'
   fi
 fi
 
