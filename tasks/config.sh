@@ -42,6 +42,18 @@ if [[ "$cron" == "y" || "$cron" == "Y" ]] ; then
   sh -c 'sudo chown root:root /etc/cron.daily/tarefa_diaria'
 fi
 
+read -p '--> Alterar logo da tela de abertura? (y/N) ' logo
+if [[ "$logo" == "y" || "$logo" == "Y" ]] ; then
+  # copia a logo para a pasta
+  sh -c 'sudo cp ~/sc_player/device_configs/splash.png /usr/share/plymouth/themes/pix/'
+
+  # adiciona 'logo.nologo' no /boot/cmdline.txt para remover a logo do raspberry
+  TEM_LOGO=$(grep -rnw /boot/cmdline.txt -e 'logo.nologo')
+  if [[ !$TEM_LOGO ]]; then
+    sh -c 'sed -i "s/$/ logo.nologo/" /boot/cmdline.txt'
+  fi
+fi
+
 read -p '--> Atualizar autostart LXDE-pi? (y/N) ' atualizar_lxde
 if [[ "$atualizar_lxde" == "y" || "$atualizar_lxde" == "Y" ]] ; then
   sh -c 'sudo cp ~/sc_player/device_configs/lxde-autostart /etc/xdg/lxsession/LXDE-pi/autostart'
