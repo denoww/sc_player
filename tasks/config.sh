@@ -49,7 +49,9 @@ if [[ "$logo" == "y" || "$logo" == "Y" ]] ; then
 
   # adiciona 'logo.nologo' no /boot/cmdline.txt para remover a logo do raspberry
   TEM_LOGO=$(grep -rnw /boot/cmdline.txt -e 'logo.nologo')
-  if [[ !$TEM_LOGO ]]; then
+  if [[ $TEM_LOGO ]]; then
+    echo '/boot/cmdline.txt já está atualizado!'
+  else
     sh -c 'sudo sed -i "s/$/ logo.nologo/" /boot/cmdline.txt'
   fi
 fi
@@ -59,34 +61,34 @@ if [[ "$atualizar_lxde" == "y" || "$atualizar_lxde" == "Y" ]] ; then
   sh -c 'sudo cp ~/sc_player/device_configs/lxde-autostart /etc/xdg/lxsession/LXDE-pi/autostart'
 fi
 
-read -p '--> Deseja Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
+read -p '--> Instalar xdotool para posisionar o MOUSE no canto da tela? (y/N) ' instalar_xdo
 if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
   sh -c 'sudo apt install xdotool -y'
 fi
 
-read -p '--> Deseja Instalar nodejs? (y/N) ' instalar_node
+read -p '--> Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
   sh -c 'sudo apt install nodejs -y'
 fi
 
-read -p '--> Deseja Instalar npm? (y/N) ' instalar_npm
+read -p '--> Instalar npm? (y/N) ' instalar_npm
 if [[ "$instalar_npm" == "y" || "$instalar_npm" == "Y" ]] ; then
   sh -c 'sudo apt install npm -y'
 fi
 
-read -p '--> Deseja Executar o npm install? (y/N) ' executar_npm
+read -p '--> Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
 fi
 
-read -p '--> Deseja Instalar notification-daemon? (y/N) ' instalar_notif
+read -p '--> Instalar notification-daemon? (y/N) ' instalar_notif
 if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
   sh -c 'sudo apt install notification-daemon -y'
   echo '--- Criando org.freedesktop.Notifications'
   sh -c 'sudo cp ~/sc_player/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
 fi
 
-read -p '--> Deseja iniciar o servidor? (y/N) ' instalar_server
+read -p '--> Iniciar o servidor? (y/N) ' instalar_server
 if [[ "$instalar_server" == "y" || "$instalar_server" == "Y" ]] ; then
   sh -c 'npm run start'
 fi
