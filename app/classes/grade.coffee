@@ -163,19 +163,19 @@ module.exports = ->
               --kiosk
               --start-fullscreen
               --incognito
-              --disable-gpu
               --noerrdialogs
+              --disable-gpu
               --disable-translate
               --disable-sync
+              --disable-infobars
               --no-first-run
               --fast
               --fast-start
-              --disable-infobars
               --disable-features=TranslateUI
           ###
 
-          # cmd = 'firefox http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11'
-          cmd = 'chromium-browser http://localhost:3001 --noerrdialogs --kiosk --incognito --disable-translate &'
+          cmd = 'firefox --private-window http://localhost:3001 && xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11'
+          # cmd = 'chromium-browser http://localhost:3001 --noerrdialogs --kiosk --disable-translate --disable-gpu-sandbox --disable-sync --disable-infobars --autoplay-policy=no-user-gesture-required --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio,MediaEngagementBypassAutoplayPolicies &'
           shell.exec cmd, (code, stdout, stderr)->
             console.info '### Navegador executando!'
         else
