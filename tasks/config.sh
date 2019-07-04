@@ -66,6 +66,11 @@ if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
   sh -c 'sudo apt install xdotool -y'
 fi
 
+read -p '--> Instalar Firefox? (y/N) ' instalar_firefox
+if [[ "$instalar_firefox" == "y" || "$instalar_firefox" == "Y" ]] ; then
+  sh -c 'sudo apt install firefox-esr -y'
+fi
+
 read -p '--> Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
   sh -c 'sudo apt install nodejs -y'
