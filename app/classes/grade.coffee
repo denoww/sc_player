@@ -18,7 +18,6 @@ module.exports = ->
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           global.logs.create("Grade -> getList -> ERRO: #{erro}")
-          @startBrowser()
           return
 
         data = JSON.parse(body)
@@ -34,8 +33,6 @@ module.exports = ->
         if atualizarPlayer
           return @updatePlayer()
 
-        @startBrowser()
-        @setTimerUpdateBrowser()
         global.feeds.getList()
     handlelist: (data)->
       @data =
@@ -150,70 +147,19 @@ module.exports = ->
         @data.offline = true
       catch e
         global.logs.create("Grade -> getDataOffline -> ERRO: #{e}")
-    startBrowser: ->
-      console.info '### Iniciando Navegador...'
-      # verificando se já não tem um chromium aberto
-      # shell.exec 'pgrep chromium', (code, grepOut, grepErr)->
-      # shell.exec 'pgrep firefox', (code, grepOut, grepErr)->
-      shell.exec 'xdotool search --onlyvisible --name page-player &', (code, grepOut, grepErr)->
-        # se nao tem nenhum processo entao inicia o navegador
-        unless grepOut
-          ###
-            chromium-browser
-              --kiosk
-              --start-fullscreen
-              --incognito
-              --noerrdialogs
-              --disable-gpu
-              --disable-translate
-              --disable-sync
-              --disable-infobars
-              --no-first-run
-              --fast
-              --fast-start
-              --disable-features=TranslateUI
-          ###
-
-          cmd = 'firefox --private-window http://localhost:3001 & xdotool search --sync --onlyvisible --class "Firefox" windowactivate key F11'
-          # cmd = 'chromium-browser http://localhost:3001 --noerrdialogs --kiosk --disable-translate --disable-gpu-sandbox --disable-sync --disable-infobars --autoplay-policy=no-user-gesture-required --disable-features=PreloadMediaEngagementData,AutoplayIgnoreWebAudio,MediaEngagementBypassAutoplayPolicies &'
-          shell.exec cmd, (code, stdout, stderr)->
-            console.info '### Navegador executando!'
-        else
-          console.info '### Navegador já está aberto!'
-    refreshBrowser: ->
-      console.info '### Atualizando Navegador...'
-      # atualizar chromium para limpar cache e sobrecarga de processos
-
-      caminho = resolve('tasks/')
-      shell.exec "#{caminho}/./refresh_browser.sh &", (code, grepOut, grepErr)->
-        if grepErr
-          return global.logs.create("Grade -> refreshBrowser -> ERRO: #{grepErr}")
-        global.logs.create('Grade -> Navegador Atualizado!')
     updatePlayer: ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
 
       caminho = resolve('tasks/')
-      shell.exec "#{caminho}/./update.sh", (code, grepOut, grepErr)->
+      shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
         if grepErr
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
-    setTimerUpdateBrowser: ->
-      # para resolver o problema do 'Aw, Snap!' do Chromium
-      @clearTimerUpdateBrowser()
-      @timerUpdateBrowser = setTimeout ->
-        ctrl.refreshBrowser()
-      , 1000 * 60 * 1.7
-    clearTimerUpdateBrowser: ->
-      clearTimeout @timerUpdateBrowser if @timerUpdateBrowser
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
-
-  setInterval ->
-    ctrl.refreshBrowser()
-  , 1000 * 60 * 60 * 2 # 2 horas
 
   ctrl.getList()
   global.grade = ctrl

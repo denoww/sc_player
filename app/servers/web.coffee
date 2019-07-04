@@ -29,7 +29,6 @@ module.exports = (opt={}) ->
       global.grade.getList()
       res.sendStatus(400)
       return
-    global.grade.setTimerUpdateBrowser()
     res.send JSON.stringify global.grade.data
 
   app.get '/feeds', (req, res) ->

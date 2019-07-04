@@ -66,11 +66,6 @@ if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
   sh -c 'sudo apt install xdotool -y'
 fi
 
-read -p '--> Instalar Firefox? (y/N) ' instalar_firefox
-if [[ "$instalar_firefox" == "y" || "$instalar_firefox" == "Y" ]] ; then
-  sh -c 'sudo apt install firefox-esr -y'
-fi
-
 read -p '--> Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
   sh -c 'sudo apt install nodejs -y'
@@ -84,13 +79,6 @@ fi
 read -p '--> Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
-fi
-
-read -p '--> Instalar notification-daemon? (y/N) ' instalar_notif
-if [[ "$instalar_notif" == "y" || "$instalar_notif" == "Y" ]] ; then
-  sh -c 'sudo apt install notification-daemon -y'
-  echo '--- Criando org.freedesktop.Notifications'
-  sh -c 'sudo cp ~/sc_player/device_configs/org.freedesktop.Notifications.service /usr/share/dbus-1/services/'
 fi
 
 read -p '--> Iniciar o servidor? (y/N) ' instalar_server

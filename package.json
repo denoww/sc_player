@@ -7,7 +7,8 @@
     "node": ">=6.2.0"
   },
   "scripts": {
-    "start": "nodemon --inspect server.coffee",
+    "start": "electron .",
+    "start2": "nodemon --inspect server.coffee",
     "start-coffee": "coffee server.coffee",
     "delete_old_images": "coffee ./tasks/delete_old_images.coffee",
     "update_timezone": "coffee ./tasks/update_timezone.coffee",
@@ -27,6 +28,7 @@
     "url-exists": "^1.0.3"
   },
   "devDependencies": {
-    "coffeescript": "^2.4.1"
+    "coffeescript": "^2.4.1",
+    "electron": "^5.0.6"
   }
 }

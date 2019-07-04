@@ -6,5 +6,4 @@
 @xset s off
 @xset -dpms
 @xset s noblank
-@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
 @lxterminal -e /home/pi/sc_player/tasks/./init.sh
