@@ -91,3 +91,10 @@ framebuffer_height=1080
 ```
 coffee -wc app/assets/javascripts/*.coffee
 ```
+
+## Corrigir erro 405 npm
+
+```
+npm config set registry https://registry.npmjs.org
+sudo npm install -g npm
+```

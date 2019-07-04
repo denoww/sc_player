@@ -102,31 +102,31 @@
             <div class="player-item" :class="{'transicao': timeline.transicao.conteudos}">
 
               <!-- feeds -->
-              <div v-if="timeline.current.conteudos.tipo_midia === 'feed'" class="content-feed">
+              <div v-if="timeline.conteudo.tipo_midia === 'feed'" class="content-feed">
                 <div class="feed-main">
                   <div class="feed-info">
-                    <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + timeline.current.conteudos.fonte + '.png)'}"></div>
-                    <div class="feed-categoria">{{timeline.current.conteudos.titulo_feed}}</div>
+                    <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + timeline.conteudo.fonte + '.png)'}"></div>
+                    <div class="feed-categoria">{{timeline.conteudo.titulo_feed}}</div>
                     <div class="feed-out"></div>
                   </div>
-                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.current.conteudos.nome ? '/downloads/feeds/' + timeline.current.conteudos.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
-                  <div class="feed-titulo">{{timeline.current.conteudos.titulo}}</div>
+                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.conteudo.nome ? '/downloads/feeds/' + timeline.conteudo.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
+                  <div class="feed-titulo">{{timeline.conteudo.titulo}}</div>
                 </div>
               </div>
               <!-- feeds -->
 
               <!-- midia -->
-              <div class="midia-main" v-else-if="timeline.current.conteudos.tipo_midia === 'midia'">
-                <div class="midia-imagem" v-if="timeline.current.conteudos.is_image"
-                  :style="{'background-image': 'url(/downloads/images/' + timeline.current.conteudos.nome + ')'}">
+              <div class="midia-main" v-else-if="timeline.conteudo.tipo_midia === 'midia'">
+                <div class="midia-imagem" v-if="timeline.conteudo.is_image"
+                  :style="{'background-image': 'url(/downloads/images/' + timeline.conteudo.nome + ')'}">
                 </div>
 
                 <video class="midia-video"
-                  v-if="timeline.current.conteudos.is_video"
+                  v-if="timeline.conteudo.is_video"
                   id="video-player"
                   :oncanplay="playVideo()"
                   autoplay>
-                  <source :src="'/downloads/videos/' + timeline.current.conteudos.nome" :type="timeline.current.conteudos.content_type">
+                  <source :src="'/downloads/videos/' + timeline.conteudo.nome" :type="timeline.conteudo.content_type">
                 </video>
               </div>
               <!-- midia -->
@@ -140,9 +140,9 @@
             <div class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
           </div> <!-- content-logo -->
 
-          <div class="content-mensagem" v-if="timeline.current.mensagens">
-            <div class="titulo" v-if="timeline.current.mensagens.titulo">{{timeline.current.mensagens.titulo}}</div>
-            <div class="mensagem" v-if="timeline.current.mensagens.mensagem" v-html="timeline.current.mensagens.mensagem"></div>
+          <div class="content-mensagem" v-if="timeline.mensagem">
+            <div class="titulo" v-if="timeline.mensagem.titulo">{{timeline.mensagem.titulo}}</div>
+            <div class="mensagem" v-if="timeline.mensagem.mensagem" v-html="timeline.mensagem.mensagem"></div>
           </div> <!-- content-mensagem -->
         </div> <!-- content-footer -->
       </div> <!-- content-main -->
