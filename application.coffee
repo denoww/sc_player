@@ -4,7 +4,9 @@ createWindow = ->
   win = new BrowserWindow
     autoHideMenuBar: true
     useContentSize: true
-    webPreferences: nodeIntegration: true
+    webPreferences:
+      nodeIntegration: true
+      webSecurity: false
   win.setFullScreen(true)
 
   win.loadURL 'http://localhost:3001'

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "start2": "nodemon --inspect server.coffee",
+    "start2": "nodemon --inspect server.js",
     "start-coffee": "coffee server.coffee",
     "delete_old_images": "coffee ./tasks/delete_old_images.coffee",
     "update_timezone": "coffee ./tasks/update_timezone.coffee",

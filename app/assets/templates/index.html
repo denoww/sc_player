@@ -109,7 +109,7 @@
                     <div class="feed-categoria">{{timeline.conteudo.titulo_feed}}</div>
                     <div class="feed-out"></div>
                   </div>
-                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.conteudo.nome ? '/downloads/feeds/' + timeline.conteudo.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
+                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.conteudo.nome ? 'file:///home/pi/sc_player/downloads/feeds/' + timeline.conteudo.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
                   <div class="feed-titulo">{{timeline.conteudo.titulo}}</div>
                 </div>
               </div>
@@ -118,7 +118,7 @@
               <!-- midia -->
               <div class="midia-main" v-else-if="timeline.conteudo.tipo_midia === 'midia'">
                 <div class="midia-imagem" v-if="timeline.conteudo.is_image"
-                  :style="{'background-image': 'url(/downloads/images/' + timeline.conteudo.nome + ')'}">
+                  :style="{'background-image': 'url(file:///home/pi/sc_player/downloads/images/' + timeline.conteudo.nome + ')'}">
                 </div>
 
                 <video class="midia-video"
@@ -126,7 +126,7 @@
                   id="video-player"
                   :oncanplay="playVideo()"
                   autoplay>
-                  <source :src="'/downloads/videos/' + timeline.conteudo.nome" :type="timeline.conteudo.content_type">
+                  <source :src="'file:///home/pi/sc_player/downloads/videos/' + timeline.conteudo.nome" :type="timeline.conteudo.content_type">
                 </video>
               </div>
               <!-- midia -->
