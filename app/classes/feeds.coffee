@@ -39,12 +39,12 @@ module.exports = ->
       return unless image
 
       feedObj =
-        url:    image.url
-        nome:   image.nome
-        data:   feed.pubDate
-        titulo: feed.title
-        is_feed: true
-        titulo_feed: params.titulo
+        url:          image.url
+        # data:         feed.pubDate
+        titulo:       feed.title
+        is_feed:      true
+        titulo_feed:  params.titulo
+        nome_arquivo: image.nome
 
       if image.url.match(/uol(.*)142x100/)
         @getImageUol(feedObj, image)

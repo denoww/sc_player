@@ -99,37 +99,44 @@
           </div> <!-- content-side -->
 
           <div class="content-player">
-            <div class="player-item" :class="{'transicao': timeline.transicao.conteudos}">
+            <div class="player-item">
 
-              <!-- feeds -->
-              <div v-if="timeline.conteudo.tipo_midia === 'feed'" class="content-feed">
-                <div class="feed-main">
-                  <div class="feed-info">
-                    <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + timeline.conteudo.fonte + '.png)'}"></div>
-                    <div class="feed-categoria">{{timeline.conteudo.titulo_feed}}</div>
-                    <div class="feed-out"></div>
+              <div v-for="(item, index) in playlist" :key="item.id" :class="[{'active': (index === currentIndex)}]" class="playlist-content">
+
+                <transition name="fade">
+                  <div v-show="index === currentIndex">
+                    <!-- feeds -->
+                    <div v-if="item.tipo_midia === 'feed'" class="content-feed">
+                      <div class="feed-main">
+                        <div class="feed-info">
+                          <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + item.fonte + '.png)'}"></div>
+                          <div class="feed-categoria">{{item.titulo_feed}}</div>
+                          <div class="feed-out"></div>
+                        </div>
+                        <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? 'file://' + grade.data.path + '/downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
+                        <div class="feed-titulo">{{item.titulo}}</div>
+                      </div>
+                    </div>
+                    <!-- feeds -->
+
+                    <!-- midia -->
+                    <div class="midia-main" v-else-if="item.tipo_midia === 'midia'">
+                      <div class="midia-imagem" v-if="item.is_image"
+                        :style="{'background-image': 'url(file://' + grade.data.path + '/downloads/images/' + item.nome_arquivo + ')'}">
+                      </div>
+
+                      <video class="midia-video"
+                        v-if="item.is_video"
+                        :id="'video-player-' + item.id"
+                        preload="auto">
+                        <source :src="'file://' + grade.data.path + '/downloads/videos/' + item.nome_arquivo" :type="item.content_type">
+                      </video>
+                    </div>
+                    <!-- midia -->
                   </div>
-                  <div class="feed-imagem" :style="{'background-image': 'url(' + (timeline.conteudo.nome ? 'file:///home/pi/sc_player/downloads/feeds/' + timeline.conteudo.nome : '/images/no-image.png') + ')'}">&nbsp;</div>
-                  <div class="feed-titulo">{{timeline.conteudo.titulo}}</div>
-                </div>
-              </div>
-              <!-- feeds -->
+                </transition>
 
-              <!-- midia -->
-              <div class="midia-main" v-else-if="timeline.conteudo.tipo_midia === 'midia'">
-                <div class="midia-imagem" v-if="timeline.conteudo.is_image"
-                  :style="{'background-image': 'url(file:///home/pi/sc_player/downloads/images/' + timeline.conteudo.nome + ')'}">
-                </div>
-
-                <video class="midia-video"
-                  v-if="timeline.conteudo.is_video"
-                  id="video-player"
-                  :oncanplay="playVideo()"
-                  autoplay>
-                  <source :src="'file:///home/pi/sc_player/downloads/videos/' + timeline.conteudo.nome" :type="timeline.conteudo.content_type">
-                </video>
               </div>
-              <!-- midia -->
 
             </div> <!-- player-item -->
           </div> <!-- content-player -->
@@ -157,11 +164,12 @@
       </div> <!-- loading -->
 
     </div>
+
   </body>
 
   <script src="/javascripts/lib/moment.min.js"></script>
   <script src="/javascripts/lib/moment_pt-br.js"></script>
-  <script src="/javascripts/lib/vue.min.js"></script>
+  <script src="/javascripts/lib/vue.js"></script>
   <script src="/javascripts/lib/vue-resource.min.js"></script>
   <script src="/javascripts/app.js"></script>
 </html>

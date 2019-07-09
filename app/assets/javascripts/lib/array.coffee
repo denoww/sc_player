@@ -119,6 +119,8 @@ Array::addOrExtend = (obj)->
     @push obj
   else
     Object.assign @[idx], obj
+    # @splice(idx, 1, obj)
+    # Vue.set(@, idx, obj)
 
 Array::somar = (field)->
   _arr = if field then @.map((e)-> e[field]) else @

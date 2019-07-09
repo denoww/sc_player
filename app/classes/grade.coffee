@@ -38,6 +38,7 @@ module.exports = ->
       @data =
         id:        data.id
         cor:       data.cor
+        path:      resolve('./')
         layout:    data.layout
         cidade:    data.cidade
         musicas:   []
@@ -72,7 +73,6 @@ module.exports = ->
       return unless vinculo.midia
 
       item.url      = vinculo.midia.original
-      item.nome     = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
       item.size     = vinculo.midia.size
       item.midia_id = vinculo.midia.id
       item.extensao = vinculo.midia.extension
@@ -80,6 +80,7 @@ module.exports = ->
       item.is_image = vinculo.midia.is_image
       item.is_video = vinculo.midia.is_video
       item.content_type = vinculo.midia.content_type
+      item.nome_arquivo = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
 
       lista ||= @data
 

@@ -12,10 +12,10 @@ class Download
     pasta = ENV.DOWNLOAD_FEEDS  if params.is_feed
     pasta ||= './downloads'
 
-    path = pasta + params.nome
+    path = pasta + params.nome_arquivo
     fs.stat path, (error, stats)=>
       if !error && alreadyExists(params, stats.size)
-        # console.info "Download -> Arquivo já existe: #{params.nome}"
+        # console.info "Download -> Arquivo já existe: #{params.nome_arquivo}"
         return next()
 
       return @fila.push params if @loading
@@ -24,7 +24,7 @@ class Download
       file      = fs.createWriteStream(path)
       protocolo = http
       protocolo = https if params.url.match(/https/)
-      console.info "Download -> #{params.nome}, URL: #{params.url}"
+      console.info "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
       unless validURL(params.url)
         console.info '! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '

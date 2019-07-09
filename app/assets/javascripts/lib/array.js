@@ -221,6 +221,8 @@
     }
   };
 
+  // @splice(idx, 1, obj)
+  // Vue.set(@, idx, obj)
   Array.prototype.somar = function(field) {
     var _arr;
     _arr = field ? this.map(function(e) {

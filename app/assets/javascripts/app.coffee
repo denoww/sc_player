@@ -3,6 +3,10 @@ data =
   loaded:  false
   loading: true
 
+  currentIndex: 0
+
+  playlist: []
+
   grade:
     data:
       cor: 'black'
@@ -129,7 +133,6 @@ feedsObj =
     return
 
 timelineConteudos =
-  current:   {}
   promessa:  null
   nextIndex: 0
   playlistIndex: {}
@@ -137,28 +140,47 @@ timelineConteudos =
     return unless vm.loaded
     @executar() unless @promessa?
   executar: ->
-    console.log 'timelineConteudos.executar'
-    # vm.timeline.transicao = false
     clearTimeout @promessa if @promessa
 
-    vm.timeline.conteudo = @getNextItem()
-    console.log vm.timeline.conteudo
-    console.log '----------------------------------------------'
-    return unless vm.timeline.conteudo
+    itemAtual = @getNextItem()
+    return unless itemAtual
 
-    segundos = (vm.timeline.conteudo.segundos * 1000) || 5000
-    # vm.timeline.transicao = true
+    vm.currentIndex = vm.playlist.getIndexByField 'id', itemAtual.id
+    if !vm.currentIndex?
+      vm.playlist.push itemAtual
+      vm.currentIndex = vm.playlist.length - 1
 
-    # setTimeout (-> vm.timeline.transicao = false) , 250
-    # setTimeout (-> vm.timeline.transicao = true), segundos - 250
-    @promessa = setTimeout (-> timelineConteudos.executar()) , segundos
-    # @playVideo() if vm.timeline.conteudo.is_video
+    @stopUltimoVideo()
+
+    segundos = (itemAtual.segundos * 1000) || 5000
+    @promessa = setTimeout ->
+      itemAtual.active = false
+      timelineConteudos.executar()
+    , segundos
+
+    @playVideo(itemAtual) if itemAtual.is_video
     return
-  playVideo: ->
-    setTimeout ->
-      video = document.getElementById('video-player')
+  playVideo: (itemAtual)->
+    @ultimoVideo = "video-player-#{itemAtual.id}"
+
+    setTimeout =>
+      video = document.getElementById(@ultimoVideo)
+      if video
+        video.currentTime = 0
+        video.play()
+
+    setTimeout =>
+      video = document.getElementById(@ultimoVideo)
       video.play() if video?.paused
     , 1000
+    return
+  stopUltimoVideo: ->
+    videoId = @ultimoVideo
+    return unless videoId
+
+    video = document.getElementById(videoId)
+    video.pause() if video
+    @ultimoVideo = null
     return
   getNextItem: ->
     lista = vm.grade.data.conteudos
@@ -197,10 +219,11 @@ timelineConteudos =
     feed = feedItems[feedIndex] || feedItems[0]
 
     return unless feed
-    currentItem.nome   = feed.nome
+    currentItem.id     = "#{currentItem.id}#{feed.nome_arquivo}"
     currentItem.data   = feed.data
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
+    currentItem.nome_arquivo = feed.nome_arquivo
     currentItem
   getItemPlaylist: (playlist)->
     if !@playlistIndex[playlist.id]?
@@ -224,17 +247,14 @@ timelineMensagens =
     return unless vm.loaded
     @executar() unless @promessa?
   executar: ->
-    console.log 'timelineMensagens.executar'
 
     clearTimeout @promessa if @promessa
 
     vm.timeline.mensagem = @getNextItem()
-    console.log vm.timeline.mensagem
-    console.log '----------------------------------------------'
     return unless vm.timeline.mensagem
 
     segundos = (vm.timeline.mensagem.segundos * 1000) || 5000
-    @promessa = setTimeout (-> timelineMensagens.executar()) , segundos
+    @promessa = setTimeout (-> timelineMensagens.executar()), segundos
     return
   getNextItem: ->
     lista = vm.grade.data.mensagens

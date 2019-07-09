@@ -6,6 +6,8 @@
     body: void 0,
     loaded: false,
     loading: true,
+    currentIndex: 0,
+    playlist: [],
     grade: {
       data: {
         cor: 'black',
@@ -167,7 +169,6 @@
   };
 
   timelineConteudos = {
-    current: {},
     promessa: null,
     nextIndex: 0,
     playlistIndex: {},
@@ -180,36 +181,58 @@
       }
     },
     executar: function() {
-      var segundos;
-      console.log('timelineConteudos.executar');
+      var itemAtual, segundos;
       if (this.promessa) {
-        // vm.timeline.transicao = false
         clearTimeout(this.promessa);
       }
-      vm.timeline.conteudo = this.getNextItem();
-      console.log(vm.timeline.conteudo);
-      console.log('----------------------------------------------');
-      if (!vm.timeline.conteudo) {
+      itemAtual = this.getNextItem();
+      if (!itemAtual) {
         return;
       }
-      segundos = (vm.timeline.conteudo.segundos * 1000) || 5000;
-      // vm.timeline.transicao = true
-
-      // setTimeout (-> vm.timeline.transicao = false) , 250
-      // setTimeout (-> vm.timeline.transicao = true), segundos - 250
-      this.promessa = setTimeout((function() {
+      vm.currentIndex = vm.playlist.getIndexByField('id', itemAtual.id);
+      if (vm.currentIndex == null) {
+        vm.playlist.push(itemAtual);
+        vm.currentIndex = vm.playlist.length - 1;
+      }
+      this.stopUltimoVideo();
+      segundos = (itemAtual.segundos * 1000) || 5000;
+      this.promessa = setTimeout(function() {
+        itemAtual.active = false;
         return timelineConteudos.executar();
-      }), segundos);
+      }, segundos);
+      if (itemAtual.is_video) {
+        this.playVideo(itemAtual);
+      }
     },
-    // @playVideo() if vm.timeline.conteudo.is_video
-    playVideo: function() {
-      setTimeout(function() {
+    playVideo: function(itemAtual) {
+      this.ultimoVideo = `video-player-${itemAtual.id}`;
+      setTimeout(() => {
         var video;
-        video = document.getElementById('video-player');
+        video = document.getElementById(this.ultimoVideo);
+        if (video) {
+          video.currentTime = 0;
+          return video.play();
+        }
+      });
+      setTimeout(() => {
+        var video;
+        video = document.getElementById(this.ultimoVideo);
         if (video != null ? video.paused : void 0) {
           return video.play();
         }
       }, 1000);
+    },
+    stopUltimoVideo: function() {
+      var video, videoId;
+      videoId = this.ultimoVideo;
+      if (!videoId) {
+        return;
+      }
+      video = document.getElementById(videoId);
+      if (video) {
+        video.pause();
+      }
+      this.ultimoVideo = null;
     },
     getNextItem: function() {
       var currentItem, index, lista, total;
@@ -258,10 +281,11 @@
       if (!feed) {
         return;
       }
-      currentItem.nome = feed.nome;
+      currentItem.id = `${currentItem.id}${feed.nome_arquivo}`;
       currentItem.data = feed.data;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
+      currentItem.nome_arquivo = feed.nome_arquivo;
       return currentItem;
     },
     getItemPlaylist: function(playlist) {
@@ -296,13 +320,10 @@
     },
     executar: function() {
       var segundos;
-      console.log('timelineMensagens.executar');
       if (this.promessa) {
         clearTimeout(this.promessa);
       }
       vm.timeline.mensagem = this.getNextItem();
-      console.log(vm.timeline.mensagem);
-      console.log('----------------------------------------------');
       if (!vm.timeline.mensagem) {
         return;
       }
