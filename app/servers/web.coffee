@@ -5,6 +5,7 @@ module.exports = (opt={}) ->
   app = express()
   server = app.listen(ENV.HTTP_PORT)
   console.info "HTTP #{ENV.HTTP_PORT} STARTING"
+  global.logs.create('Iniciando servidor HTTP!')
 
   app.use express.static(resolve('app/assets/'))
   app.use '/downloads/', express.static(resolve('downloads/'))
