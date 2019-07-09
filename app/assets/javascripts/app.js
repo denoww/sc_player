@@ -400,12 +400,14 @@
       this.loading = true;
       this.mouse();
       relogio.exec();
-      grade.get(function() {
-        return feedsObj.get(function() {
-          vm.loading = false;
-          return vm.loaded = true;
+      setTimeout(function() {
+        return grade.get(function() {
+          return feedsObj.get(function() {
+            vm.loading = false;
+            return vm.loaded = true;
+          });
         });
-      });
+      }, 1000);
       return setInterval(function() {
         return grade.get(function() {
           return feedsObj.get(function() {

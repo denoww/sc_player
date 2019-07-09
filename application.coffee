@@ -11,6 +11,7 @@ createWindow = ->
 
   win.loadURL 'http://localhost:3001'
   win.focus()
+  global.win = win
 
   # Open the DevTools
   # win.webContents.openDevTools()
@@ -20,3 +21,4 @@ createWindow = ->
   return
 
 app.on 'ready', createWindow
+global.app = app

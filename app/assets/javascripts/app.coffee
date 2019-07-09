@@ -305,10 +305,12 @@ vm = new Vue
     @mouse()
     relogio.exec()
 
-    grade.get ->
-      feedsObj.get ->
-        vm.loading = false
-        vm.loaded = true
+    setTimeout ->
+      grade.get ->
+        feedsObj.get ->
+          vm.loading = false
+          vm.loaded = true
+    , 1000
 
     setInterval ->
       grade.get ->

@@ -156,11 +156,28 @@ module.exports = ->
       shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
         if grepErr
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
+    refreshApplication: ->
+      # atualizar o app para limpar cache e sobrecarga de processos
+      global.logs.create('Grade -> Atualizando Aplicação!')
+      global.win.reload()
+    setTimerUpdateApplication: ->
+      # caso o app pare de receber requisições será atualizado
+      @clearTimerUpdateApplication()
+      @timerUpdateApplication = setTimeout ->
+        ctrl.refreshApplication()
+      , 1000 * 60 * 1.5
+    clearTimerUpdateApplication: ->
+      clearTimeout @timerUpdateApplication if @timerUpdateApplication
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * ENV.TEMPO_ATUALIZAR
+
+  setInterval ->
+    global.logs.create('Grade -> Atualização preventiva (2h)!')
+    ctrl.refreshApplication()
+  , 1000 * 60 * 60 * 2 # 2 horas
 
   ctrl.getList()
   global.grade = ctrl
