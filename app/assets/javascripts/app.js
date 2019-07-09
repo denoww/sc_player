@@ -396,7 +396,7 @@
         return Date.now();
       }
     },
-    created: function() {
+    mounted: function() {
       this.loading = true;
       this.mouse();
       relogio.exec();

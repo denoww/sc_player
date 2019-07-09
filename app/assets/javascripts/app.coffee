@@ -300,7 +300,7 @@ vm = new Vue
       , 1000
   computed:
     now: -> Date.now()
-  created: ->
+  mounted: ->
     @loading = true
     @mouse()
     relogio.exec()
