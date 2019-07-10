@@ -3,7 +3,8 @@
 createWindow = ->
   win = new BrowserWindow
     autoHideMenuBar: true
-    useContentSize: true
+    useContentSize:  true
+    backgroundColor: '#222'
     webPreferences:
       nodeIntegration: true
       webSecurity: false
@@ -22,3 +23,6 @@ createWindow = ->
 
 app.on 'ready', createWindow
 global.app = app
+
+process.on 'uncaughtException', (err)->
+  global.logs.create("uncaughtException -> #{err}")

@@ -32,7 +32,7 @@ module.exports = ->
         @data[params.fonte] ||= {}
         @data[params.fonte][params.categoria] = null
         @handlelist(params, feed) for feed in feeds.items.splice(0, @totalItensPorCategoria)
-        @saveDataJson()
+        @setTimerToSaveDataJson()
       return
     handlelist: (params, feed)->
       image = @getImageData(params, feed)
@@ -105,12 +105,20 @@ module.exports = ->
         return unless @fila.length
         item = @fila.shift()
         @exec(item.params, item.urls, item.index)
+    setTimerToSaveDataJson: ->
+      # para nao salvar o @data varias vezes, podendo quebrar o json
+      @clearTimerToSaveDataJson()
+      @timerToSaveDataJson = setTimeout ->
+        ctrl.saveDataJson()
+      , 1000 * 10 # 10 segundos
+    clearTimerToSaveDataJson: ->
+      clearTimeout @timerToSaveDataJson if @timerToSaveDataJson
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
       try
         fs.writeFile 'feeds.json', dados, (error)->
           return global.logs.create("Feeds -> saveDataJson -> ERRO: #{error}") if error
-          console.info 'feeds.json salvo com sucesso!'
+          console.info 'Feeds -> feeds.json salvo com sucesso!'
       catch e
         global.logs.create("Feeds -> saveDataJson -> ERRO: #{e}")
       return

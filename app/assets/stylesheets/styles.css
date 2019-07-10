@@ -197,6 +197,7 @@ html, body {
   /*transform: translateX(-200%);*/
 }
 
+/* transicao da categoria do feed */
 /*.content-player .playlist-content.active .feed-categoria {
   animation: feed-categoria .5s;
   transform: translateX(0);
@@ -229,7 +230,7 @@ html, body {
   /*transform: translateY(100%);*/
   /*transition: transform 0.5s;*/
 }
-
+/* transicao do titulo do feed */
 /*.content-player .playlist-content.active .feed-titulo {
   animation: feed-titulo .5s;
   transform: translateY(0);
@@ -283,7 +284,8 @@ html, body {
   z-index: 1;
 }
 
-.content-player .player-item .playlist-content > div {
+/* transicao de imagens */
+/*.content-player .player-item .playlist-content > div {
   opacity: 0;
   transition: opacity .3s;
   transition-timing-function: linear;
@@ -297,10 +299,11 @@ html, body {
 .content-player .player-item .playlist-content .fade-enter-to {
   opacity: 1;
 }
+
 .content-player .player-item .playlist-content .fade-leave-active,
 .content-player .player-item .playlist-content .fade-leave-to {
   opacity: 0;
-}
+}*/
 
 /* --------------- PLAYER --------------- */
 
