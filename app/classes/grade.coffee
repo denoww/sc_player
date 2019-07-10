@@ -158,12 +158,12 @@ module.exports = ->
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
     refreshApplication: ->
       # atualizar o app para limpar cache e sobrecarga de processos
-      global.logs.create('Grade -> Atualizando Aplicação!')
       global.win.reload()
     setTimerUpdateApplication: ->
       # caso o app pare de receber requisições será atualizado
       @clearTimerUpdateApplication()
       @timerUpdateApplication = setTimeout ->
+        global.logs.create('Grade -> Atualizando Aplicação!')
         ctrl.refreshApplication()
       , 1000 * 60 * 1.5
     clearTimerUpdateApplication: ->
