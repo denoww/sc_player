@@ -20,11 +20,10 @@ class Download
       if !fs.existsSync(folder)
         fs.mkdirSync(folder)
   @exec: (params, opts={})->
-
     pasta = global.configPath + ENV.DOWNLOAD_VIDEOS if params.is_video
     pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image
     pasta = global.configPath + ENV.DOWNLOAD_AUDIOS if params.is_audio
-    pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if opts.is_feed
+    pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if params.is_feed || opts.is_feed
 
     unless pasta
       global.logs.create("Download -> exec -> nenhuma pasta encontrada para #{params.nome_arquivo}!")
@@ -36,7 +35,7 @@ class Download
         # console.info "Download -> Arquivo já existe: #{params.nome_arquivo}"
         return next()
 
-      return @fila.push params if @loading
+      return @fila.push Object.assign {}, params, opts if @loading
       @loading = true
 
       file      = fs.createWriteStream(fullPath)
