@@ -2,7 +2,7 @@ fs        = require 'fs'
 RSS       = require 'rss-parser'
 shell     = require 'shelljs'
 request   = require 'request'
-resolve   = require('path').resolve
+path      = require 'path'
 UrlExists = require 'url-exists'
 
 module.exports = ->
@@ -40,9 +40,7 @@ module.exports = ->
 
       feedObj =
         url:          image.url
-        # data:         feed.pubDate
         titulo:       feed.title
-        is_feed:      true
         titulo_feed:  params.titulo
         nome_arquivo: image.nome
 
@@ -51,7 +49,7 @@ module.exports = ->
       else if params.fonte == 'infomoney'
         return @getImageInfomoney(params, feedObj, image)
       else
-        Download.exec(feedObj)
+        Download.exec(feedObj, is_feed: true)
 
       @data[params.fonte] ||= {}
       @data[params.fonte][params.categoria] ||= []
@@ -96,7 +94,7 @@ module.exports = ->
 
           if existe
             params.url = urls[index]
-            Download.exec(params)
+            Download.exec(params, is_feed: true)
             return
 
           index++
@@ -146,7 +144,7 @@ module.exports = ->
         image = ctrl.mountImageData(params, imageURL)
         feedObj.url  = image.url
         feedObj.nome = image.nome
-        Download.exec(feedObj)
+        Download.exec(feedObj, is_feed: true)
 
         ctrl.data[params.fonte] ||= {}
         ctrl.data[params.fonte][params.categoria] ||= []
@@ -162,7 +160,7 @@ module.exports = ->
           imagensAtuais.push "-name '#{item.nome}'" for item in items || []
       return if imagensAtuais.empty()
 
-      caminho = resolve('downloads/feeds/')
+      caminho = global.configPath + 'downloads/feeds/'
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
       shell.exec command, (code, out, error)->
         return global.logs.create("Feeds -> deleteOldImages -> ERRO: #{error}") if error

@@ -1,5 +1,5 @@
 express = require 'express'
-resolve = require('path').resolve
+path    = require 'path'
 
 module.exports = (opt={}) ->
   app = express()
@@ -7,8 +7,7 @@ module.exports = (opt={}) ->
   console.info "HTTP #{ENV.HTTP_PORT} STARTING"
   global.logs.create('Iniciando servidor HTTP!')
 
-  app.use express.static(resolve('app/assets/'))
-  app.use '/downloads/', express.static(resolve('downloads/'))
+  app.use express.static(path.join( __dirname, '../assets/'))
 
   # Resolve o erro do CROSS de Access-Control-Allow-Origin
   app.all '*', (req, res, next)->
@@ -22,7 +21,7 @@ module.exports = (opt={}) ->
   app.get '/', (req, res) ->
     console.info "Request GET / params: #{JSON.stringify(req.body || {})}"
     res.type "text/html"
-    res.sendFile resolve('app/assets/templates/index.html')
+    res.sendFile path.join( __dirname, '../assets/templates/index.html')
 
   app.get '/grade', (req, res) ->
     console.info "Request GET /grade params: #{JSON.stringify(req.body || {})}"
@@ -30,7 +29,7 @@ module.exports = (opt={}) ->
       global.grade.getList()
       res.sendStatus(400)
       return
-    global.grade.setTimerUpdateApplication()
+    global.grade.setTimerUpdateWindow()
     res.send JSON.stringify global.grade.data
 
   app.get '/feeds', (req, res) ->

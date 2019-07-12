@@ -1,7 +1,7 @@
 fs      = require 'fs'
 shell   = require 'shelljs'
 request = require 'request'
-resolve = require('path').resolve
+path    = require 'path'
 
 module.exports = ->
   ctrl =
@@ -38,7 +38,7 @@ module.exports = ->
       @data =
         id:        data.id
         cor:       data.cor
-        path:      resolve('./')
+        path:      global.configPath
         layout:    data.layout
         cidade:    data.cidade
         musicas:   []
@@ -152,22 +152,28 @@ module.exports = ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
 
-      caminho = resolve('tasks/')
+      caminho = path.join(__dirname, '../../tasks/')
       shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
         if grepErr
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
-    refreshApplication: ->
+    restartPlayer: ->
+      global.logs.create('Grade -> Reiniciando Player!')
+
+      shell.exec 'sudo reboot', (code, grepOut, grepErr)->
+        if grepErr
+          global.logs.create("Grade -> restartPlayer -> ERRO: #{grepErr}")
+    refreshWindow: ->
       # atualizar o app para limpar cache e sobrecarga de processos
       global.win.reload()
-    setTimerUpdateApplication: ->
+    setTimerUpdateWindow: ->
       # caso o app pare de receber requisições será atualizado
-      @clearTimerUpdateApplication()
-      @timerUpdateApplication = setTimeout ->
+      @clearTimerUpdateWindow()
+      @timerUpdateWindow = setTimeout ->
         global.logs.create('Grade -> Atualizando Aplicação!')
-        ctrl.refreshApplication()
+        ctrl.refreshWindow()
       , 1000 * 60 * 1.5
-    clearTimerUpdateApplication: ->
-      clearTimeout @timerUpdateApplication if @timerUpdateApplication
+    clearTimerUpdateWindow: ->
+      clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
@@ -176,7 +182,7 @@ module.exports = ->
 
   setInterval ->
     global.logs.create('Grade -> Atualização preventiva (2h)!')
-    ctrl.refreshApplication()
+    ctrl.refreshWindow()
   , 1000 * 60 * 60 * 2 # 2 horas
 
   ctrl.getList()

@@ -61,7 +61,7 @@
           return;
         }
         this.tentarNovamenteEm = 1000 * this.tentativas;
-        console.warn(`Grade: Tentando em ${this.tentarNovamenteEm} segundos`);
+        console.warn(`Grade: Tentando em ${this.tentarNovamenteEm / 1000} segundos`);
         setTimeout((function() {
           return grade.get();
         }), this.tentarNovamenteEm);
@@ -136,7 +136,7 @@
           return;
         }
         this.tentarNovamenteEm = 1000 * this.tentativas;
-        console.warn(`Feeds: Tentando em ${this.tentarNovamenteEm} segundos`);
+        console.warn(`Feeds: Tentando em ${this.tentarNovamenteEm / 1000} segundos`);
         setTimeout((function() {
           return feedsObj.get();
         }), this.tentarNovamenteEm);

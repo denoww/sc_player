@@ -11,6 +11,8 @@ html, body {
   font-family: 'Open Sans', sans-serif;
   background: #333;
   cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

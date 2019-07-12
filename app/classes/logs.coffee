@@ -1,10 +1,9 @@
 shell   = require 'shelljs'
-resolve = require('path').resolve
 
 module.exports = ->
   ctrl =
     init: ->
-      @caminho = resolve('./logs')
+      @caminho = global.configPath + 'logs'
     show: ->
       shell.exec "cat #{@caminho}", (code, grepOut, grepErr)->
         return console.error 'Logs -> show:', grepErr if grepErr

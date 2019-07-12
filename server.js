@@ -2,6 +2,9 @@ require('coffeescript').register();
 require('./env');
 require('sc-node-tools');
 
+global.homePath = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/'
+global.configPath = global.homePath + '.config/sc-player/'
+
 // servers
 console.log('STARTING SERVERS...');
 require('./app/classes/download');

@@ -54,7 +54,7 @@ grade =
         return
 
       @tentarNovamenteEm = 1000 * @tentativas
-      console.warn "Grade: Tentando em #{@tentarNovamenteEm} segundos"
+      console.warn "Grade: Tentando em #{@tentarNovamenteEm / 1000} segundos"
       setTimeout (-> grade.get()), @tentarNovamenteEm
       onError?()
 
@@ -116,7 +116,7 @@ feedsObj =
         return
 
       @tentarNovamenteEm = 1000 * @tentativas
-      console.warn "Feeds: Tentando em #{@tentarNovamenteEm} segundos"
+      console.warn "Feeds: Tentando em #{@tentarNovamenteEm / 1000} segundos"
       setTimeout (-> feedsObj.get()), @tentarNovamenteEm
       onError?()
 

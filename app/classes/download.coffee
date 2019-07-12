@@ -1,19 +1,37 @@
 fs    = require 'fs'
 http  = require 'http'
 https = require 'https'
+path  = require 'path'
 
 class Download
   @fila: []
   @loading: false
-  @exec: (params)->
-    pasta = ENV.DOWNLOAD_VIDEOS if params.is_video
-    pasta = ENV.DOWNLOAD_IMAGES if params.is_image
-    pasta = ENV.DOWNLOAD_AUDIOS if params.is_audio
-    pasta = ENV.DOWNLOAD_FEEDS  if params.is_feed
-    pasta ||= './downloads'
+  @init: ->
+    folders  = []
+    basePath = global.homePath + '.config/sc-player/'
 
-    path = pasta + params.nome_arquivo
-    fs.stat path, (error, stats)=>
+    folders.push basePath + 'downloads'
+    folders.push basePath + ENV.DOWNLOAD_VIDEOS
+    folders.push basePath + ENV.DOWNLOAD_IMAGES
+    folders.push basePath + ENV.DOWNLOAD_AUDIOS
+    folders.push basePath + ENV.DOWNLOAD_FEEDS
+
+    for folder in folders
+      if !fs.existsSync(folder)
+        fs.mkdirSync(folder)
+  @exec: (params, opts={})->
+
+    pasta = global.configPath + ENV.DOWNLOAD_VIDEOS if params.is_video
+    pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image
+    pasta = global.configPath + ENV.DOWNLOAD_AUDIOS if params.is_audio
+    pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if opts.is_feed
+
+    unless pasta
+      global.logs.create("Download -> exec -> nenhuma pasta encontrada para #{params.nome_arquivo}!")
+      return
+
+    fullPath = pasta + params.nome_arquivo
+    fs.stat fullPath, (error, stats)=>
       if !error && alreadyExists(params, stats.size)
         # console.info "Download -> Arquivo já existe: #{params.nome_arquivo}"
         return next()
@@ -21,7 +39,7 @@ class Download
       return @fila.push params if @loading
       @loading = true
 
-      file      = fs.createWriteStream(path)
+      file      = fs.createWriteStream(fullPath)
       protocolo = http
       protocolo = https if params.url.match(/https/)
       console.info "Download -> #{params.nome_arquivo}, URL: #{params.url}"
@@ -57,9 +75,10 @@ class Download
     Download.exec(Download.fila.shift())
 
   alreadyExists = (params, size=null)->
-    return size > 1024 if params.is_feed
+    return size > 1024 unless params.size
     margem = 1
     size <= (params.size + margem) &&
     size >= (params.size - margem)
 
+Download.init()
 global.Download = Download

@@ -1,8 +1,14 @@
 {
   "name": "sc-player",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Player de Publicidades do Seu Condomínio.",
   "main": "server.js",
+  "private": true,
+  "author": {
+    "name": "Seu Condomínio",
+    "email": "contato@seucondominio.com.br",
+    "url": "http://seucondominio.com.br"
+  },
   "engines": {
     "node": ">=6.2.0"
   },
@@ -12,23 +18,29 @@
     "start-coffee": "coffee server.coffee",
     "delete_old_images": "coffee ./tasks/delete_old_images.coffee",
     "update_timezone": "coffee ./tasks/update_timezone.coffee",
-    "compile-coffee": "coffee -wc app/assets/**"
+    "compile-coffee": "coffee -wc app/assets/**",
+    "build": "npm run clean && npm run bundle:x64 && npm run deb:x64",
+    "clean": "rimraf dist",
+    "bundle:x64": "electron-packager . --platform linux --arch x64 --out dist/",
+    "deb:x64": "electron-installer-debian --src dist/sc-player-linux-x64/ --arch amd64 --config installer-config.json"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "coffeescript": "^2.4.1",
+    "electron-context-menu": "^0.13.0",
     "express": "^4.16.3",
     "moment": "^2.24.0",
     "node-env-file": "^0.1.8",
     "nodemon": "^1.11.0",
     "request": "^2.87.0",
-    "rss-parser": "^3.7.1",
+    "rss-parser": "^3.7.2",
     "sc-node-tools": "^1.1.9",
     "shelljs": "^0.8.3",
     "url-exists": "^1.0.3"
   },
   "devDependencies": {
-    "coffeescript": "^2.4.1",
-    "electron": "^5.0.6"
+    "electron": "^5.0.6",
+    "electron-installer-debian": "*",
+    "electron-packager": "^13.0.0",
+    "rimraf": "^2.6.2"
   }
 }
