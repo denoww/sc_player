@@ -5,7 +5,6 @@ createWindow = ->
   win = new BrowserWindow
     show:            false
     icon:            "#{__dirname}/app/assets/images/icon.png"
-    frame:           false
     kiosk:           true
     minWidth:        640
     minHeight:       360

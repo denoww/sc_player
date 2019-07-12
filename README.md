@@ -8,34 +8,11 @@ cd sc_player/
 tasks/./config.sh
 ```
 
-#### Alterar a "Autoplay policy" do Chromium
-
-1. Abra o link: [chrome://flags/#autoplay-policy](chrome://flags/#autoplay-policy "chrome://flags/#autoplay-policy")
-2. Altere a "Autoplay policy" para "No user gesture is required"
-3. Clique em "Relaunch Now"
-4. Reinicie o player
-
 ## Removendo libs desnecessárias
 
 ```
 sudo apt-get remove --purge wolfram-engine scratch nuscratch sonic-pi idle3 smartsim java-common minecraft-pi python-minecraftpi python3-minecraftpi libreoffice python3-thonny geany claws-mail bluej greenfoot
 sudo apt-get autoremove
-```
-
-## Desabilitar screensaver
-
-Adicione o código abaixo no arquivo `/etc/xdg/lxsession/LXDE-pi/autostart`
-
-```
-@xset s noblank
-@xset s off
-@xset -dpms
-```
-
-Adicione o código abaixo no arquivo `/etc/lightdm/lightdm.conf`
-
-```
-xserver-command=X -s 0 dpms
 ```
 
 ## Conexão SSH no Raspberry

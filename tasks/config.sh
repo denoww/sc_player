@@ -3,22 +3,10 @@
 # configurar desktop
 read -p '--> Configurar Desktop? (y/N) ' config_desktop
 if [[ "$config_desktop" == "y" || "$config_desktop" == "Y" ]] ; then
-  # criando pastas de downloads das midias
-  echo '--- Criando pastas de downloads das mídias'
-  sh -c 'mkdir ~/sc_player/downloads'
-  sh -c 'mkdir ~/sc_player/downloads/videos'
-  sh -c 'mkdir ~/sc_player/downloads/images'
-  sh -c 'mkdir ~/sc_player/downloads/audios'
-  sh -c 'mkdir ~/sc_player/downloads/feeds'
 
   # configurando barra de tarefas
   echo '--- Configurando barra de tarefas'
   sh -c 'cp ~/sc_player/device_configs/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel'
-
-  # criando autostart
-  # echo '--- Criando autostart'
-  # sh -c 'mkdir /home/pi/.config/autostart'
-  # sh -c 'cp ~/sc_player/device_configs/player.desktop /home/pi/.config/autostart/'
 
   # configurando wallpaper do dispo
   echo '--- Configurando wallpaper do dispositivo'
@@ -30,7 +18,7 @@ fi
 read -p '--> Configurar variáveis de ambiente? (y/N) ' config_vars
 if [[ "$config_vars" == "y" || "$config_vars" == "Y" ]] ; then
   read -p '--> Informe o ID da TV: ' TV_ID
-  echo -e "TV_ID=$TV_ID\n" | sudo tee /etc/environment
+  echo -e "TV_ID=$TV_ID\nNODE_ENV=production\n" | sudo tee /etc/environment
   source /etc/environment
   sh -c 'cp ~/sc_player/.env_DEVELOPMENT_sample ~/sc_player/.env_DEVELOPMENT'
 fi

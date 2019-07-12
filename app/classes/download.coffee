@@ -26,7 +26,7 @@ class Download
     pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if params.is_feed || opts.is_feed
 
     unless pasta
-      global.logs.create("Download -> exec -> nenhuma pasta encontrada para #{params.nome_arquivo}!")
+      global.logs.create("Download -> exec -> ERRO: Nenhuma pasta encontrada para #{params.nome_arquivo}!")
       return
 
     fullPath = pasta + params.nome_arquivo
