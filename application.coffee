@@ -9,7 +9,6 @@ createWindow = ->
     minWidth:        640
     minHeight:       360
     darkTheme:       true
-    alwaysOnTop:     true
     autoplayPolicy:  'no-user-gesture-required'
     useContentSize:  true
     autoHideMenuBar: true

@@ -178,7 +178,7 @@ module.exports = ->
   setInterval ->
     console.info 'Grade -> Atualizando lista!'
     ctrl.getList()
-  , 1000 * 60 * ENV.TEMPO_ATUALIZAR
+  , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
     global.logs.create('Grade -> Atualização preventiva (2h)!')
