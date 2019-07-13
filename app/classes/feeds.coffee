@@ -42,7 +42,7 @@ module.exports = ->
         url:          image.url
         titulo:       feed.title
         titulo_feed:  params.titulo
-        nome_arquivo: image.nome
+        nome_arquivo: image.nome_arquivo
 
       if image.url.match(/uol(.*)142x100/)
         @getImageUol(feedObj, image)
@@ -80,7 +80,7 @@ module.exports = ->
       imageNome = "#{params.fonte}-#{params.categoria}-#{imageNome}"
       imageNome = "#{imageNome}#{extension}"
 
-      url: url, nome: imageNome
+      url: url, nome_arquivo: imageNome
     verificarUrls:
       fila: []
       exec: (params, urls, index=0)->
@@ -141,9 +141,9 @@ module.exports = ->
         imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || ''
         return console.warn 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
 
-        image = ctrl.mountImageData(params, imageURL)
-        feedObj.url  = image.url
-        feedObj.nome = image.nome
+        image                = ctrl.mountImageData(params, imageURL)
+        feedObj.url          = image.url
+        feedObj.nome_arquivo = image.nome_arquivo
         Download.exec(feedObj, is_feed: true)
 
         ctrl.data[params.fonte] ||= {}
@@ -157,7 +157,7 @@ module.exports = ->
       imagensAtuais = []
       for fonte, categorias of @data
         for categoria, items of categorias || []
-          imagensAtuais.push "-name '#{item.nome}'" for item in items || []
+          imagensAtuais.push "-name '#{item.nome_arquivo}'" for item in items || []
       return if imagensAtuais.empty()
 
       caminho = global.configPath + 'downloads/feeds/'
