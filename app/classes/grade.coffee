@@ -35,10 +35,13 @@ module.exports = ->
 
         global.feeds.getList()
     handlelist: (data)->
+      configPath = global.configPath
+      configPath = configPath.split('\\').join('/') if process.platform == 'win32'
+
       @data =
         id:        data.id
         cor:       data.cor
-        path:      global.configPath
+        path:      configPath
         layout:    data.layout
         cidade:    data.cidade
         musicas:   []

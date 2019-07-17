@@ -2,8 +2,8 @@ require('coffeescript').register();
 require('./env');
 require('sc-node-tools');
 
-global.homePath = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/'
-global.configPath = global.homePath + '.config/sc-player/'
+global.homePath = (process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH) + '/'
+global.configPath = global.homePath + '.config/sc_player/'
 
 // servers
 console.log('STARTING SERVERS...');

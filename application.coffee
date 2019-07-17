@@ -1,3 +1,9 @@
+# handle setupevents as quickly as possible
+setupEvents = require './installers/setupEvents'
+if setupEvents.handleSquirrelEvent()
+  # squirrel event handled and app will exit in 1000ms, so don't do anything else
+  return
+
 { app, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
 
