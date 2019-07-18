@@ -80,7 +80,7 @@ grade =
     dados = @data
     dados.conteudos = (dados?.conteudos || []).select (e)-> e.ativado
     dados.mensagens = (dados?.mensagens || []).select (e)-> e.ativado
-    dados.musicas   = (dados?.musicas || []).select (e)-> e.ativado
+    dados.musicas   = (dados?.musicas   || []).select (e)-> e.ativado
     vm.grade.data = dados
     return
 

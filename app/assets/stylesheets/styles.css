@@ -15,6 +15,13 @@ html, body {
   -webkit-user-select: none;
 }
 
+p {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 0.5em;
+}
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
@@ -130,7 +137,8 @@ html, body {
 
 /* --------------- PLAYER --------------- */
 .content-player .midia-main,
-.content-player .feed-main {
+.content-player .feed-main,
+.content-player .informativo-main {
   width: 100%;
   height: 100%;
   display: flex;
@@ -306,6 +314,97 @@ html, body {
 .content-player .player-item .playlist-content .fade-leave-to {
   opacity: 0;
 }*/
+
+/* --------------- INFORMATIVO --------------- */
+
+.content-player .informativo {
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-player .informativo.layout-1 .conteudo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 50px 50px 0;
+  height: 980px;
+}
+.content-player .informativo.layout-1 .conteudo .titulo {
+  line-height: 1;
+  padding: 60px 70px 20px;
+}
+.content-player .informativo.layout-1 .conteudo .titulo > div {
+  font-size: 50px;
+  font-weight: bold;
+}
+.content-player .informativo.layout-1 .conteudo .mensagem {
+  padding: 20px 70px 0;
+}
+.content-player .informativo.layout-1 .conteudo .mensagem > div {
+  font-size: 30px;
+}
+.content-player .informativo.layout-2 .conteudo {
+  margin: 63px 82px 0 725px;
+  height: 950px;
+  overflow: hidden;
+}
+.content-player .informativo.layout-2 .conteudo .titulo {
+  line-height: 1;
+  padding: 60px 70px 20px;
+}
+.content-player .informativo.layout-2 .conteudo .titulo > div {
+  font-size: 50px;
+  font-weight: bold;
+}
+.content-player .informativo.layout-2 .conteudo .mensagem {
+  padding: 20px 70px 0;
+}
+.content-player .informativo.layout-2 .conteudo .mensagem > div {
+  font-size: 30px;
+}
+.content-player .informativo.layout-3 .conteudo {
+  margin: 114px 628px 0 70px;
+  height: 810px;
+  overflow: hidden;
+}
+.content-player .informativo.layout-3 .conteudo .titulo {
+  line-height: 1;
+  padding: 60px 70px 20px;
+}
+.content-player .informativo.layout-3 .conteudo .titulo > div {
+  font-size: 50px;
+  font-weight: bold;
+}
+.content-player .informativo.layout-3 .conteudo .mensagem {
+  padding: 20px 70px 0;
+}
+.content-player .informativo.layout-3 .conteudo .mensagem > div {
+  font-size: 30px;
+}
+.content-player .informativo.layout-4 .conteudo {
+  margin: 96px 160px 0;
+  height: 890px;
+  overflow: hidden;
+}
+.content-player .informativo.layout-4 .conteudo .titulo {
+  line-height: 1;
+  padding: 60px 70px 20px;
+}
+.content-player .informativo.layout-4 .conteudo .titulo > div {
+  font-size: 50px;
+  font-weight: bold;
+}
+.content-player .informativo.layout-4 .conteudo .mensagem {
+  padding: 20px 70px 0;
+}
+.content-player .informativo.layout-4 .conteudo .mensagem > div {
+  font-size: 30px;
+}
+/* layout 4 */
+/* --------------- INFORMATIVO --------------- */
 
 /* --------------- PLAYER --------------- */
 

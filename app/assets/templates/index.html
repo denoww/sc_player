@@ -132,6 +132,31 @@
                       </video>
                     </div>
                     <!-- midia -->
+
+                    <!-- informativo -->
+                    <div class="informativo-main" v-else-if="item.tipo_midia === 'informativo'">
+                      <div class="informativo" :class="item.mensagem.layout" :style="
+                        {
+                          'background-image': 'url(/images/informativos/' + item.mensagem.imagem + ')',
+                          'background-color': item.mensagem.cor_fundo,
+                        }
+                      ">
+                        <svg viewBox="0 0 1920 1080">
+                          <foreignObject height="100%" width="100%">
+                            <div class="conteudo">
+                              <div class="titulo" :style="{'color': item.mensagem.cor_titulo}">
+                                <div>{{item.titulo}}</div>
+                              </div>
+                              <div class="mensagem" :style="{'color': item.mensagem.cor_mensagem}">
+                                <div v-html="item.mensagem.texto"></div>
+                              </div>
+                            </div>
+                          </foreignObject>
+                        </svg>
+                      </div>
+                    </div>
+                    <!-- informativo -->
+
                   </div>
                 </transition>
 

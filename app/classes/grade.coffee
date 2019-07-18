@@ -67,6 +67,7 @@ module.exports = ->
 
         switch vinculo.tipo_midia
           when 'musica', 'midia' then @handleMidia(vinculo, item)
+          when 'informativo'     then @handleInformativo(vinculo, item)
           when 'playlist'        then @handlePlaylist(vinculo, item)
           when 'mensagem'        then @handleMensagem(vinculo, item)
           when 'clima'           then @handleClima(vinculo, item)
@@ -92,6 +93,12 @@ module.exports = ->
       else
         lista.conteudos.push item
       Download.exec(item)
+    handleInformativo: (vinculo, item, lista=null)->
+      return unless vinculo.mensagem
+
+      item.mensagem = vinculo.mensagem
+      lista ||= @data
+      lista.conteudos.push item
     handlePlaylist: (vinculo, item)->
       return unless (vinculo.playlist.vinculos || []).any()
       item.conteudos = []
