@@ -34,7 +34,7 @@
     "nodemon": "^1.11.0",
     "request": "^2.87.0",
     "rss-parser": "^3.7.2",
-    "sc-node-tools": "^1.1.9",
+    "sc-node-tools": "^1.2.1",
     "shelljs": "^0.8.3",
     "url-exists": "^1.0.3"
   },

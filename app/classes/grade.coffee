@@ -44,9 +44,6 @@ module.exports = ->
         path:      configPath
         layout:    data.layout
         cidade:    data.cidade
-        musicas:   []
-        conteudos: []
-        mensagens: []
         resolucao: data.resolucao
         versao_player: data.versao_player
 
@@ -87,21 +84,18 @@ module.exports = ->
       item.nome_arquivo = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
 
       lista ||= @data
-
-      if item.is_audio
-        lista.musicas.push item
-      else
-        lista.conteudos.push item
+      lista[vinculo.posicao] ||= []
+      lista[vinculo.posicao].push item
       Download.exec(item)
     handleInformativo: (vinculo, item, lista=null)->
       return unless vinculo.mensagem
 
       item.mensagem = vinculo.mensagem
       lista ||= @data
-      lista.conteudos.push item
+      lista[vinculo.posicao] ||= []
+      lista[vinculo.posicao].push item
     handlePlaylist: (vinculo, item)->
       return unless (vinculo.playlist.vinculos || []).any()
-      item.conteudos = []
 
       for vinc in (vinculo.playlist.vinculos || []).sortByField('ordem')
         continue unless vinc.ativado
@@ -119,12 +113,14 @@ module.exports = ->
           when 'midia' then @handleMidia(vinc, subItem, item)
           when 'clima' then @handleClima(vinc, subItem, item)
           when 'feed'  then @handleFeed(vinc, subItem, item)
-      @data.conteudos.push item
+      @data[vinculo.posicao] ||= []
+      @data[vinculo.posicao].push item
     handleMensagem: (vinculo, item)->
       return unless vinculo.mensagem
-
       item.mensagem = vinculo.mensagem.texto
-      @data.mensagens.push item
+
+      @data[vinculo.posicao] ||= []
+      @data[vinculo.posicao].push item
     handleClima: (vinculo, item, lista=null)->
       return unless vinculo.clima
       lista ||= @data
@@ -132,7 +128,8 @@ module.exports = ->
       item.uf      = vinculo.clima.uf
       item.nome    = vinculo.clima.nome
       item.country = vinculo.clima.country
-      lista.conteudos.push item
+      lista[vinculo.posicao] ||= []
+      lista[vinculo.posicao].push item
     handleFeed: (vinculo, item, lista=null)->
       return unless vinculo.feed
       lista ||= @data
@@ -140,7 +137,8 @@ module.exports = ->
       item.url       = vinculo.feed.url
       item.fonte     = vinculo.feed.fonte
       item.categoria = vinculo.feed.categoria
-      lista.conteudos.push item
+      lista[vinculo.posicao] ||= []
+      lista[vinculo.posicao].push item
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
       try

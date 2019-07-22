@@ -100,10 +100,10 @@
           <div class="content-player">
             <div class="player-item">
 
-              <div v-for="(item, index) in playlist" :key="item.id" :class="[{'active': (index === currentIndex)}]" class="playlist-content">
+              <div v-for="(item, index) in listaConteudoSuperior" :key="item.id" :class="[{'active': (index === indexConteudoSuperior)}]" class="playlist-content">
 
                 <transition name="fade">
-                  <div v-show="index === currentIndex">
+                  <div v-show="index === indexConteudoSuperior">
                     <!-- feeds -->
                     <div v-if="item.tipo_midia === 'feed'" class="content-feed">
                       <div class="feed-main">
@@ -112,7 +112,7 @@
                           <div class="feed-categoria">{{item.titulo_feed}}</div>
                           <div class="feed-out"></div>
                         </div>
-                        <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? 'file://' + grade.data.path + 'downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
+                        <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? '/downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
                         <div class="feed-titulo">{{item.titulo}}</div>
                       </div>
                     </div>
@@ -121,14 +121,14 @@
                     <!-- midia -->
                     <div class="midia-main" v-else-if="item.tipo_midia === 'midia'">
                       <div class="midia-imagem" v-if="item.is_image"
-                        :style="{'background-image': 'url(file://' + grade.data.path + 'downloads/images/' + item.nome_arquivo + ')'}">
+                        :style="{'background-image': 'url(/downloads/images/' + item.nome_arquivo + ')'}">
                       </div>
 
                       <video class="midia-video"
                         v-if="item.is_video"
                         :id="'video-player-' + item.id"
                         preload="auto">
-                        <source :src="'file://' + grade.data.path + 'downloads/videos/' + item.nome_arquivo" :type="item.content_type">
+                        <source :src="'/downloads/videos/' + item.nome_arquivo" :type="item.content_type">
                       </video>
                     </div>
                     <!-- midia -->
@@ -171,9 +171,27 @@
             <div class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
           </div> <!-- content-logo -->
 
-          <div class="content-mensagem" v-if="timeline.mensagem">
-            <div class="titulo" v-if="timeline.mensagem.titulo">{{timeline.mensagem.titulo}}</div>
-            <div class="mensagem" v-if="timeline.mensagem.mensagem" v-html="timeline.mensagem.mensagem"></div>
+          <div class="content-mensagem">
+            <div v-for="(item, index) in listaConteudoMensagem" :key="item.id" :class="[{'active': (index === indexConteudoMensagem)}]">
+              <div v-show="index === indexConteudoMensagem">
+                <!-- mensagem -->
+                <div v-if="item.tipo_midia === 'mensagem'">
+                  <div class="titulo" v-if="item.titulo">{{item.titulo}}</div>
+                  <div class="mensagem" v-if="item.mensagem" v-html="item.mensagem"></div>
+                </div>
+                <!-- mensagem -->
+
+                <!-- feeds -->
+                <div class="feed" v-else-if="item.tipo_midia === 'feed'">
+                  <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + item.fonte + '.png)'}"></div>
+                  <div>
+                    <div class="categoria">{{item.titulo_feed}}</div>
+                    <div class="titulo">{{item.titulo}}</div>
+                  </div>
+                </div>
+                <!-- feeds -->
+              </div>
+            </div>
           </div> <!-- content-mensagem -->
         </div> <!-- content-footer -->
       </div> <!-- content-main -->

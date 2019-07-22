@@ -3,9 +3,11 @@ data =
   loaded:  false
   loading: true
 
-  currentIndex: 0
+  indexConteudoSuperior: 0
+  indexConteudoMensagem: 0
 
-  playlist: []
+  listaConteudoSuperior: []
+  listaConteudoMensagem: []
 
   grade:
     data:
@@ -13,18 +15,11 @@ data =
       layout: 'layout-2'
       weather: {}
 
-  feeds:
-    data: {}
+onLoaded = ->
+  timelineConteudoSuperior.init()
+  timelineConteudoMensagem.init()
 
-  timeline:
-    conteudo: {}
-    mensagem: {}
-    transicao:
-      conteudos: false
-      mensagens: false
-
-grade =
-  data: {}
+gradeObj =
   tentar: 10
   tentativas: 0
   get: (onSuccess, onError)->
@@ -35,17 +30,14 @@ grade =
       @loading    = false
       @tentativas = 0
 
-      @data = resp.data
+      @handle resp.data
       onSuccess?()
       @mountWeatherData()
-      @handle @data
-      timelineConteudos.init()
-      timelineMensagens.init()
+      onLoaded()
 
     error = (resp)=>
       @loading = false
-      timelineConteudos.init()
-      timelineMensagens.init()
+      onLoaded()
       console.error 'Grade:', resp
 
       @tentativas++
@@ -55,10 +47,14 @@ grade =
 
       @tentarNovamenteEm = 1000 * @tentativas
       console.warn "Grade: Tentando em #{@tentarNovamenteEm / 1000} segundos"
-      setTimeout (-> grade.get()), @tentarNovamenteEm
+      setTimeout (-> gradeObj.get()), @tentarNovamenteEm
       onError?()
 
     Vue.http.get('/grade').then success, error
+    return
+  handle: (data)->
+    @data = data
+    vm.grade.data = data
     return
   mountWeatherData: ->
     return unless @data.weather
@@ -76,19 +72,12 @@ grade =
 
     @data.weather.proximos_dias = @data.weather.proximos_dias.slice(0,4)
     return
-  handle: (data)->
-    dados = @data
-    dados.conteudos = (dados?.conteudos || []).select (e)-> e.ativado
-    dados.mensagens = (dados?.mensagens || []).select (e)-> e.ativado
-    dados.musicas   = (dados?.musicas   || []).select (e)-> e.ativado
-    vm.grade.data = dados
-    return
 
 feedsObj =
   data: {}
   tentar: 10
   tentativas: 0
-  nextIndex: {}
+  posicoes: ['conteudo_superior', 'conteudo_mensagem']
   get: (onSuccess, onError)->
     return if @loading
     @loading = true
@@ -97,17 +86,14 @@ feedsObj =
       @loading    = false
       @tentativas = 0
 
-      @data = resp.data
+      @handle(resp.data)
       @verificarNoticias()
       onSuccess?()
-      vm.feeds.data = @data
-      timelineConteudos.init()
-      timelineMensagens.init()
+      onLoaded()
 
     error = (resp)=>
       @loading = false
-      timelineConteudos.init()
-      timelineMensagens.init()
+      onLoaded()
       console.error 'Feeds:', resp
 
       @tentativas++
@@ -122,19 +108,33 @@ feedsObj =
 
     Vue.http.get('/feeds').then success, error
     return
+  handle: (data)->
+    @data = data
+    # pre-montar a estrutura dos feeds com base na grade para ser usado em verificarNoticias()
+    for posicao in @posicoes
+      feeds = vm.grade.data[posicao].select (e)-> e.tipo_midia == 'feed'
+
+      for feed in feeds
+        @data[feed.fonte] ||= {}
+        @data[feed.fonte][feed.categoria] ||= []
+    return
   verificarNoticias: ->
+    # serve para remover feeds que nao tem noticias
     for fonte, categorias of @data
-      for categoria, valores of categorias
-        if (valores || []).empty()
-          return unless grade.data.conteudos
-          conteudos = grade.data.conteudos.select (e)->
-            e.fonte == fonte && e.categoria == categoria
-          cont.ativado = false for cont in conteudos
+      for categoria, noticias of categorias
+        if (noticias || []).empty()
+          for posicao in @posicoes
+            continue unless vm.grade.data[posicao]
+
+            items = vm.grade.data[posicao].select (e)->
+              e.fonte == fonte && e.categoria == categoria
+            vm.grade.data[posicao].removeById item.id for item in items
     return
 
-timelineConteudos =
+timelineConteudoSuperior =
   promessa:  null
   nextIndex: 0
+  feedIndex: {}
   playlistIndex: {}
   init: ->
     return unless vm.loaded
@@ -145,17 +145,16 @@ timelineConteudos =
     itemAtual = @getNextItem()
     return unless itemAtual
 
-    vm.currentIndex = vm.playlist.getIndexByField 'id', itemAtual.id
-    if !vm.currentIndex?
-      vm.playlist.push itemAtual
-      vm.currentIndex = vm.playlist.length - 1
+    vm.indexConteudoSuperior = vm.listaConteudoSuperior.getIndexByField 'id', itemAtual.id
+    if !vm.indexConteudoSuperior?
+      vm.listaConteudoSuperior.push itemAtual
+      vm.indexConteudoSuperior = vm.listaConteudoSuperior.length - 1
 
     @stopUltimoVideo()
 
     segundos = (itemAtual.segundos * 1000) || 5000
     @promessa = setTimeout ->
-      itemAtual.active = false
-      timelineConteudos.executar()
+      timelineConteudoSuperior.executar()
     , segundos
 
     @playVideo(itemAtual) if itemAtual.is_video
@@ -183,7 +182,7 @@ timelineConteudos =
     @ultimoVideo = null
     return
   getNextItem: ->
-    lista = vm.grade.data.conteudos
+    lista = vm.grade.data.conteudo_superior
     total = lista.length
     return unless total
 
@@ -199,28 +198,26 @@ timelineConteudos =
       when 'playlist' then @getItemPlaylist(currentItem)
       else currentItem
   getItemFeed: (currentItem)->
-    feedItems = vm.feeds.data[currentItem.fonte]?[currentItem.categoria]
-    return currentItem if (feedItems || []).empty()
+    feedItems = feedsObj.data[currentItem.fonte]?[currentItem.categoria] || []
+    return currentItem if feedItems.empty()
 
     fonte = currentItem.fonte
     categ = currentItem.categoria
-    feedsObj.nextIndex[fonte] ||= {}
+    @feedIndex[fonte] ||= {}
 
-    if !feedsObj.nextIndex[fonte][categ]?
-      feedsObj.nextIndex[fonte][categ] = 0
+    if !@feedIndex[fonte][categ]?
+      @feedIndex[fonte][categ] = 0
     else
-      feedsObj.nextIndex[fonte][categ]++
+      @feedIndex[fonte][categ]++
 
-    if feedsObj.nextIndex[fonte][categ] >= feedItems.length
-      feedsObj.nextIndex[fonte][categ] = 0
+    if @feedIndex[fonte][categ] >= feedItems.length
+      @feedIndex[fonte][categ] = 0
 
-    feedIndex = feedsObj.nextIndex[fonte][categ]
-
-    feed = feedItems[feedIndex] || feedItems[0]
+    index = @feedIndex[fonte][categ]
+    feed = feedItems[index] || feedItems[0]
 
     return unless feed
     currentItem.id     = "#{currentItem.id}#{feed.nome_arquivo}"
-    currentItem.data   = feed.data
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
     currentItem.nome_arquivo = feed.nome_arquivo
@@ -231,33 +228,39 @@ timelineConteudos =
     else
       @playlistIndex[playlist.id]++
 
-    if @playlistIndex[playlist.id] >= playlist.conteudos.length
+    if @playlistIndex[playlist.id] >= playlist.conteudo_superior.length
       @playlistIndex[playlist.id] = 0
 
-    currentItem = playlist.conteudos[@playlistIndex[playlist.id]]
+    currentItem = playlist.conteudo_superior[@playlistIndex[playlist.id]]
 
     return currentItem if currentItem.tipo_midia != 'feed'
     @getItemFeed(currentItem)
 
-timelineMensagens =
-  current:   {}
+timelineConteudoMensagem =
   promessa:  null
   nextIndex: 0
+  playlistIndex: {}
   init: ->
     return unless vm.loaded
     @executar() unless @promessa?
   executar: ->
-
     clearTimeout @promessa if @promessa
 
-    vm.timeline.mensagem = @getNextItem()
-    return unless vm.timeline.mensagem
+    itemAtual = @getNextItem()
+    return unless itemAtual
 
-    segundos = (vm.timeline.mensagem.segundos * 1000) || 5000
-    @promessa = setTimeout (-> timelineMensagens.executar()), segundos
+    vm.indexConteudoMensagem = vm.listaConteudoMensagem.getIndexByField 'id', itemAtual.id
+    if !vm.indexConteudoMensagem?
+      vm.listaConteudoMensagem.push itemAtual
+      vm.indexConteudoMensagem = vm.listaConteudoMensagem.length - 1
+
+    segundos = (itemAtual.segundos * 1000) || 5000
+    @promessa = setTimeout ->
+      timelineConteudoMensagem.executar()
+    , segundos
     return
   getNextItem: ->
-    lista = vm.grade.data.mensagens
+    lista = vm.grade.data.conteudo_mensagem
     total = lista.length
     return unless total
 
@@ -267,7 +270,22 @@ timelineMensagens =
     @nextIndex++
     @nextIndex = 0 if @nextIndex >= total
 
-    lista[index]
+    currentItem = lista[index]
+    switch currentItem.tipo_midia
+      when 'feed' then @getItemFeed(currentItem)
+      else currentItem
+  getItemFeed: (currentItem)->
+    feedItems = feedsObj.data[currentItem.fonte]?[currentItem.categoria] || []
+    return currentItem if feedItems.empty()
+
+    index = parseInt(Math.random() * 100) % feedItems.length
+    feed = feedItems[index] || feedItems[0]
+
+    return unless feed
+    currentItem.id     = "#{currentItem.id}#{feed.titulo}"
+    currentItem.titulo = feed.titulo
+    currentItem.titulo_feed = feed.titulo_feed
+    currentItem
 
 relogio =
   exec: ->
@@ -289,7 +307,7 @@ vm = new Vue
   el:   '#main-player'
   data: data
   methods:
-    playVideo: timelineConteudos.playVideo
+    playVideo: timelineConteudoSuperior.playVideo
     mouse: ->
       clearTimeout(@mouseTimeout) if @mouseTimeout
       @body ||= document.getElementById('body-player')
@@ -306,14 +324,14 @@ vm = new Vue
     relogio.exec()
 
     setTimeout ->
-      grade.get ->
+      gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true
     , 1000
 
     setInterval ->
-      grade.get ->
+      gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true

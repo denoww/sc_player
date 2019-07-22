@@ -10,12 +10,18 @@ module.exports = ->
     data: {}
     totalItensPorCategoria: 20
     getList: ->
-      return unless global.grade?.data?.conteudos?.length
-      feeds = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'feed'
-      playlists = global.grade.data.conteudos.select (item)-> item.tipo_midia == 'playlist'
+      feeds = []
+      posicoes = ['conteudo_superior', 'conteudo_mensagem']
 
-      for playlist in playlists
-        feeds = feeds.concat playlist.conteudos.select (item)-> item.tipo_midia == 'feed'
+      for posicao in posicoes
+        continue unless global.grade?.data?[posicao]?.length
+        for feed in global.grade.data[posicao].select (item)-> item.tipo_midia == 'feed'
+          feeds.addOrExtend feed
+        playlists = global.grade.data[posicao].select (item)-> item.tipo_midia == 'playlist'
+
+        for playlist in playlists
+          for feed in playlist[posicao].select (item)-> item.tipo_midia == 'feed'
+            feeds.addOrExtend feed
 
       return if feeds.empty()
 
