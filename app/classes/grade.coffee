@@ -87,6 +87,7 @@ module.exports = ->
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
       Download.exec(item)
+      return
     handleInformativo: (vinculo, item, lista=null)->
       return unless vinculo.mensagem
 
@@ -94,6 +95,7 @@ module.exports = ->
       lista ||= @data
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
+      return
     handlePlaylist: (vinculo, item)->
       return unless (vinculo.playlist.vinculos || []).any()
 
@@ -113,14 +115,18 @@ module.exports = ->
           when 'midia' then @handleMidia(vinc, subItem, item)
           when 'clima' then @handleClima(vinc, subItem, item)
           when 'feed'  then @handleFeed(vinc, subItem, item)
+          when 'informativo' then @handleInformativo(vinc, subItem, item)
+
       @data[vinculo.posicao] ||= []
       @data[vinculo.posicao].push item
+      return
     handleMensagem: (vinculo, item)->
       return unless vinculo.mensagem
       item.mensagem = vinculo.mensagem.texto
 
       @data[vinculo.posicao] ||= []
       @data[vinculo.posicao].push item
+      return
     handleClima: (vinculo, item, lista=null)->
       return unless vinculo.clima
       lista ||= @data
@@ -130,6 +136,7 @@ module.exports = ->
       item.country = vinculo.clima.country
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
+      return
     handleFeed: (vinculo, item, lista=null)->
       return unless vinculo.feed
       lista ||= @data
@@ -139,6 +146,7 @@ module.exports = ->
       item.categoria = vinculo.feed.categoria
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
+      return
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
       try
@@ -156,6 +164,7 @@ module.exports = ->
         @data.offline = true
       catch e
         global.logs.create("Grade -> getDataOffline -> ERRO: #{e}")
+      return
     updatePlayer: ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
@@ -164,12 +173,14 @@ module.exports = ->
       shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
         if grepErr
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
+      return
     restartPlayer: ->
       global.logs.create('Grade -> Reiniciando Player!')
 
       shell.exec 'sudo reboot', (code, grepOut, grepErr)->
         if grepErr
           global.logs.create("Grade -> restartPlayer -> ERRO: #{grepErr}")
+      return
     refreshWindow: ->
       # atualizar o app para limpar cache e sobrecarga de processos
       global.win.reload()
