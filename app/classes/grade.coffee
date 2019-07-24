@@ -200,9 +200,9 @@ module.exports = ->
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
-    global.logs.create('Grade -> Atualização preventiva (2h)!')
+    global.logs.create('Grade -> Atualização preventiva (3h)!')
     ctrl.refreshWindow()
-  , 1000 * 60 * 60 * 2 # 2 horas
+  , 1000 * 60 * 60 * 3 # 2 horas
 
   ctrl.getList()
   global.grade = ctrl
