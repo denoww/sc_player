@@ -8,11 +8,10 @@ class Download
   @loading: false
   @init: ->
     folders  = []
-    basePath = global.homePath
-    # basePath = global.homePath + '.config/sc_player/'
+    folders.push global.homePath + '.config/'
+    basePath = global.homePath + '.config/sc_player/'
 
-    # folders.push global.homePath + '.config/'
-    # folders.push global.homePath + '.config/sc_player/'
+    folders.push basePath
     folders.push basePath + 'downloads'
     folders.push basePath + ENV.DOWNLOAD_VIDEOS
     folders.push basePath + ENV.DOWNLOAD_IMAGES

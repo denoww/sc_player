@@ -58,9 +58,9 @@ contextMenu(
     ]
 )
 
-app.on 'ready', createWindow
-
 app.setName 'SC Player'
+
+app.on 'ready', createWindow
 
 app.on 'gpu-process-crashed', ->
   global.logs.create("gpu-process-crashed -> O processo da GPU parou de funcionar ou foi interrompido!")
