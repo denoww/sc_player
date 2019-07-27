@@ -34,6 +34,7 @@ module.exports = ->
           return @updatePlayer()
 
         global.feeds.getList()
+        @setTimerUpdateWindow()
     handlelist: (data)->
       configPath = global.configPath
       configPath = configPath.split('\\').join('/') if process.platform == 'win32'
@@ -188,9 +189,9 @@ module.exports = ->
       # caso o app pare de receber requisições será atualizado
       @clearTimerUpdateWindow()
       @timerUpdateWindow = setTimeout ->
-        global.logs.create('Grade -> Atualizando Aplicação!')
+        global.logs.create('Grade -> Atualizando Aplicação! :(')
         ctrl.refreshWindow()
-      , 1000 * 60 * 1.5
+      , 1000 * 60 * 1.5 # 1.5 minutos
     clearTimerUpdateWindow: ->
       clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
