@@ -9,11 +9,13 @@ module.exports = ->
         return console.error 'Logs -> show:', grepErr if grepErr
         console.log 'LOGS:', grepOut
         grepOut
-    create: (message)->
-      return unless message
-      console.warn message
+    create: (messages...)->
+      message = (messages || []).join(' ')
+      return if message == ' '
 
-      log = (new Date).toLocaleString() + ' >> ' + message
+      console.warn message
+      log = (new Date).toLocaleString() + ' :: ' + message
+
       shell.exec "echo '#{log}' >> #{@caminho}", (code, grepOut, grepErr)->
         return console.error 'Logs -> create:', grepErr if grepErr
   ctrl.init()
