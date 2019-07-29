@@ -157,6 +157,7 @@ module.exports = ->
         ctrl.data[params.fonte][params.categoria].push feedObj
       return
     deleteOldImages: ->
+      global.logs.create 'deleteOldImages'
       @getDataOffline()
       return if Object.empty(@data || {})
 
@@ -164,6 +165,7 @@ module.exports = ->
       for fonte, categorias of @data
         for categoria, items of categorias || []
           imagensAtuais.push "-name '#{item.nome_arquivo}'" for item in items || []
+      global.logs.create 'imagensAtuais.length:', imagensAtuais.length
       return if imagensAtuais.empty()
 
       caminho = global.configPath + 'downloads/feeds/'
