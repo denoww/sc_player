@@ -105,6 +105,7 @@ app.on 'remote-get-global', ->         global.logs.create("--- ELECTRON --- remo
 app.on 'remote-get-builtin', ->        global.logs.create("--- ELECTRON --- remote-get-builtin!")
 app.on 'remote-get-current-window', -> global.logs.create("--- ELECTRON --- remote-get-current-window!")
 
+process.setMaxListeners(0)
 process.on 'beforeExit', (err)->         global.logs.create('--- NODE --- beforeExit ->', err)
 process.on 'disconnect', (err)->         global.logs.create('--- NODE --- disconnect ->', err)
 process.on 'exit', (err)->               global.logs.create('--- NODE --- exit ->', err)
