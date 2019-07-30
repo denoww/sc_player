@@ -1,7 +1,6 @@
 global.homePath = (process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH) + '/'
+global.homePath = '/home/pi/' if global.homePath == '/root/'
 global.configPath = global.homePath + '.config/sc_player/'
-# global.homePath = path.join(__dirname) + '/'
-# global.configPath = global.homePath
 
 require('sc-node-tools')
 require('../app/classes/logs')()

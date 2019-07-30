@@ -292,15 +292,17 @@ relogio =
     now = new Date
     hour = now.getHours()
     min  = now.getMinutes()
-    sec  = now.getSeconds()
+    # sec  = now.getSeconds()
 
     hour = "0#{hour}" if hour < 10
     min  = "0#{min}"  if min < 10
-    sec  = "0#{sec}"  if sec < 10
+    # sec  = "0#{sec}"  if sec < 10
 
     @elemHora ||= document.getElementById('hora')
-    @elemHora.innerHTML = hour + ':' + min + ':' + sec if @elemHora
-    setTimeout relogio.exec, 1000
+    @elemHora.innerHTML = hour + ':' + min if @elemHora
+    @timer = setTimeout relogio.exec, 1000 * 60 # 1 minuto
+    # @elemHora.innerHTML = hour + ':' + min + ':' + sec if @elemHora
+    # setTimeout relogio.exec, 1000
     return
 
 vm = new Vue
@@ -324,18 +326,19 @@ vm = new Vue
     relogio.exec()
 
     setTimeout ->
+      return if vm.loaded
       gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true
-    , 1000
+    , 1000 * 5 # 5 segundos
 
     setInterval ->
       gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true
-    , 1000 * 60 # a cada minuto
+    , 1000 * 60 * 2 # a cada 2 minutos
 
 Vue.filter 'formatDate', (value)->
   moment(value).format('DD MMM') if value

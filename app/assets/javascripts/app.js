@@ -380,28 +380,28 @@
 
   relogio = {
     exec: function() {
-      var hour, min, now, sec;
+      var hour, min, now;
       now = new Date;
       hour = now.getHours();
       min = now.getMinutes();
-      sec = now.getSeconds();
       if (hour < 10) {
+        // sec  = now.getSeconds()
         hour = `0${hour}`;
       }
       if (min < 10) {
         min = `0${min}`;
       }
-      if (sec < 10) {
-        sec = `0${sec}`;
-      }
+      // sec  = "0#{sec}"  if sec < 10
       this.elemHora || (this.elemHora = document.getElementById('hora'));
       if (this.elemHora) {
-        this.elemHora.innerHTML = hour + ':' + min + ':' + sec;
+        this.elemHora.innerHTML = hour + ':' + min;
       }
-      setTimeout(relogio.exec, 1000);
+      this.timer = setTimeout(relogio.exec, 1000 * 60); // 1 minuto
     }
   };
 
+  // @elemHora.innerHTML = hour + ':' + min + ':' + sec if @elemHora
+  // setTimeout relogio.exec, 1000
   vm = new Vue({
     el: '#main-player',
     data: data,
@@ -428,13 +428,16 @@
       this.mouse();
       relogio.exec();
       setTimeout(function() {
+        if (vm.loaded) {
+          return;
+        }
         return gradeObj.get(function() {
           return feedsObj.get(function() {
             vm.loading = false;
             return vm.loaded = true;
           });
         });
-      }, 1000);
+      }, 1000 * 5); // 5 segundos
       return setInterval(function() {
         return gradeObj.get(function() {
           return feedsObj.get(function() {
@@ -442,7 +445,7 @@
             return vm.loaded = true;
           });
         });
-      }, 1000 * 60); // a cada minuto
+      }, 1000 * 60 * 2); // a cada 2 minutos
     }
   });
 

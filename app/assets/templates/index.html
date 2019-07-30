@@ -16,7 +16,7 @@
   <body id="body-player">
     <!-- style="cursor: none"> -->
     <div id="main-player" :class="[grade.data.layout, grade.data.cor]" @mousemove="mouse">
-      <div id="content-main" class="content-main" v-if="loaded">
+      <div id="content-main" class="content-main" v-show="loaded">
         <!-- offline -->
         <div class="offline" v-if="grade.data.offline"></div>
         <!-- offline -->
@@ -29,7 +29,7 @@
                 <div class="dia">{{now | formatDate}}</div>
                 <div class="semana">{{now | formatWeek}}</div>
               </div>
-              <div id="hora">--:--:--</div>
+              <div id="hora">--:--</div>
             </div>
             <!-- data e hora -->
 

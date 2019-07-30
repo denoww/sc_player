@@ -191,7 +191,7 @@ module.exports = ->
       @timerUpdateWindow = setTimeout ->
         global.logs.create('Grade -> Atualizando Aplicação! :(')
         ctrl.refreshWindow()
-      , 1000 * 60 * 1.5 # 1.5 minutos
+      , 1000 * 60 * 2.5 # 2.5 minutos
     clearTimerUpdateWindow: ->
       clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
@@ -201,9 +201,9 @@ module.exports = ->
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
-    global.logs.create('Grade -> Atualização preventiva (3h)!')
+    global.logs.create('Grade -> Atualização preventiva (2h)!')
     ctrl.refreshWindow()
-  , 1000 * 60 * 60 * 3 # 2 horas
+  , 1000 * 60 * 60 * 2 # 2 horas
 
   ctrl.getList()
   global.grade = ctrl

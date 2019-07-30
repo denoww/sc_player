@@ -8,7 +8,6 @@ module.exports = (opt={}) ->
   global.logs.create('Iniciando servidor HTTP!')
 
   app.use express.static(path.join( __dirname, '../assets/'))
-  # app.use '/downloads/', express.static(global.homePath + 'downloads/')
 
   # Resolve o erro do CROSS de Access-Control-Allow-Origin
   app.all '*', (req, res, next)->
