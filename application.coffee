@@ -33,6 +33,12 @@ createWindow = ->
   win.on 'session-end', (e, c)-> global.logs.create('--- WIN --- session-end ->', e, c)
   win.on 'hide', (e, c)->        global.logs.create('--- WIN --- hide ->', e, c)
 
+  win.webContents.on 'crashed', (e, c)->
+    obj = JSON.stringify(e)
+    global.logs.create('--- WEBCONTENTS --- crashed ->', obj, c)
+    global.logs.create('--- RELOADING.........')
+    win.reload()
+
   win.webContents.on 'page-title-updated', (e, c)-> global.logs.create('--- WEBCONTENTS --- page-title-updated ->', e, c)
   win.webContents.on 'new-window', (e, c)-> global.logs.create('--- WEBCONTENTS --- new-window ->', e, c)
   win.webContents.on 'will-navigate', (e, c)-> global.logs.create('--- WEBCONTENTS --- will-navigate ->', e, c)
@@ -60,7 +66,6 @@ createWindow = ->
   win.webContents.on 'did-frame-navigate', (e, c)-> global.logs.create('--- WEBCONTENTS --- did-frame-navigate ->', e, c)
   win.webContents.on 'did-navigate-in-page', (e, c)-> global.logs.create('--- WEBCONTENTS --- did-navigate-in-page ->', e, c)
   win.webContents.on 'will-prevent-unload', (e, c)-> global.logs.create('--- WEBCONTENTS --- will-prevent-unload ->', e, c)
-  win.webContents.on 'crashed', (e, c)-> global.logs.create('--- WEBCONTENTS --- crashed ->', e, c)
   win.webContents.on 'plugin-crashed', (e, c)-> global.logs.create('--- WEBCONTENTS --- plugin-crashed ->', e, c)
   win.webContents.on 'destroyed', (e, c)-> global.logs.create('--- WEBCONTENTS --- destroyed ->', e, c)
   win.webContents.on 'before-input-event', (e, c)-> global.logs.create('--- WEBCONTENTS --- before-input-event ->', e, c)
