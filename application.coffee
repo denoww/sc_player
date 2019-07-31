@@ -34,10 +34,9 @@ createWindow = ->
   win.on 'hide', (e, c)->        global.logs.create('--- WIN --- hide ->', e, c)
 
   win.webContents.on 'crashed', (e, c)->
-    console.log e
     global.logs.create('--- WEBCONTENTS --- crashed ->', e, c)
     global.logs.create('--- RELOADING.........')
-    win.reload()
+    global.grade.refreshWindow()
 
   win.webContents.on 'page-title-updated', (e, c)-> global.logs.create('--- WEBCONTENTS --- page-title-updated ->', e, c)
   win.webContents.on 'new-window', (e, c)-> global.logs.create('--- WEBCONTENTS --- new-window ->', e, c)
