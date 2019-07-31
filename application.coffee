@@ -34,8 +34,8 @@ createWindow = ->
   win.on 'hide', (e, c)->        global.logs.create('--- WIN --- hide ->', e, c)
 
   win.webContents.on 'crashed', (e, c)->
-    obj = JSON.stringify(e)
-    global.logs.create('--- WEBCONTENTS --- crashed ->', obj, c)
+    console.log e
+    global.logs.create('--- WEBCONTENTS --- crashed ->', e, c)
     global.logs.create('--- RELOADING.........')
     win.reload()
 
