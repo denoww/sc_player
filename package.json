@@ -26,6 +26,7 @@
     "win": "node installers/create_win_installer.js"
   },
   "dependencies": {
+    "@sentry/node": "^5.5.0",
     "coffeescript": "^2.4.1",
     "electron": "^5.0.6",
     "electron-context-menu": "^0.13.0",

@@ -1,3 +1,10 @@
+{ crashReporter } = require 'electron'
+crashReporter.start
+  productName: 'sc_player'
+  companyName: 'seucondominioWeb'
+  submitURL: 'https://sentry.io/api/1519364/minidump/?sentry_key=ac78f87fac094b808180f86ad8867f61'
+  autoSubmit: true
+
 data =
   body:    undefined
   loaded:  false
