@@ -5,6 +5,8 @@ crashReporter.start
   submitURL: 'https://sentry.io/api/1519364/minidump/?sentry_key=ac78f87fac094b808180f86ad8867f61'
   autoSubmit: true
 
+Sentry.init({ dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364' })
+
 data =
   body:    undefined
   loaded:  false
