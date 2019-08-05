@@ -13,7 +13,7 @@
     "node": ">=6.2.0"
   },
   "scripts": {
-    "start": "electron .",
+    "start": "electron --disable-gpu .",
     "start-nodemon": "nodemon --inspect server.js",
     "delete_old_images": "coffee ./tasks/delete_old_images.coffee",
     "update_timezone": "coffee ./tasks/update_timezone.coffee",
