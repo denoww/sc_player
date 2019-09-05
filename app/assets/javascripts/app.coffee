@@ -64,24 +64,23 @@ gradeObj =
     Vue.http.get('/grade').then success, error
     return
   handle: (data)->
-    @data = data
-    vm.grade.data = data
+    vm.grade.data = @data = data
     return
   mountWeatherData: ->
-    return unless @data.weather
+    vm.grade.data.weather ||= {}
 
     dataHoje = new Date
     dia = "#{dataHoje.getDate()}".rjust(2, '0')
     mes = "#{dataHoje.getMonth() + 1}".rjust(2, '0')
     dataHoje = "#{dia}/#{mes}"
 
-    dia = @data.weather.proximos_dias?[0]
-    if dia.data == dataHoje
-      dia = @data.weather.proximos_dias.shift()
-      @data.weather.max = dia.max
-      @data.weather.min = dia.min
+    dia = vm.grade.data.weather.proximos_dias?[0]
+    if dia? && dia.data == dataHoje
+      dia = vm.grade.data.weather.proximos_dias.shift()
+      vm.grade.data.weather.max = dia.max
+      vm.grade.data.weather.min = dia.min
 
-    @data.weather.proximos_dias = @data.weather.proximos_dias.slice(0,4)
+    vm.grade.data.weather.proximos_dias = vm.grade.data.weather.proximos_dias.slice(0,4)
     return
 
 feedsObj =

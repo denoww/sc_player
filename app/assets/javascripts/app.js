@@ -81,25 +81,22 @@
       Vue.http.get('/grade').then(success, error);
     },
     handle: function(data) {
-      this.data = data;
-      vm.grade.data = data;
+      vm.grade.data = this.data = data;
     },
     mountWeatherData: function() {
-      var dataHoje, dia, mes, ref;
-      if (!this.data.weather) {
-        return;
-      }
+      var base, dataHoje, dia, mes, ref;
+      (base = vm.grade.data).weather || (base.weather = {});
       dataHoje = new Date;
       dia = `${dataHoje.getDate()}`.rjust(2, '0');
       mes = `${dataHoje.getMonth() + 1}`.rjust(2, '0');
       dataHoje = `${dia}/${mes}`;
-      dia = (ref = this.data.weather.proximos_dias) != null ? ref[0] : void 0;
-      if (dia.data === dataHoje) {
-        dia = this.data.weather.proximos_dias.shift();
-        this.data.weather.max = dia.max;
-        this.data.weather.min = dia.min;
+      dia = (ref = vm.grade.data.weather.proximos_dias) != null ? ref[0] : void 0;
+      if ((dia != null) && dia.data === dataHoje) {
+        dia = vm.grade.data.weather.proximos_dias.shift();
+        vm.grade.data.weather.max = dia.max;
+        vm.grade.data.weather.min = dia.min;
       }
-      this.data.weather.proximos_dias = this.data.weather.proximos_dias.slice(0, 4);
+      vm.grade.data.weather.proximos_dias = vm.grade.data.weather.proximos_dias.slice(0, 4);
     }
   };
 
