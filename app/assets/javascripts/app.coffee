@@ -75,7 +75,7 @@ gradeObj =
     mes = "#{dataHoje.getMonth() + 1}".rjust(2, '0')
     dataHoje = "#{dia}/#{mes}"
 
-    dia = @data.weather.proximos_dias[0]
+    dia = @data.weather.proximos_dias?[0]
     if dia.data == dataHoje
       dia = @data.weather.proximos_dias.shift()
       @data.weather.max = dia.max
