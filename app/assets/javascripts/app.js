@@ -85,7 +85,7 @@
       vm.grade.data = data;
     },
     mountWeatherData: function() {
-      var dataHoje, dia, mes;
+      var dataHoje, dia, mes, ref;
       if (!this.data.weather) {
         return;
       }
@@ -93,7 +93,7 @@
       dia = `${dataHoje.getDate()}`.rjust(2, '0');
       mes = `${dataHoje.getMonth() + 1}`.rjust(2, '0');
       dataHoje = `${dia}/${mes}`;
-      dia = this.data.weather.proximos_dias[0];
+      dia = (ref = this.data.weather.proximos_dias) != null ? ref[0] : void 0;
       if (dia.data === dataHoje) {
         dia = this.data.weather.proximos_dias.shift();
         this.data.weather.max = dia.max;
