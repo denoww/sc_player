@@ -68,14 +68,15 @@ gradeObj =
     return
   mountWeatherData: ->
     vm.grade.data.weather ||= {}
+    return unless (vm.grade.data.weather.proximos_dias || []).length
 
     dataHoje = new Date
     dia = "#{dataHoje.getDate()}".rjust(2, '0')
     mes = "#{dataHoje.getMonth() + 1}".rjust(2, '0')
     dataHoje = "#{dia}/#{mes}"
 
-    dia = vm.grade.data.weather.proximos_dias?[0]
-    if dia? && dia.data == dataHoje
+    dia = vm.grade.data.weather.proximos_dias[0]
+    if dia.data == dataHoje
       dia = vm.grade.data.weather.proximos_dias.shift()
       vm.grade.data.weather.max = dia.max
       vm.grade.data.weather.min = dia.min
