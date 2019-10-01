@@ -195,7 +195,7 @@ timelineConteudoSuperior =
     @ultimoVideo = null
     return
   getNextItem: ->
-    lista = vm.grade.data.conteudo_superior
+    lista = vm.grade.data.conteudo_superior || []
     total = lista.length
     return unless total
 
@@ -273,7 +273,7 @@ timelineConteudoMensagem =
     , segundos
     return
   getNextItem: ->
-    lista = vm.grade.data.conteudo_mensagem
+    lista = vm.grade.data.conteudo_mensagem || []
     total = lista.length
     return unless total
 

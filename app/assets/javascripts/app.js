@@ -258,7 +258,7 @@
     },
     getNextItem: function() {
       var currentItem, index, lista, total;
-      lista = vm.grade.data.conteudo_superior;
+      lista = vm.grade.data.conteudo_superior || [];
       total = lista.length;
       if (!total) {
         return;
@@ -360,7 +360,7 @@
     },
     getNextItem: function() {
       var currentItem, index, lista, total;
-      lista = vm.grade.data.conteudo_mensagem;
+      lista = vm.grade.data.conteudo_mensagem || [];
       total = lista.length;
       if (!total) {
         return;
