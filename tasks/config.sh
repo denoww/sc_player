@@ -18,6 +18,7 @@ fi
 read -p '--> Configurar variáveis de ambiente? (y/N) ' config_vars
 if [[ "$config_vars" == "y" || "$config_vars" == "Y" ]] ; then
   sh -c 'sudo cp ~/sc_player/.env_DEVELOPMENT_sample /etc/environment'
+  sh -c 'sudo cp ~/sc_player/.env_DEVELOPMENT_sample ~/sc_player/.env_DEVELOPMENT'
   read -p '--> Informe o ID da TV: ' TV_ID
   read -p '--> Informe a API_SERVER_URL: ' API_SERVER_URL
   echo -e "TV_ID=$TV_ID\nAPI_SERVER_URL=$API_SERVER_URL\nNODE_ENV=production\n" | sudo tee -a /etc/environment
