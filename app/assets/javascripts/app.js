@@ -143,24 +143,25 @@
       Vue.http.get('/feeds').then(success, error);
     },
     handle: function(data) {
-      var base, base1, feed, feeds, i, j, len, len1, name, name1, posicao, ref;
+      var base, base1, base2, feed, feeds, i, j, len, len1, name, name1, posicao, ref;
       this.data = data;
       ref = this.posicoes;
       // pre-montar a estrutura dos feeds com base na grade para ser usado em verificarNoticias()
       for (i = 0, len = ref.length; i < len; i++) {
         posicao = ref[i];
+        (base = vm.grade.data)[posicao] || (base[posicao] = []);
         feeds = vm.grade.data[posicao].select(function(e) {
           return e.tipo_midia === 'feed';
         });
         for (j = 0, len1 = feeds.length; j < len1; j++) {
           feed = feeds[j];
-          (base = this.data)[name = feed.fonte] || (base[name] = {});
-          (base1 = this.data[feed.fonte])[name1 = feed.categoria] || (base1[name1] = []);
+          (base1 = this.data)[name = feed.fonte] || (base1[name] = {});
+          (base2 = this.data[feed.fonte])[name1 = feed.categoria] || (base2[name1] = []);
         }
       }
     },
     verificarNoticias: function() {
-      var categoria, categorias, fonte, i, item, items, j, len, len1, noticias, posicao, ref, ref1;
+      var base, categoria, categorias, fonte, i, item, items, j, len, len1, noticias, posicao, ref, ref1;
       ref = this.data;
       // serve para remover feeds que nao tem noticias
       for (fonte in ref) {
@@ -174,6 +175,7 @@
               if (!vm.grade.data[posicao]) {
                 continue;
               }
+              (base = vm.grade.data)[posicao] || (base[posicao] = []);
               items = vm.grade.data[posicao].select(function(e) {
                 return e.fonte === fonte && e.categoria === categoria;
               });
