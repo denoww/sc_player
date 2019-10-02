@@ -71,7 +71,7 @@ if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
 fi
 
-read -p '--> Iniciar o servidor? (y/N) ' instalar_server
-if [[ "$instalar_server" == "y" || "$instalar_server" == "Y" ]] ; then
-  sh -c 'npm run start'
+read -p '--> Reiniciar o equipamento? (y/N) ' reiniciar
+if [[ "$reiniciar" == "y" || "$reiniciar" == "Y" ]] ; then
+  sh -c 'reboot'
 fi
