@@ -4,17 +4,14 @@ if setupEvents.handleSquirrelEvent()
   # squirrel event handled and app will exit in 1000ms, so don't do anything else
   return
 
-{ app, BrowserWindow, crashReporter } = require 'electron'
+{ app, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
 
-Sentry = require('@sentry/node')
+# Sentry = require('@sentry/node')
+Sentry = require('@sentry/electron')
 Sentry.init({ dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364' })
-
-crashReporter.start
-  productName: 'sc_player'
-  companyName: 'seucondominio'
-  submitURL: 'https://sentry.io/api/1519364/minidump/?sentry_key=ac78f87fac094b808180f86ad8867f61'
-  autoSubmit: true
+Sentry.configureScope (scope)->
+  scope.setUser id: "TV_ID_#{ENV.TV_ID}_BACKEND"
 
 createWindow = ->
   win = new BrowserWindow

@@ -1,13 +1,9 @@
-{ crashReporter } = require 'electron'
-crashReporter.start
-  productName: 'sc_player'
-  companyName: 'seucondominioWeb'
-  submitURL: 'https://sentry.io/api/1519364/minidump/?sentry_key=ac78f87fac094b808180f86ad8867f61'
-  autoSubmit: true
-
 Sentry.init
   dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364'
   integrations: [new Sentry.Integrations.Vue({Vue, attachProps: true})]
+
+Sentry.configureScope (scope)->
+  scope.setUser id: "TV_ID_#{process.env.TV_ID}_FRONTEND"
 
 data =
   body:    undefined

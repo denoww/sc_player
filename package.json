@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^5.5.0",
+    "@sentry/electron": "^0.17.4",
     "@sentry/integrations": "^5.5.0",
     "@sentry/node": "^5.5.0",
     "coffeescript": "^2.4.1",
