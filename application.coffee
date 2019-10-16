@@ -9,9 +9,9 @@ contextMenu = require 'electron-context-menu'
 
 # Sentry = require('@sentry/node')
 Sentry = require('@sentry/electron')
-Sentry.init({ dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364' })
+Sentry.init dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364'
 Sentry.configureScope (scope)->
-  scope.setUser id: "TV_ID_#{ENV.TV_ID}_BACKEND"
+  scope.setUser id: "TV_ID_#{ENV.TV_ID}"
 
 createWindow = ->
   win = new BrowserWindow
@@ -34,9 +34,10 @@ createWindow = ->
   win.once 'ready-to-show', -> win.show()
   global.win = win
 
-  win.webContents.on 'crashed', (e, c)->
-    global.logs.create('--- WEBCONTENTS --- crashed ->', e, c)
-    global.logs.create('--- RELOADING.........')
+  win.webContents.on 'crashed', ->
+    Sentry.captureMessage "TV_ID_#{ENV.TV_ID}_BACKEND"
+    # global.logs.create('--- WEBCONTENTS --- crashed ->')
+    # global.logs.create('--- RELOADING.........')
     setTimeout (-> win.reload()), 1000
 
   # Open the DevTools
