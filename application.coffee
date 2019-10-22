@@ -36,7 +36,7 @@ createWindow = ->
 
   win.webContents.on 'crashed', ->
     Sentry.captureMessage "TV_ID_#{ENV.TV_ID}_BACKEND"
-    # global.logs.create('--- WEBCONTENTS --- crashed ->')
+    global.logs.create('--- WEBCONTENTS --- crashed')
     # global.logs.create('--- RELOADING.........')
     setTimeout (-> win.reload()), 1000
 
