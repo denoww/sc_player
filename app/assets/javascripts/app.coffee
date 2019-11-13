@@ -120,7 +120,7 @@ feedsObj =
     # pre-montar a estrutura dos feeds com base na grade para ser usado em verificarNoticias()
     for posicao in @posicoes
       vm.grade.data[posicao] ||= []
-      feeds = vm.grade.data[posicao].select (e)-> e.tipo_midia == 'feed'
+      feeds = vm.grade.data[posicao].select?((e)-> e.tipo_midia == 'feed') || []
 
       for feed in feeds
         @data[feed.fonte] ||= {}
@@ -135,9 +135,8 @@ feedsObj =
             continue unless vm.grade.data[posicao]
 
             vm.grade.data[posicao] ||= []
-            items = vm.grade.data[posicao].select (e)->
-              e.fonte == fonte && e.categoria == categoria
-            vm.grade.data[posicao].removeById item.id for item in items
+            items = vm.grade.data[posicao].select?((e)-> e.fonte == fonte && e.categoria == categoria)
+            vm.grade.data[posicao].removeById item.id for item in items || []
     return
 
 timelineConteudoSuperior =
