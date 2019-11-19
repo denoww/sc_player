@@ -297,9 +297,13 @@ timelineConteudoMensagem =
 
 relogio =
   exec: ->
-    now = new Date
-    hour = now.getHours()
-    min  = now.getMinutes()
+    # now = new Date
+    now = moment()
+    now.add(-1, 'hour') if now.isDST()
+    console.log 'now.format()', now.format()
+
+    hour = now.get('hour')
+    min  = now.get('minute')
     # sec  = now.getSeconds()
 
     hour = "0#{hour}" if hour < 10

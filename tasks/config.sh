@@ -60,7 +60,7 @@ read -p '--> Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
   sh -c 'curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -'
   sh -c 'sudo apt update'
-  sh -c 'sudo apt install nodejs -y'
+  sh -c 'sudo apt install -y nodejs'
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
