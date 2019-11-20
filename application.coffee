@@ -59,8 +59,7 @@ contextMenu(
       {
         label: 'Atualizar Equipamento',
         click: ->
-          app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
-          app.exit(0)
+          global.grade.updatePlayer()
       }
       {
         label: 'Reiniciar Equipamento',
