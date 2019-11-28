@@ -1,4 +1,5 @@
 fs        = require 'fs'
+md5       = require 'md5'
 RSS       = require 'rss-parser'
 shell     = require 'shelljs'
 request   = require 'request'
@@ -83,7 +84,7 @@ module.exports = ->
     mountImageData: (params, url)->
       extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
       imageNome = url.split('/').pop().replace(extension, '').removeSpecialCharacters()
-      imageNome = "#{params.fonte}-#{params.categoria}-#{imageNome}"
+      imageNome = "#{params.fonte}-#{params.categoria}-#{md5(imageNome)}"
       imageNome = "#{imageNome}#{extension}"
 
       url: url, nome_arquivo: imageNome
