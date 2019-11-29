@@ -184,7 +184,7 @@ module.exports = ->
       return
     refreshWindow: ->
       # atualizar o app para limpar cache e sobrecarga de processos
-      global.win.reload()
+      global.win?.reload?()
     setTimerUpdateWindow: ->
       # caso o app pare de receber requisições será atualizado
       @clearTimerUpdateWindow()

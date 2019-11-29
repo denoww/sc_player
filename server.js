@@ -15,3 +15,4 @@ require('./app/servers/web')();
 require('./application');
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+process.env['ELECTRON_ENABLE_STACK_DUMPING'] = 'true';

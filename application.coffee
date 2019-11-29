@@ -4,7 +4,7 @@ if setupEvents.handleSquirrelEvent()
   # squirrel event handled and app will exit in 1000ms, so don't do anything else
   return
 
-{ app, BrowserWindow } = require 'electron'
+{ app, dialog, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
 
 # Sentry = require('@sentry/node')
@@ -34,10 +34,14 @@ createWindow = ->
   win.once 'ready-to-show', -> win.show()
   global.win = win
 
-  win.webContents.on 'crashed', ->
-    Sentry.captureMessage "TV_ID_#{ENV.TV_ID}_BACKEND"
-    global.logs.create('--- WEBCONTENTS --- crashed')
-    # global.logs.create('--- RELOADING.........')
+  win.webContents.on 'crashed', (event, killed)->
+    global.logs.create('--- WEBCONTENTS --- crashed', event, killed)
+
+    error        = new Error "TV_ID_#{ENV.TV_ID}_BACKEND"
+    error.event  = event
+    error.killed = killed
+    Sentry.captureException(error)
+
     setTimeout (-> win.reload()), 1000
 
   # Open the DevTools
@@ -68,6 +72,14 @@ contextMenu(
       }
     ]
 )
+
+# Disable error dialogs by overriding
+dialog.showErrorBox = (title, content)->
+  global.logs.create("DIALOG -> #{title} #{content}")
+  error         = new Error "DIALOG_TV_ID_#{ENV.TV_ID}"
+  error.title   = title
+  error.content = content
+  Sentry.captureException(error)
 
 app.setName 'SC Player'
 
