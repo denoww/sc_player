@@ -1,3 +1,3 @@
 #!/bin/bash
-WIN=$(xdotool search --name "init.sh")
+WIN=$(xdotool search --sync --onlyvisible --name "init.sh")
 xdotool windowminimize $WIN
