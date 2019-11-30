@@ -1,7 +1,7 @@
 fs      = require 'fs'
+path    = require 'path'
 shell   = require 'shelljs'
 request = require 'request'
-path    = require 'path'
 
 module.exports = ->
   ctrl =
@@ -18,6 +18,7 @@ module.exports = ->
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           global.logs.create("Grade -> getList -> ERRO: #{erro}")
+          global.feeds.getList()
           return
 
         data = JSON.parse(body)

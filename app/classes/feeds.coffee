@@ -13,6 +13,7 @@ module.exports = ->
     getList: ->
       feeds = []
       posicoes = ['conteudo_superior', 'conteudo_mensagem']
+      @getDataOffline()
 
       for posicao in posicoes
         continue unless global.grade?.data?[posicao]?.length
@@ -25,8 +26,6 @@ module.exports = ->
             feeds.addOrExtend feed
 
       return if feeds.empty()
-
-      @getDataOffline()
       @baixarFeeds(feed) for feed in feeds
     baixarFeeds: (params)->
       parserRSS = new RSS(defaultRSS: 2.0)
