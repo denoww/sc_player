@@ -46,6 +46,7 @@ module.exports = ->
         path:      configPath
         layout:    data.layout
         cidade:    data.cidade
+        offline:   false
         resolucao: data.resolucao
         versao_player: data.versao_player
 
