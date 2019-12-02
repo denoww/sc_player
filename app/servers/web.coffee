@@ -34,7 +34,7 @@ module.exports = (opt={}) ->
 
   app.get '/feeds', (req, res) ->
     console.info "Request GET /feeds params: #{JSON.stringify(req.body || {})}"
-    if Object.any global.grade.data && Object.empty global.feeds.data
+    if Object.empty global.feeds.data
       global.feeds.getList()
       res.sendStatus(400)
       return

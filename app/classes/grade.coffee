@@ -18,6 +18,7 @@ module.exports = ->
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           global.logs.create("Grade -> getList -> ERRO: #{erro}")
+          @data.offline = true
           global.feeds.getList()
           return
 
@@ -164,7 +165,6 @@ module.exports = ->
       console.info 'Grade -> Pegando grade de grade.json'
       try
         @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
-        @data.offline = true
       catch e
         global.logs.create("Grade -> getDataOffline -> ERRO: #{e}")
       return
