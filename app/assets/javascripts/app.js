@@ -36,6 +36,10 @@
   };
 
   onLoaded = function() {
+    vm.loaded || (vm.loaded = gradeObj.loaded && feedsObj.loaded);
+    if (vm.loaded) {
+      vm.loading = false;
+    }
     timelineConteudoSuperior.init();
     return timelineConteudoMensagem.init();
   };
@@ -57,6 +61,7 @@
           onSuccess();
         }
         this.mountWeatherData();
+        this.loaded = true;
         return onLoaded();
       };
       error = (resp) => {
@@ -119,6 +124,7 @@
         if (typeof onSuccess === "function") {
           onSuccess();
         }
+        this.loaded = true;
         return onLoaded();
       };
       error = (resp) => {
@@ -461,7 +467,7 @@
             return vm.loaded = true;
           });
         });
-      }, 1000 * 5); // 5 segundos
+      }, 1000 * 1); // 1 segundo
       return setInterval(function() {
         return gradeObj.get(function() {
           return feedsObj.get(function() {

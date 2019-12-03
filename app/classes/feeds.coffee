@@ -28,6 +28,7 @@ module.exports = ->
       return if feeds.empty()
       @baixarFeeds(feed) for feed in feeds
     baixarFeeds: (params)->
+      return if global.grade?.data?.offline
       parserRSS = new RSS(defaultRSS: 2.0)
 
       parserRSS.parseURL params.url,

@@ -23,6 +23,9 @@ data =
       weather: {}
 
 onLoaded = ->
+  vm.loaded ||= gradeObj.loaded && feedsObj.loaded
+  vm.loading = false if vm.loaded
+
   timelineConteudoSuperior.init()
   timelineConteudoMensagem.init()
 
@@ -40,6 +43,7 @@ gradeObj =
       @handle resp.data
       onSuccess?()
       @mountWeatherData()
+      @loaded = true
       onLoaded()
 
     error = (resp)=>
@@ -96,6 +100,7 @@ feedsObj =
       @handle(resp.data)
       @verificarNoticias()
       onSuccess?()
+      @loaded = true
       onLoaded()
 
     error = (resp)=>
@@ -343,7 +348,7 @@ vm = new Vue
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true
-    , 1000 * 5 # 5 segundos
+    , 1000 * 1 # 1 segundo
 
     setInterval ->
       gradeObj.get ->

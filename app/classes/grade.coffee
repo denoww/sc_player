@@ -10,26 +10,27 @@ module.exports = ->
       url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=#{ENV.TV_ID}"
       console.info "URL", url
 
-      request url, (error, response, body)=>
-        @getDataOffline()
+      @getDataOffline()
+      @data.offline = true
 
+      request url, (error, response, body)=>
         if error || response?.statusCode != 200
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
           global.logs.create("Grade -> getList -> ERRO: #{erro}")
-          @data.offline = true
           global.feeds.getList()
           return
 
-        data = JSON.parse(body)
-        if Object.empty(data || {})
+        @data.offline = false
+        jsonData = JSON.parse(body)
+        if Object.empty(jsonData || {})
           return global.logs.create('Grade -> Erro: Não existe Dados da Grade!')
 
         atualizarPlayer = @data?.versao_player? &&
-          @data.versao_player != data.versao_player
+          @data.versao_player != jsonData.versao_player
 
-        @handlelist(data)
+        @handlelist(jsonData)
         @saveDataJson()
 
         if atualizarPlayer
