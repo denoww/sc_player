@@ -6,12 +6,7 @@ if setupEvents.handleSquirrelEvent()
 
 { app, dialog, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
-
-# Sentry = require('@sentry/node')
-Sentry = require('@sentry/electron')
-Sentry.init dsn: 'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364'
-Sentry.configureScope (scope)->
-  scope.setUser id: "TV_ID_#{ENV.TV_ID}"
+Sentry = require('./sentry')
 
 createWindow = ->
   win = new BrowserWindow
@@ -37,12 +32,13 @@ createWindow = ->
   win.webContents.on 'crashed', (event, killed)->
     global.logs.create('--- WEBCONTENTS --- crashed', event, killed)
 
-    error        = new Error "TV_ID_#{ENV.TV_ID}_BACKEND"
-    error.event  = event
-    error.killed = killed
-    Sentry.captureException(error)
+    Sentry.captureMessage "TV_ID_#{ENV.TV_ID}_BACKEND"
+    # error        = new Error "TV_ID_#{ENV.TV_ID}_BACKEND"
+    # error.event  = event
+    # error.killed = killed
+    # Sentry.captureException(error)
 
-    setTimeout (-> win.reload()), 1000
+    setTimeout (-> win.reload()), 500
 
   # Open the DevTools
   # win.webContents.openDevTools()
