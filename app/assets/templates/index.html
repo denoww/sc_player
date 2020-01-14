@@ -89,12 +89,11 @@
             </div>
             <!-- finance -->
 
-            <!-- anuncie -->
-            <div class="item-anuncie">
-              <div>ANUNCIE AQUI!</div>
-              <div class="telefone">(62) 3142-9759</div>
+            <!-- informacoes -->
+            <div class="item-informacoes">
+              <div v-html="grade.data.informacoes"></div>
             </div>
-            <!-- anuncie -->
+            <!-- informacoes -->
           </div> <!-- content-side -->
 
           <div class="content-player">
@@ -168,7 +167,8 @@
 
         <div class="content-footer">
           <div class="content-logo" :class="[grade.data.cor == 'gray' ? 'black' : '']">
-            <div class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
+            <div v-if="grade.data.logo_nome" class="logo" :style="{'background-image': 'url(file://' + grade.data.path + 'downloads/' + grade.data.logo_nome + ')'}"></div>
+            <div v-else="" class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
           </div> <!-- content-logo -->
 
           <div class="content-mensagem">

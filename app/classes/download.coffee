@@ -26,6 +26,7 @@ class Download
     pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image
     pasta = global.configPath + ENV.DOWNLOAD_AUDIOS if params.is_audio
     pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if params.is_feed || opts.is_feed
+    pasta = global.configPath + 'downloads/' if params.is_logo || opts.is_logo
 
     unless pasta
       global.logs.create("Download -> exec -> ERRO: Nenhuma pasta encontrada para #{params.nome_arquivo}!")

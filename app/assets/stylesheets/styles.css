@@ -600,7 +600,7 @@ p {
 .content-side .item-finance .NASDAQ { background: #165261; }
 .content-side .item-finance .NASDAQ .titulo:before { background-image: url('../images/finance/nasdaq.png'); }
 
-.content-side .item-anuncie {
+.content-side .item-informacoes {
   font-size: 2em;
   text-align: center;
   line-height: 1;
@@ -611,9 +611,9 @@ p {
   display: flex;
   justify-content: center;
 }
-.content-side .item-anuncie .telefone {
-  font-size: 1.3em;
-  letter-spacing: -1px;
+.content-side .item-informacoes div {
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 /* --------------- LATERAIS --------------- */
 

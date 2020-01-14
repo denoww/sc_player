@@ -31,6 +31,7 @@ module.exports = ->
           @data.versao_player != jsonData.versao_player
 
         @handlelist(jsonData)
+        @saveLogo(jsonData.logo_url)
         @saveDataJson()
 
         if atualizarPlayer
@@ -38,24 +39,25 @@ module.exports = ->
 
         global.feeds.getList()
         @setTimerUpdateWindow()
-    handlelist: (data)->
+    handlelist: (jsonData)->
       configPath = global.configPath
       configPath = configPath.split('\\').join('/') if process.platform == 'win32'
 
       @data =
-        id:        data.id
-        cor:       data.cor
+        id:        jsonData.id
+        cor:       jsonData.cor
         path:      configPath
-        layout:    data.layout
-        cidade:    data.cidade
+        layout:    jsonData.layout
+        cidade:    jsonData.cidade
         offline:   false
-        resolucao: data.resolucao
-        versao_player: data.versao_player
+        resolucao: jsonData.resolucao
+        informacoes: jsonData.informacoes
+        versao_player: jsonData.versao_player
 
-      @data.finance = data.finance if data.finance
-      @data.weather = data.weather if data.weather
+      @data.finance = jsonData.finance if jsonData.finance
+      @data.weather = jsonData.weather if jsonData.weather
 
-      for vinculo in (data.vinculos || []).sortByField('ordem')
+      for vinculo in (jsonData.vinculos || []).sortByField('ordem')
         continue unless vinculo.ativado
 
         item =
@@ -152,6 +154,20 @@ module.exports = ->
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
       return
+    saveLogo: (logoUrl)->
+      return @data.logo_nome = null unless logoUrl
+
+      extension = logoUrl.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
+      imageNome = logoUrl.split('/').pop().replace(extension, '').removeSpecialCharacters()
+      imageNome = "#{imageNome}#{extension}"
+      @data.logo_nome = imageNome
+
+      params =
+        is_logo: true
+        url: logoUrl
+        nome_arquivo: imageNome
+
+      Download.exec(params)
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
       try
