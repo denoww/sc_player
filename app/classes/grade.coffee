@@ -163,8 +163,8 @@ module.exports = ->
       @data.logo_nome = imageNome
 
       params =
-        is_logo: true
         url: logoUrl
+        is_logo: true
         nome_arquivo: imageNome
 
       Download.exec(params)
