@@ -53,8 +53,8 @@ module.exports = ->
 
       if image.url.match(/uol(.*)142x100/)
         @getImageUol(feedObj, image)
-      else if params.fonte == 'infomoney'
-        return @getImageInfomoney(params, feedObj, image)
+      else if params.fonte == 'infomoney' && image.no_image
+        return @getImageInfomoney(params, feedObj, image.url)
       else
         Download.exec(feedObj, is_feed: true)
 
@@ -76,8 +76,9 @@ module.exports = ->
         if imageURL.match(/\/external_images\?/i) && imageURL.match(/url=/i)
           imageURL = imageURL.match(/url=(.*)$/i)?[1] || imageURL
 
-      if !imageURL && params.fonte == 'infomoney'
-        return url: feed.link
+      if params.fonte == 'infomoney'
+        return url: feed.link, no_image: true if !imageURL
+        imageURL = imageURL.match(/(.*)[?]/)?[1]
 
       return unless imageURL
       @mountImageData(params, imageURL)
@@ -145,9 +146,11 @@ module.exports = ->
         return global.logs.create("Feeds -> getImageInfomoney -> ERRO: #{error}") if error
 
         data = body.toString()
-        imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || ''
+        # imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || '' # OLD VERSION
+        imageURL = data.match(/figure(.|\n)*?<(\s+)?img(?:.*\ssrc=["'](.*?)["'].*)\/>?/i)?[3] || ''
         return console.warn 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
 
+        imageURL             = imageURL.match(/(.*)[?]/)?[1]
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
