@@ -112,7 +112,10 @@
                           <div class="feed-out"></div>
                         </div>
                         <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? 'file://' + grade.data.path + 'downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
-                        <div class="feed-titulo">{{item.titulo}}</div>
+                        <div class="feed-titulo">
+                          <div class="feed-data" v-if="item.data">{{item.data | formatDateTime}}</div>
+                          {{item.titulo}}
+                        </div>
                       </div>
                     </div>
                     <!-- feeds -->

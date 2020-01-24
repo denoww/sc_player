@@ -308,6 +308,7 @@
         return;
       }
       currentItem.id = `${currentItem.id}${feed.nome_arquivo}`;
+      currentItem.data = feed.data;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
       currentItem.nome_arquivo = feed.nome_arquivo;
@@ -397,6 +398,7 @@
         return;
       }
       currentItem.id = `${currentItem.id}${feed.titulo}`;
+      currentItem.data = feed.data;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
       return currentItem;
@@ -482,6 +484,12 @@
   Vue.filter('formatDate', function(value) {
     if (value) {
       return moment(value).format('DD MMM');
+    }
+  });
+
+  Vue.filter('formatDateTime', function(value) {
+    if (value) {
+      return moment(value).format('DD/MM/YYYY HH:mm');
     }
   });
 

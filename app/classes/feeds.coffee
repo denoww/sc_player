@@ -47,6 +47,7 @@ module.exports = ->
 
       feedObj =
         url:          image.url
+        data:         feed.isoDate
         titulo:       feed.title
         titulo_feed:  params.titulo
         nome_arquivo: image.nome_arquivo

@@ -231,6 +231,7 @@ timelineConteudoSuperior =
 
     return unless feed
     currentItem.id     = "#{currentItem.id}#{feed.nome_arquivo}"
+    currentItem.data   = feed.data
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
     currentItem.nome_arquivo = feed.nome_arquivo
@@ -296,6 +297,7 @@ timelineConteudoMensagem =
 
     return unless feed
     currentItem.id     = "#{currentItem.id}#{feed.titulo}"
+    currentItem.data   = feed.data
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
     currentItem
@@ -359,6 +361,9 @@ vm = new Vue
 
 Vue.filter 'formatDate', (value)->
   moment(value).format('DD MMM') if value
+
+Vue.filter 'formatDateTime', (value)->
+  moment(value).format('DD/MM/YYYY HH:mm') if value
 
 Vue.filter 'formatWeek', (value)->
   moment(value).format('dddd') if value
