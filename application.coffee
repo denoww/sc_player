@@ -32,11 +32,10 @@ createWindow = ->
   win.webContents.on 'crashed', (event, killed)->
     global.logs.create('--- WEBCONTENTS --- crashed', event, killed)
 
-    Sentry.captureMessage "TV_ID_#{ENV.TV_ID}_BACKEND"
-    # error        = new Error "TV_ID_#{ENV.TV_ID}_BACKEND"
-    # error.event  = event
-    # error.killed = killed
-    # Sentry.captureException(error)
+    Sentry.captureEvent
+      level:      'warning'
+      message:    "TV ID: #{ENV.TV_ID} - #{ENV.NODE_ENV}"
+      stacktrace: true
 
     setTimeout (-> win.reload()), 500
 
