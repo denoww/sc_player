@@ -9,7 +9,7 @@ UrlExists = require 'url-exists'
 module.exports = ->
   ctrl =
     data: {}
-    totalItensPorCategoria: 20
+    totalItensPorCategoria: 15
     getList: ->
       feeds = []
       posicoes = ['conteudo_superior', 'conteudo_mensagem']
@@ -52,12 +52,17 @@ module.exports = ->
         titulo_feed:  params.titulo
         nome_arquivo: image.nome_arquivo
 
-      if image.url.match(/uol(.*)142x100/)
-        @getImageUol(feedObj, image)
-      else if params.fonte == 'infomoney' && image.no_image
-        return @getImageInfomoney(params, feedObj, image.url)
-      else
-        Download.exec(feedObj, is_feed: true)
+      switch params.fonte
+        when 'uol'
+          return @getImageUol(feedObj, image) if image.url.match(/uol.+\d{3}x\d{3}/)
+        when 'infomoney'
+          return @getImageInfomoney(params, feedObj, image.url) if image.no_image
+        when 'bbc'
+          return @getImageBbc(params, feedObj, image.url) if image.no_image
+        when 'o_globo'
+          return @getImageOGlobo(params, feedObj, image.url) if image.no_image
+
+      Download.exec(feedObj, is_feed: true)
 
       @data[params.fonte] ||= {}
       @data[params.fonte][params.categoria] ||= []
@@ -67,9 +72,13 @@ module.exports = ->
         imageURL = feed.enclosure.url
       else
         # pegando o src da imagem
-        imageURL = (feed.content || '').match(/<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[2] || ''
+        regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
+        imageURL   = (feed.content || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
+        imageURL ||= (feed['content:encoded'] || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
+
         # substituindo &amp; por &
         imageURL = imageURL.replace(/(&amp;|amp;)+/g, '&')
+
         # removendo dimensions e resize para pegar a imagem com mais qualidade
         imageURL = imageURL.replace(/(dimensions=(\d+x\d+)|resize=(\d+x\d+))\W?/gi, '')
 
@@ -77,9 +86,14 @@ module.exports = ->
         if imageURL.match(/\/external_images\?/i) && imageURL.match(/url=/i)
           imageURL = imageURL.match(/url=(.*)$/i)?[1] || imageURL
 
-      if params.fonte == 'infomoney'
-        return url: feed.link, no_image: true if !imageURL
-        imageURL = imageURL.match(/(.*)[?]/)?[1]
+      switch params.fonte
+        when 'infomoney'
+          return url: feed.link, no_image: true if !imageURL
+          imageURL = imageURL.match(/(.*)[?]/)?[1]
+        when 'bbc'
+          return url: feed.link, no_image: true if !imageURL
+        when 'o_globo'
+          return url: feed.link, no_image: true if !imageURL
 
       return unless imageURL
       @mountImageData(params, imageURL)
@@ -139,7 +153,7 @@ module.exports = ->
       tamanhos   = ['1024x551', '900x506', '956x500', '450x450', '450x600']
       opcoesURLs = []
 
-      opcoesURLs.push image.url.replace(/142x100/, item) for item in tamanhos
+      opcoesURLs.push image.url.replace(/\d{3}x\d{3}/, item) for item in tamanhos
       opcoesURLs.push image.url
       @verificarUrls.exec feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
@@ -152,6 +166,45 @@ module.exports = ->
         return console.warn 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
 
         imageURL             = imageURL.match(/(.*)[?]/)?[1]
+        image                = ctrl.mountImageData(params, imageURL)
+        feedObj.url          = image.url
+        feedObj.nome_arquivo = image.nome_arquivo
+        Download.exec(feedObj, is_feed: true)
+
+        ctrl.data[params.fonte] ||= {}
+        ctrl.data[params.fonte][params.categoria] ||= []
+        ctrl.data[params.fonte][params.categoria].push feedObj
+      return
+    getImageBbc: (params, feedObj, url)->
+      request url, (error, res, body)->
+        return global.logs.create("Feeds -> getImageBbc -> ERRO: #{error}") if error
+
+        data       = body.toString().replace(/\n|\s|\r\n|\r/g, '')
+        imageURL   = data.match(/story-body__inner.+?figure.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
+        imageURL ||= data.match(/gallery-images.+?gallery-images__image.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
+        imageURL ||= data.match(/<metaproperty="og:image"content="(.+?)"/i)?[1] || ''
+        return console.warn 'Feeds -> não encontrado imagem de BBC!' unless imageURL
+
+        imageURL = imageURL.replace(/news\/(\d+)\/cpsprodpb/, 'news/1024/cpsprodpb')
+        imageURL = imageURL.replace(/news\/(\d+)\/branded_portuguese/, 'news/1024/cpsprodpb')
+
+        image                = ctrl.mountImageData(params, imageURL)
+        feedObj.url          = image.url
+        feedObj.nome_arquivo = image.nome_arquivo
+        Download.exec(feedObj, is_feed: true)
+
+        ctrl.data[params.fonte] ||= {}
+        ctrl.data[params.fonte][params.categoria] ||= []
+        ctrl.data[params.fonte][params.categoria].push feedObj
+      return
+    getImageOGlobo: (params, feedObj, url)->
+      request url, (error, res, body)->
+        return global.logs.create("Feeds -> getImageOGlobo -> ERRO: #{error}") if error
+
+        data     = body.toString().replace(/\n|\s|\r\n|\r/g, '')
+        imageURL = data.match(/figure.+?article-header__picture.+?<img.+?article__picture-image.+?src=["'](.+?)["']/i)?[1] || ''
+        return console.warn 'Feeds -> não encontrado imagem de O Globo!' unless imageURL
+
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
