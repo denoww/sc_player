@@ -289,7 +289,10 @@
       var base, categ, feed, feedItems, fonte, index, ref;
       feedItems = ((ref = feedsObj.data[currentItem.fonte]) != null ? ref[currentItem.categoria] : void 0) || [];
       if (feedItems.empty()) {
-        return currentItem;
+        timelineConteudoMensagem.promessa = setTimeout(function() {
+          return timelineConteudoMensagem.executar();
+        }, 2000);
+        return;
       }
       fonte = currentItem.fonte;
       categ = currentItem.categoria;
@@ -413,7 +416,6 @@
       if (now.isDST()) {
         now.add(-1, 'hour');
       }
-      console.log('now.format()', now.format());
       hour = now.get('hour');
       min = now.get('minute');
       if (hour < 10) {

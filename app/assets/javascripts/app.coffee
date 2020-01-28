@@ -212,7 +212,11 @@ timelineConteudoSuperior =
       else currentItem
   getItemFeed: (currentItem)->
     feedItems = feedsObj.data[currentItem.fonte]?[currentItem.categoria] || []
-    return currentItem if feedItems.empty()
+    if feedItems.empty()
+      timelineConteudoMensagem.promessa = setTimeout ->
+        timelineConteudoMensagem.executar()
+      , 2000
+      return
 
     fonte = currentItem.fonte
     categ = currentItem.categoria
@@ -307,7 +311,6 @@ relogio =
     # now = new Date
     now = moment()
     now.add(-1, 'hour') if now.isDST()
-    console.log 'now.format()', now.format()
 
     hour = now.get('hour')
     min  = now.get('minute')

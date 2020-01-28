@@ -1,9 +1,9 @@
 fs        = require 'fs'
 md5       = require 'md5'
 RSS       = require 'rss-parser'
+path      = require 'path'
 shell     = require 'shelljs'
 request   = require 'request'
-path      = require 'path'
 UrlExists = require 'url-exists'
 
 module.exports = ->
@@ -37,54 +37,58 @@ module.exports = ->
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}
-        @data[params.fonte][params.categoria] = null
+        @data[params.fonte][params.categoria] ||= []
         @handlelist(params, feed) for feed in feeds.items.splice(0, @totalItensPorCategoria)
         @setTimerToSaveDataJson()
       return
     handlelist: (params, feed)->
-      image = @getImageData(params, feed)
-      return unless image
+      imageObj = @getImageData(params, feed)
+      return unless imageObj
 
       feedObj =
-        url:          image.url
+        url:          imageObj.url
         data:         feed.isoDate
         titulo:       feed.title
         titulo_feed:  params.titulo
-        nome_arquivo: image.nome_arquivo
+        nome_arquivo: imageObj.nome_arquivo
 
       switch params.fonte
         when 'uol'
-          return @getImageUol(feedObj, image) if image.url.match(/uol.+\d{3}x\d{3}/)
+          return @getImageUol(params, feedObj, imageObj.url) if imageObj.url?.match?(/uol.+\d{3}x\d{3}/)
         when 'infomoney'
-          return @getImageInfomoney(params, feedObj, image.url) if image.no_image
+          return @getImageInfomoney(params, feedObj, imageObj.url) if imageObj.no_image
         when 'bbc'
-          return @getImageBbc(params, feedObj, image.url) if image.no_image
+          return @getImageBbc(params, feedObj, imageObj.url) if imageObj.no_image
         when 'o_globo'
-          return @getImageOGlobo(params, feedObj, image.url) if image.no_image
-
+          return @getImageOGlobo(params, feedObj, imageObj.url) if imageObj.no_image
+      @addToData(params, feedObj)
+    addToData: (params, feedObj)->
       Download.exec(feedObj, is_feed: true)
 
       @data[params.fonte] ||= {}
-      @data[params.fonte][params.categoria] ||= []
-      @data[params.fonte][params.categoria].push feedObj
+      dataFeeds = @data[params.fonte][params.categoria] || []
+
+      dataFeeds.unshift feedObj
+      dataFeeds = dataFeeds.slice 0, @totalItensPorCategoria
+      @data[params.fonte][params.categoria] = dataFeeds
     getImageData: (params, feed)->
       if feed.enclosure?.url && feed.enclosure?.type?.match(/image/)
-        imageURL = feed.enclosure.url
-      else
-        # pegando o src da imagem
-        regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
-        imageURL   = (feed.content || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
-        imageURL ||= (feed['content:encoded'] || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
+        return @mountImageData(params, feed.enclosure.url)
 
-        # substituindo &amp; por &
-        imageURL = imageURL.replace(/(&amp;|amp;)+/g, '&')
+      # pegando o src da imagem
+      regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
+      imageURL   = (feed.content || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
+      imageURL ||= (feed['content:encoded'] || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
 
-        # removendo dimensions e resize para pegar a imagem com mais qualidade
-        imageURL = imageURL.replace(/(dimensions=(\d+x\d+)|resize=(\d+x\d+))\W?/gi, '')
+      # substituindo &amp; por &
+      imageURL = imageURL.replace(/(&amp;|amp;)+/g, '&')
 
-        # se eh uma imagem externa vamos pegar direto da fonte
-        if imageURL.match(/\/external_images\?/i) && imageURL.match(/url=/i)
-          imageURL = imageURL.match(/url=(.*)$/i)?[1] || imageURL
+      # removendo dimensions e resize para pegar a imagem com mais qualidade
+      imageURL = imageURL.replace(/(dimensions=(\d+x\d+)|resize=(\d+x\d+))\W?/gi, '')
+
+      # se eh uma imagem externa vamos pegar direto da fonte
+      if imageURL.match(/\/external_images\?/i) && imageURL.match(/url=/i)
+        imageURL = imageURL.match(/url=(.*)$/i)?[1] || imageURL
 
       switch params.fonte
         when 'infomoney'
@@ -106,8 +110,8 @@ module.exports = ->
       url: url, nome_arquivo: imageNome
     verificarUrls:
       fila: []
-      exec: (params, urls, index=0)->
-        return @fila.push params: params, urls: urls, index: index if @loading
+      exec: (params, feedObj, urls, index=0)->
+        return @fila.push params: params, feedObj: feedObj, urls: urls, index: index if @loading
         @loading = true
 
         UrlExists urls[index], (error, existe)=>
@@ -116,22 +120,23 @@ module.exports = ->
           return global.logs.create("Feeds -> verificarUrls -> ERRO: #{error}") if error
 
           if existe
-            params.url = urls[index]
-            Download.exec(params, is_feed: true)
+            feedObj.url = urls[index]
+            Download.exec(feedObj, is_feed: true)
+            ctrl.addToData(params, feedObj)
             return
 
           index++
-          @exec(params, urls, index) if urls[index]
+          @exec(params, feedObj, urls, index) if urls[index]
       next: ->
-        return unless @fila.length
+        return ctrl.setTimerToSaveDataJson(1) unless @fila.length
         item = @fila.shift()
-        @exec(item.params, item.urls, item.index)
-    setTimerToSaveDataJson: ->
+        @exec(item.params, item.feedObj, item.urls, item.index)
+    setTimerToSaveDataJson: (time=10)->
       # para nao salvar o @data varias vezes, podendo quebrar o json
       @clearTimerToSaveDataJson()
       @timerToSaveDataJson = setTimeout ->
         ctrl.saveDataJson()
-      , 1000 * 10 # 10 segundos
+      , 1000 * time # default 10 segundos
     clearTimerToSaveDataJson: ->
       clearTimeout @timerToSaveDataJson if @timerToSaveDataJson
     saveDataJson: ->
@@ -149,13 +154,14 @@ module.exports = ->
         @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
         global.logs.create("Feeds -> getDataOffline -> ERRO: #{e}")
-    getImageUol: (feedObj, image)->
-      tamanhos   = ['1024x551', '900x506', '956x500', '450x450', '450x600']
+    getImageUol: (params, feedObj, url)->
+      # tenta encontrar outros tamanhos de imagem disponibilizadas pelo uol
+      tamanhos   = ['1024x551', '900x506', '956x500', '615x300', '450x450', '450x600']
       opcoesURLs = []
 
-      opcoesURLs.push image.url.replace(/\d{3}x\d{3}/, item) for item in tamanhos
-      opcoesURLs.push image.url
-      @verificarUrls.exec feedObj, opcoesURLs
+      opcoesURLs.push url.replace(/\d{3}x\d{3}/, tam) for tam in tamanhos
+      opcoesURLs.push url
+      @verificarUrls.exec params, feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
       request url, (error, res, body)->
         return global.logs.create("Feeds -> getImageInfomoney -> ERRO: #{error}") if error
@@ -169,11 +175,7 @@ module.exports = ->
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
-        Download.exec(feedObj, is_feed: true)
-
-        ctrl.data[params.fonte] ||= {}
-        ctrl.data[params.fonte][params.categoria] ||= []
-        ctrl.data[params.fonte][params.categoria].push feedObj
+        ctrl.addToData(params, feedObj)
       return
     getImageBbc: (params, feedObj, url)->
       request url, (error, res, body)->
@@ -191,11 +193,7 @@ module.exports = ->
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
-        Download.exec(feedObj, is_feed: true)
-
-        ctrl.data[params.fonte] ||= {}
-        ctrl.data[params.fonte][params.categoria] ||= []
-        ctrl.data[params.fonte][params.categoria].push feedObj
+        ctrl.addToData(params, feedObj)
       return
     getImageOGlobo: (params, feedObj, url)->
       request url, (error, res, body)->
@@ -208,11 +206,7 @@ module.exports = ->
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
-        Download.exec(feedObj, is_feed: true)
-
-        ctrl.data[params.fonte] ||= {}
-        ctrl.data[params.fonte][params.categoria] ||= []
-        ctrl.data[params.fonte][params.categoria].push feedObj
+        ctrl.addToData(params, feedObj)
       return
     deleteOldImages: ->
       @getDataOffline()
