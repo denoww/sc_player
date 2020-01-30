@@ -1,5 +1,5 @@
 # iniciar sc_player apos reboot
-@reboot pi /home/pi/sc_player/tasks/init.sh
+@reboot pi /home/pi/sc_player/tasks/reinit.sh
 
 # reiniciar sc_player se tiver morrido
 * * * * * pi /home/pi/sc_player/tasks/reinit.sh
