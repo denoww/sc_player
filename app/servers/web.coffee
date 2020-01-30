@@ -10,7 +10,7 @@ module.exports = (opt={}) ->
 
   Sentry.captureEvent
     level:      'info'
-    message:    "TV [ID: #{ENV.TV_ID}] Iniciando servidor HTTP!"
+    message:    "TV [ID: #{ENV.TV_ID}] Iniciando servidor HTTP! Versão #{global.grade?.data?.versao_player || '--'}"
 
   app.use express.static(path.join( __dirname, '../assets/'))
 
