@@ -189,10 +189,6 @@ module.exports = ->
     updatePlayer: ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
-      Sentry.captureEvent
-        level:   'info'
-        message: "TV [ID: #{ENV.TV_ID}] Atualizado para #{ctrl.data.versao_player}"
-      return
 
       caminho = path.join(__dirname, '../../tasks/updates/')
       shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
