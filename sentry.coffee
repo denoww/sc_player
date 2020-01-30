@@ -1,4 +1,5 @@
 Sentry = require('@sentry/electron')
+# levels: fatal, error, warning, info, debug, error
 
 Sentry.init
   dsn:              'https://ac78f87fac094b808180f86ad8867f61@sentry.io/1519364'

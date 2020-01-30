@@ -34,7 +34,7 @@ createWindow = ->
 
     Sentry.captureEvent
       level:      'warning'
-      message:    "TV ID: #{ENV.TV_ID} - #{ENV.NODE_ENV}"
+      message:    "TV [ID: #{ENV.TV_ID}] crashed"
       stacktrace: true
 
     setTimeout (-> win.reload()), 500
@@ -45,7 +45,7 @@ createWindow = ->
 contextMenu(
   prepend: (defaultActions, params, browserWindow)->
     [
-      { role: 'toggleFullScreen', label: 'Fullscreen' }
+      { role: 'toggleFullScreen', label: 'Tela cheia' }
       { type: 'separator' }
       { role: 'reload', label: 'Atualizar Player' }
       {
@@ -64,6 +64,11 @@ contextMenu(
         label: 'Reiniciar Equipamento',
         click: ->
           global.grade.restartPlayer()
+      }
+      { type: 'separator' }
+      {
+        label: "Versão atual: #{global.grade?.data?.versao_player || '--'}"
+        enabled: false
       }
     ]
 )

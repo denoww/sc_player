@@ -2,6 +2,7 @@ fs      = require 'fs'
 path    = require 'path'
 shell   = require 'shelljs'
 request = require 'request'
+Sentry  = require('./../../sentry')
 
 module.exports = ->
   ctrl =
@@ -188,6 +189,22 @@ module.exports = ->
     updatePlayer: ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
+      Sentry.captureEvent
+        level:   'info'
+        message: "TV [ID: #{ENV.TV_ID}] Atualizado para #{ctrl.data.versao_player}"
+      return
+
+      caminho = path.join(__dirname, '../../tasks/updates/')
+      shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
+        if grepErr
+          Sentry.captureEvent
+            level:   'error'
+            message: "TV [ID: #{ENV.TV_ID}] Erro ao atualizar: #{grepErr}!"
+          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
+        else
+          Sentry.captureEvent
+            level:   'info'
+            message: "TV [ID: #{ENV.TV_ID}] Atualizado para #{ctrl.data.versao_player}!"
 
       caminho = path.join(__dirname, '../../tasks/')
       shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->

@@ -1,11 +1,16 @@
 express = require 'express'
 path    = require 'path'
+Sentry  = require('./../../sentry')
 
 module.exports = (opt={}) ->
   app = express()
   server = app.listen(ENV.HTTP_PORT)
   console.info "HTTP #{ENV.HTTP_PORT} STARTING"
   global.logs.create('Iniciando servidor HTTP!')
+
+  Sentry.captureEvent
+    level:      'info'
+    message:    "TV [ID: #{ENV.TV_ID}] Iniciando servidor HTTP!"
 
   app.use express.static(path.join( __dirname, '../assets/'))
 

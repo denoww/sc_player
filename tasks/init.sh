@@ -1,7 +1,7 @@
 #!/bin/bash
-xdotool mousemove 4000 4000
+export DISPLAY=":0"
+/usr/bin/xdotool mousemove 4000 4000
 
-cd ~/sc_player/
-./tasks/minimize-terminal.sh &
-npm run update_timezone &
-npm start
+cd /home/pi/sc_player/
+/usr/bin/npm run update_timezone &
+/usr/bin/npm start
