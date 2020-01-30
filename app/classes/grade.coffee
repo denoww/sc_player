@@ -189,18 +189,15 @@ module.exports = ->
     updatePlayer: ->
       global.logs.create('Grade -> Atualizando Player!')
       # se a versao do player for alterada sera executado a atualizacao
+      return if ENV.NODE_ENV == 'development'
 
       caminho = path.join(__dirname, '../../tasks/updates/')
       shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
         if grepErr
-          Sentry.captureEvent
-            level:   'error'
-            message: "TV [ID: #{ENV.TV_ID}] Erro ao atualizar: #{grepErr}!"
+          Sentry.error "Erro ao atualizar: #{grepErr}!"
           global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
         else
-          Sentry.captureEvent
-            level:   'info'
-            message: "TV [ID: #{ENV.TV_ID}] Atualizado para #{ctrl.data.versao_player}!"
+          Sentry.info "Atualizado para #{ctrl.data.versao_player}!"
 
       caminho = path.join(__dirname, '../../tasks/')
       shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->

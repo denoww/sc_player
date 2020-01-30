@@ -5,12 +5,9 @@ Sentry  = require('./../../sentry')
 module.exports = (opt={}) ->
   app = express()
   server = app.listen(ENV.HTTP_PORT)
-  console.info "HTTP #{ENV.HTTP_PORT} STARTING"
-  global.logs.create('Iniciando servidor HTTP!')
 
-  Sentry.captureEvent
-    level:      'info'
-    message:    "TV [ID: #{ENV.TV_ID}] Iniciando servidor HTTP! Versão #{global.grade?.data?.versao_player || '--'}"
+  global.logs.create 'Iniciando servidor HTTP!'
+  Sentry.info "Iniciando servidor HTTP! Versão #{global.grade?.data?.versao_player || '--'}"
 
   app.use express.static(path.join( __dirname, '../assets/'))
 
