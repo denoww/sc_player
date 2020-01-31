@@ -223,6 +223,7 @@ module.exports = ->
       shell.exec command, (code, out, error)->
         return global.logs.create("Feeds -> deleteOldImages -> ERRO: #{error}") if error
         global.logs.create('Feeds -> Imagens antigas APAGADAS!')
+        return
       return
 
   global.feeds = ctrl

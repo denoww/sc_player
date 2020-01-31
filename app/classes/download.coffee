@@ -21,6 +21,7 @@ class Download
     for folder in folders
       if !fs.existsSync(folder)
         fs.mkdirSync(folder)
+    return
   @exec: (params, opts={})->
     pasta = global.configPath + ENV.DOWNLOAD_VIDEOS if params.is_video
     pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image

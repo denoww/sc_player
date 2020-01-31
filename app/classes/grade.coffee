@@ -191,18 +191,24 @@ module.exports = ->
       # se a versao do player for alterada sera executado a atualizacao
       return if ENV.NODE_ENV == 'development'
 
-      caminho = path.join(__dirname, '../../tasks/updates/')
-      shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
-        if grepErr
-          Sentry.error "Erro ao atualizar: #{grepErr}!"
-          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
-        else
-          Sentry.info "Atualizado para #{ctrl.data.versao_player}!"
+      # verificar se existe arquivo de update para esta versao
+      arquivo = path.join(__dirname, "../../tasks/updates/version-#{ctrl.data.versao_player}.sh")
+      fs.stat arquivo, (error)->
+        if !error
+          # se o arquivo existe entao executa a atualizacao
+          caminho = path.join(__dirname, '../../tasks/updates/')
+          shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
+            if grepErr
+              Sentry.error "Erro ao atualizar: #{grepErr}!"
+              global.logs.create "Grade -> updateVersion -> ERRO: #{grepErr}"
+            else
+              Sentry.info "Atualizado para #{ctrl.data.versao_player}!"
 
-      caminho = path.join(__dirname, '../../tasks/')
-      shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
-        if grepErr
-          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}")
+        # execura o update do repositorio
+        caminho = path.join(__dirname, '../../tasks/')
+        shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
+          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}") if grepErr
+          return
       return
     restartPlayer: ->
       global.logs.create('Grade -> Reiniciando Player!')
