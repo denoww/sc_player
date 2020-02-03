@@ -2,7 +2,6 @@ fs      = require 'fs'
 path    = require 'path'
 shell   = require 'shelljs'
 request = require 'request'
-Sentry  = require('./../../sentry')
 
 module.exports = ->
   ctrl =
@@ -19,14 +18,14 @@ module.exports = ->
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
-          global.logs.create("Grade -> getList -> ERRO: #{erro}")
+          global.logs.error "Grade -> getList -> #{erro}"
           global.feeds.getList()
           return
 
         @data.offline = false
         jsonData = JSON.parse(body)
         if Object.empty(jsonData || {})
-          return global.logs.create('Grade -> Erro: Não existe Dados da Grade!')
+          return global.logs.create 'Grade -> Erro: Não existe Dados da Grade!'
 
         atualizarPlayer = @data?.versao_player? &&
           @data.versao_player != jsonData.versao_player
@@ -173,21 +172,20 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
       try
         fs.writeFile 'grade.json', dados, (error)->
-          if error
-            return global.logs.create("Grade -> saveDataJson -> ERRO: #{error}")
-          console.info 'Grade -> grade.json salvo com sucesso!'
+          return global.logs.error "Grade -> saveDataJson -> #{error}" if error
+          global.logs.create 'Grade -> grade.json salvo com sucesso!'
       catch e
-        global.logs.create("Grade -> saveDataJson -> ERRO: #{e}")
+        global.logs.error "Grade -> saveDataJson -> #{e}"
       return
     getDataOffline: ->
       console.info 'Grade -> Pegando grade de grade.json'
       try
         @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
       catch e
-        global.logs.create("Grade -> getDataOffline -> ERRO: #{e}")
+        global.logs.error "Grade -> getDataOffline -> #{e}"
       return
     updatePlayer: ->
-      global.logs.create('Grade -> Atualizando Player!')
+      global.logs.create 'Grade -> Atualizando Player!'
       # se a versao do player for alterada sera executado a atualizacao
       return if ENV.NODE_ENV == 'development'
 
@@ -199,23 +197,22 @@ module.exports = ->
           caminho = path.join(__dirname, '../../tasks/updates/')
           shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
             if grepErr
-              Sentry.error "Erro ao atualizar: #{grepErr}!"
-              global.logs.create "Grade -> updateVersion -> ERRO: #{grepErr}"
+              global.logs.error "Erro ao atualizar: #{grepErr}!"
             else
-              Sentry.info "Atualizado para #{ctrl.data.versao_player}!"
+              global.logs.info "Atualizado para #{ctrl.data.versao_player}!"
 
         # execura o update do repositorio
         caminho = path.join(__dirname, '../../tasks/')
         shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
-          global.logs.create("Grade -> updatePlayer -> ERRO: #{grepErr}") if grepErr
+          global.logs.error "Grade -> updatePlayer -> #{grepErr}" if grepErr
           return
       return
     restartPlayer: ->
-      global.logs.create('Grade -> Reiniciando Player!')
+      global.logs.create 'Grade -> Reiniciando Player!'
 
       shell.exec 'sudo reboot', (code, grepOut, grepErr)->
         if grepErr
-          global.logs.create("Grade -> restartPlayer -> ERRO: #{grepErr}")
+          global.logs.error "Grade -> restartPlayer -> #{grepErr}"
       return
     refreshWindow: ->
       # atualizar o app para limpar cache e sobrecarga de processos
@@ -224,7 +221,7 @@ module.exports = ->
       # caso o app pare de receber requisições será atualizado
       @clearTimerUpdateWindow()
       @timerUpdateWindow = setTimeout ->
-        global.logs.create('Grade -> Atualizando Aplicação! :(')
+        global.logs.create 'Grade -> Atualizando Aplicação! :('
         ctrl.refreshWindow()
       , 1000 * 60 * 2.5 # 2.5 minutos
     clearTimerUpdateWindow: ->
@@ -236,7 +233,7 @@ module.exports = ->
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
-    global.logs.create('Grade -> Atualização preventiva (3h)!')
+    global.logs.info 'Grade -> Atualização preventiva (3h)!'
     ctrl.refreshWindow()
   , 1000 * 60 * 60 * 3 # 3 horas
 

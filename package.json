@@ -26,10 +26,10 @@
     "win": "node installers/create_win_installer.js"
   },
   "dependencies": {
-    "@sentry/browser": "^5.5.0",
+    "@sentry/browser": "^5.12.0",
     "@sentry/electron": "^1.2.0",
-    "@sentry/integrations": "^5.5.0",
-    "@sentry/node": "^5.5.0",
+    "@sentry/integrations": "^5.12.0",
+    "@sentry/node": "^5.12.0",
     "coffeescript": "^2.4.1",
     "electron": "^5.0.6",
     "electron-context-menu": "^0.13.0",

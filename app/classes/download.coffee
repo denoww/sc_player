@@ -30,7 +30,7 @@ class Download
     pasta = global.configPath + 'downloads/' if params.is_logo || opts.is_logo
 
     unless pasta
-      global.logs.create("Download -> exec -> ERRO: Nenhuma pasta encontrada para #{params.nome_arquivo}!")
+      global.logs.error "Download -> exec -> Nenhuma pasta encontrada para #{params.nome_arquivo}!"
       return
 
     fullPath = pasta + params.nome_arquivo

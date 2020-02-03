@@ -6,7 +6,6 @@ if setupEvents.handleSquirrelEvent()
 
 { app, dialog, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
-Sentry = require('./sentry')
 
 createWindow = ->
   win = new BrowserWindow
@@ -31,7 +30,7 @@ createWindow = ->
 
   win.webContents.on 'crashed', ->
     console.warn '--- WEBCONTENTS --- crashed'
-    Sentry.warning 'webContents crashed'
+    global.logs.warning 'webContents crashed'
     setTimeout (-> win.reload()), 500
 
   # Open the DevTools
@@ -70,8 +69,7 @@ contextMenu(
 
 # Disable error dialogs by overriding
 dialog.showErrorBox = (title, content)->
-  global.logs.create "DIALOG -> #{title} #{content}"
-  Sentry.error "DIALOG -> #{title} #{content}"
+  global.logs.error "DIALOG -> #{title} #{content}"
 
 app.setName 'SC Player'
 

@@ -33,7 +33,7 @@ module.exports = ->
 
       parserRSS.parseURL params.url,
       (error, feeds)=>
-        return global.logs.create("Feeds -> baixarFeeds -> ERRO: #{error}") if error
+        return global.logs.error "Feeds -> baixarFeeds #{error}" if error
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}
@@ -117,7 +117,7 @@ module.exports = ->
         UrlExists urls[index], (error, existe)=>
           @loading = false
           @next()
-          return global.logs.create("Feeds -> verificarUrls -> ERRO: #{error}") if error
+          return global.logs.error "Feeds -> verificarUrls #{error}" if error
 
           if existe
             feedObj.url = urls[index]
@@ -143,17 +143,17 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
       try
         fs.writeFile 'feeds.json', dados, (error)->
-          return global.logs.create("Feeds -> saveDataJson -> ERRO: #{error}") if error
-          console.info 'Feeds -> feeds.json salvo com sucesso!'
+          return global.logs.error "Feeds -> saveDataJson #{error}" if error
+          global.logs.create 'Feeds -> feeds.json salvo com sucesso!'
       catch e
-        global.logs.create("Feeds -> saveDataJson -> ERRO: #{e}")
+        global.logs.error "Feeds -> saveDataJson #{e}"
       return
     getDataOffline: ->
       console.info 'Feeds -> Pegando feeds de feeds.json'
       try
         @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
-        global.logs.create("Feeds -> getDataOffline -> ERRO: #{e}")
+        global.logs.error "Feeds -> getDataOffline #{e}"
     getImageUol: (params, feedObj, url)->
       # tenta encontrar outros tamanhos de imagem disponibilizadas pelo uol
       tamanhos   = ['1024x551', '900x506', '956x500', '615x300', '450x450', '450x600']
@@ -164,7 +164,7 @@ module.exports = ->
       @verificarUrls.exec params, feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.create("Feeds -> getImageInfomoney -> ERRO: #{error}") if error
+        return global.logs.error "Feeds -> getImageInfomoney #{error}" if error
 
         data = body.toString()
         # imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || '' # OLD VERSION
@@ -179,7 +179,7 @@ module.exports = ->
       return
     getImageBbc: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.create("Feeds -> getImageBbc -> ERRO: #{error}") if error
+        return global.logs.error "Feeds -> getImageBbc #{error}" if error
 
         data       = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL   = data.match(/story-body__inner.+?figure.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
@@ -197,7 +197,7 @@ module.exports = ->
       return
     getImageOGlobo: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.create("Feeds -> getImageOGlobo -> ERRO: #{error}") if error
+        return global.logs.error "Feeds -> getImageOGlobo #{error}" if error
 
         data     = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL = data.match(/figure.+?article-header__picture.+?<img.+?article__picture-image.+?src=["'](.+?)["']/i)?[1] || ''
@@ -221,8 +221,8 @@ module.exports = ->
       caminho = global.configPath + 'downloads/feeds/'
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
       shell.exec command, (code, out, error)->
-        return global.logs.create("Feeds -> deleteOldImages -> ERRO: #{error}") if error
-        global.logs.create('Feeds -> Imagens antigas APAGADAS!')
+        return global.logs.error "Feeds -> deleteOldImages #{error}" if error
+        global.logs.info 'Feeds -> Imagens antigas APAGADAS!'
         return
       return
 

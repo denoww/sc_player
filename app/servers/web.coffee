@@ -1,13 +1,11 @@
 express = require 'express'
 path    = require 'path'
-Sentry  = require('./../../sentry')
 
 module.exports = (opt={}) ->
   app = express()
   server = app.listen(ENV.HTTP_PORT)
 
-  global.logs.create 'Iniciando servidor HTTP!'
-  Sentry.info "Iniciando servidor HTTP! Versão #{global.grade?.data?.versao_player || '--'}"
+  global.logs.info "Iniciando servidor HTTP! Versão #{global.grade?.data?.versao_player || '--'}"
 
   app.use express.static(path.join( __dirname, '../assets/'))
 
