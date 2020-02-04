@@ -33,7 +33,9 @@ module.exports = ->
 
       parserRSS.parseURL params.url,
       (error, feeds)=>
-        return global.logs.error "Feeds -> baixarFeeds #{error}" if error
+        if error
+          return global.logs.error "Feeds -> baixarFeeds #{error}",
+            extra: url: params.url
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}

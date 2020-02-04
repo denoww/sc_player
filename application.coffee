@@ -57,8 +57,6 @@ createWindow = ->
   win.webContents.on 'destroyed', ->                       global.logs.debug 'webContents destroyed'
   win.webContents.on 'zoom-changed', ->                    global.logs.debug 'webContents zoom-changed'
   win.webContents.on 'found-in-page', ->                   global.logs.debug 'webContents found-in-page'
-  win.webContents.on 'media-started-playing', ->           global.logs.debug 'webContents media-started-playing'
-  win.webContents.on 'media-paused', ->                    global.logs.debug 'webContents media-paused'
   win.webContents.on 'did-change-theme-color', ->          global.logs.debug 'webContents did-change-theme-color'
   win.webContents.on 'cursor-changed', ->                  global.logs.debug 'webContents cursor-changed'
   win.webContents.on 'context-menu', ->                    global.logs.debug 'webContents context-menu'
