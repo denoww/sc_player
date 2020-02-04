@@ -8,7 +8,7 @@ if setupEvents.handleSquirrelEvent()
 contextMenu = require 'electron-context-menu'
 
 createWindow = ->
-  win = new BrowserWindow
+  windowOptions =
     show:            false
     icon:            "#{__dirname}/app/assets/images/icon.png"
     kiosk:           true
@@ -22,6 +22,14 @@ createWindow = ->
     webPreferences:
       webSecurity:     false
       nodeIntegration: true
+
+  if ENV.NODE_ENV == 'development'
+    windowOptions.kiosk       = false
+    windowOptions.width       = 640
+    windowOptions.height      = 360
+    windowOptions.alwaysOnTop = true
+
+  win = new BrowserWindow windowOptions
 
   win.loadURL 'http://localhost:3001'
   win.focus()

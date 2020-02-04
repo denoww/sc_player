@@ -130,7 +130,7 @@ module.exports = ->
           index++
           @exec(params, feedObj, urls, index) if urls[index]
       next: ->
-        return ctrl.setTimerToSaveDataJson(1) unless @fila.length
+        return ctrl.setTimerToSaveDataJson(5) unless @fila.length
         item = @fila.shift()
         @exec(item.params, item.feedObj, item.urls, item.index)
     setTimerToSaveDataJson: (time=10)->
