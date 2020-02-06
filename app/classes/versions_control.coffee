@@ -97,7 +97,7 @@ module.exports = ->
 
       folder = path.join(__dirname, '../../tasks/')
       shell.exec "#{folder}./update_repository.sh", (code, out, error)->
-        return ctrl.sendLog "execUpdateRepository -> #{error}" if error
+        ctrl.sendLog "execUpdateRepository -> #{error}" if error
         callback?()
       return
     saveCurrentVersion: (version, updateRepository=false)->
