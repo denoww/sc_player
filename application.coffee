@@ -6,6 +6,7 @@ if setupEvents.handleSquirrelEvent()
 
 { app, dialog, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
+shell = require 'shelljs'
 
 createWindow = ->
   windowOptions =
@@ -117,8 +118,7 @@ restartPlayer = ->
   return if ENV.NODE_ENV == 'development'
 
   shell.exec 'sudo reboot', (code, out, error)->
-    if error
-      global.logs.error "restartPlayer -> #{error}", tags: class: 'application'
+    global.logs.error "restartPlayer -> #{error}", tags: class: 'application' if error
   return
 
 # Disable error dialogs by overriding
