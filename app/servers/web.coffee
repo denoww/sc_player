@@ -19,12 +19,12 @@ module.exports = (opt={}) ->
     next()
 
   app.get '/', (req, res) ->
-    console.info "Request GET / params: #{JSON.stringify(req.body || {})}"
+    global.logs.create "Request GET / params: #{JSON.stringify(req.body || {})}"
     res.type "text/html"
     res.sendFile path.join( __dirname, '../assets/templates/index.html')
 
   app.get '/grade', (req, res) ->
-    console.info "Request GET /grade params: #{JSON.stringify(req.body || {})}"
+    global.logs.create "Request GET /grade params: #{JSON.stringify(req.body || {})}"
     if Object.empty global.grade.data
       global.grade.getList()
       res.sendStatus(400)
@@ -33,7 +33,7 @@ module.exports = (opt={}) ->
     res.send JSON.stringify global.grade.data
 
   app.get '/feeds', (req, res) ->
-    console.info "Request GET /feeds params: #{JSON.stringify(req.body || {})}"
+    global.logs.create "Request GET /feeds params: #{JSON.stringify(req.body || {})}"
     if Object.empty global.feeds.data
       global.feeds.getList()
       res.sendStatus(400)

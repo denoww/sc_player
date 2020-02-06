@@ -37,7 +37,6 @@ createWindow = ->
   global.win = win
 
   win.webContents.on 'crashed', ->
-    console.warn '--- WEBCONTENTS --- crashed'
     global.logs.warning 'webContents crashed'
     setTimeout (-> win.reload()), 500
 
@@ -56,7 +55,6 @@ createWindow = ->
   win.webContents.on 'remote-get-current-window', ->       global.logs.debug 'webContents remote-get-current-window'
   win.webContents.on 'did-fail-load', ->                   global.logs.debug 'webContents did-fail-load'
   win.webContents.on 'did-fail-provisional-load', ->       global.logs.debug 'webContents did-fail-provisional-load'
-  win.webContents.on 'did-start-loading', ->               global.logs.debug 'webContents did-start-loading'
   win.webContents.on 'will-redirect', ->                   global.logs.debug 'webContents will-redirect'
   win.webContents.on 'did-redirect-navigation', ->         global.logs.debug 'webContents did-redirect-navigation'
   win.webContents.on 'did-navigate-in-page', ->            global.logs.debug 'webContents did-navigate-in-page'
@@ -99,12 +97,12 @@ contextMenu(
       {
         label: 'Atualizar Equipamento',
         click: ->
-          global.grade.updatePlayer()
+          global.versionsControl.init()
       }
       {
         label: 'Reiniciar Equipamento',
         click: ->
-          global.grade.restartPlayer()
+          restartPlayer()
       }
       { type: 'separator' }
       {
@@ -113,6 +111,15 @@ contextMenu(
       }
     ]
 )
+
+restartPlayer = ->
+  global.logs.create 'Reiniciando Player!'
+  return if ENV.NODE_ENV == 'development'
+
+  shell.exec 'sudo reboot', (code, out, error)->
+    if error
+      global.logs.error "restartPlayer -> #{error}", tags: class: 'application'
+  return
 
 # Disable error dialogs by overriding
 dialog.showErrorBox = (title, content)->

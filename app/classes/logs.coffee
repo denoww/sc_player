@@ -1,26 +1,13 @@
 shell  = require 'shelljs'
 Sentry = require './sentry'
 
-module.exports = ->
+module.exports = (showConsole=false)->
   ctrl =
-    init: ->
-      @caminho = global.configPath + 'logs'
-    show: ->
-      shell.exec "cat #{@caminho}", (code, grepOut, grepErr)->
-        return console.error 'Logs -> show:', grepErr if grepErr
-        console.log 'LOGS:', grepOut
-        grepOut
     create: (message, options={})->
       return if !message
-      console.info message
+      console.log message if showConsole
 
-      # enviando log para o Sentry
       Sentry.log message, options if options.send
-
-      return if ENV.NODE_ENV != 'development'
-      log = (new Date).toLocaleString() + ' :: ' + message
-      shell.exec "echo '#{log}' >> #{@caminho}", (code, grepOut, grepErr)->
-        return console.error 'Logs -> create:', grepErr if grepErr
       return
     info: (message, options={})->
       options.send  = true
@@ -42,5 +29,4 @@ module.exports = ->
       options.send  = true
       options.level = 'warning'
       @create message, options
-  ctrl.init()
   global.logs = ctrl

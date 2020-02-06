@@ -35,22 +35,17 @@ class Download
 
     fullPath = pasta + params.nome_arquivo
     fs.stat fullPath, (error, stats)=>
-      if !error && alreadyExists(params, stats.size)
-        # console.info "Download -> Arquivo já existe: #{params.nome_arquivo}"
-        return next()
-
+      return next() if !error && alreadyExists(params, stats.size)
       return @fila.push Object.assign {}, params, opts if @loading
       @loading = true
 
       file      = fs.createWriteStream(fullPath)
       protocolo = http
       protocolo = https if params.url.match(/https/)
-      console.info "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+      global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
       unless validURL(params.url)
-        console.info '! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '
-        console.info "URL INVÁLIDA: #{params.url}"
-        console.info '! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! '
+        global.logs.warning "URL INVÁLIDA: #{params.url}", tags: class: 'download'
         return next()
 
       protocolo.get params.url, (res)->
@@ -63,11 +58,17 @@ class Download
         .on 'error', (error)->
           Download.loading = false
           next()
-          console.error 'Download -> Error:', error if error
+          if error
+            global.logs.error "Download -> Error: #{error}",
+              extra: url: params.url
+              tags: class: 'download'
       .on 'error', (error)->
         Download.loading = false
         next()
-        console.error 'Download -> Error:', error if error
+        if error
+          global.logs.error "Download -> Error: #{error}",
+            extra: url: params.url
+            tags: class: 'download'
 
   validURL = (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')

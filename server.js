@@ -6,9 +6,9 @@ global.homePath = (process.env.HOME || process.env.USERPROFILE || process.env.HO
 global.configPath = global.homePath + '.config/sc_player/';
 
 // servers
-console.log('STARTING SERVERS...');
-require('./app/classes/download');
 require('./app/classes/logs')();
+require('./app/classes/versions_control')();
+require('./app/classes/download');
 require('./app/classes/grade')();
 require('./app/classes/feeds')();
 require('./app/servers/web')();

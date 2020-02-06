@@ -34,8 +34,9 @@ module.exports = ->
       parserRSS.parseURL params.url,
       (error, feeds)=>
         if error
-          return global.logs.error "Feeds -> baixarFeeds #{error}",
+          return global.logs.warning "Feeds -> baixarFeeds #{error}",
             extra: url: params.url
+            tags: class: 'feeds'
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}
@@ -119,7 +120,7 @@ module.exports = ->
         UrlExists urls[index], (error, existe)=>
           @loading = false
           @next()
-          return global.logs.error "Feeds -> verificarUrls #{error}" if error
+          return global.logs.error "Feeds -> verificarUrls #{error}", tags: class: 'feeds' if error
 
           if existe
             feedObj.url = urls[index]
@@ -145,17 +146,17 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
       try
         fs.writeFile 'feeds.json', dados, (error)->
-          return global.logs.error "Feeds -> saveDataJson #{error}" if error
+          return global.logs.error "Feeds -> saveDataJson #{error}", tags: class: 'feeds' if error
           global.logs.create 'Feeds -> feeds.json salvo com sucesso!'
       catch e
-        global.logs.error "Feeds -> saveDataJson #{e}"
+        global.logs.error "Feeds -> saveDataJson #{e}", tags: class: 'feeds'
       return
     getDataOffline: ->
-      console.info 'Feeds -> Pegando feeds de feeds.json'
+      global.logs.create 'Feeds -> Pegando feeds de feeds.json'
       try
         @data = JSON.parse(fs.readFileSync('feeds.json', 'utf8') || '{}')
       catch e
-        global.logs.error "Feeds -> getDataOffline #{e}"
+        global.logs.error "Feeds -> getDataOffline #{e}", tags: class: 'feeds'
     getImageUol: (params, feedObj, url)->
       # tenta encontrar outros tamanhos de imagem disponibilizadas pelo uol
       tamanhos   = ['1024x551', '900x506', '956x500', '615x300', '450x450', '450x600']
@@ -166,12 +167,16 @@ module.exports = ->
       @verificarUrls.exec params, feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageInfomoney #{error}" if error
+        return global.logs.error "Feeds -> getImageInfomoney #{error}", tags: class: 'feeds' if error
 
         data = body.toString()
         # imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || '' # OLD VERSION
         imageURL = data.match(/figure(.|\n)*?<(\s+)?img(?:.*\ssrc=["'](.*?)["'].*)\/>?/i)?[3] || ''
-        return console.warn 'Feeds -> não encontrado imagem de InfoMoney!' unless imageURL
+        unless imageURL
+          global.logs.warning 'Feeds -> não encontrado imagem de InfoMoney!',
+            extra: url: url
+            tags: class: 'feed'
+          return
 
         imageURL             = imageURL.match(/(.*)[?]/)?[1]
         image                = ctrl.mountImageData(params, imageURL)
@@ -181,13 +186,17 @@ module.exports = ->
       return
     getImageBbc: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageBbc #{error}" if error
+        return global.logs.error "Feeds -> getImageBbc #{error}", tags: class: 'feeds' if error
 
         data       = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL   = data.match(/story-body__inner.+?figure.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
         imageURL ||= data.match(/gallery-images.+?gallery-images__image.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
         imageURL ||= data.match(/<metaproperty="og:image"content="(.+?)"/i)?[1] || ''
-        return console.warn 'Feeds -> não encontrado imagem de BBC!' unless imageURL
+        unless imageURL
+          global.logs.warning 'Feeds -> não encontrado imagem de BBC!',
+            extra: url: url
+            tags: class: 'feed'
+          return
 
         imageURL = imageURL.replace(/news\/(\d+)\/cpsprodpb/, 'news/1024/cpsprodpb')
         imageURL = imageURL.replace(/news\/(\d+)\/branded_portuguese/, 'news/1024/cpsprodpb')
@@ -199,11 +208,15 @@ module.exports = ->
       return
     getImageOGlobo: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageOGlobo #{error}" if error
+        return global.logs.error "Feeds -> getImageOGlobo #{error}", tags: class: 'feeds' if error
 
         data     = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL = data.match(/figure.+?article-header__picture.+?<img.+?article__picture-image.+?src=["'](.+?)["']/i)?[1] || ''
-        return console.warn 'Feeds -> não encontrado imagem de O Globo!' unless imageURL
+        unless imageURL
+          global.logs.warning 'Feeds -> não encontrado imagem de O Globo!',
+            extra: url: url
+            tags: class: 'feed'
+          return
 
         image                = ctrl.mountImageData(params, imageURL)
         feedObj.url          = image.url
@@ -223,8 +236,8 @@ module.exports = ->
       caminho = global.configPath + 'downloads/feeds/'
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
       shell.exec command, (code, out, error)->
-        return global.logs.error "Feeds -> deleteOldImages #{error}" if error
-        global.logs.info 'Feeds -> Imagens antigas APAGADAS!'
+        return global.logs.error "Feeds -> deleteOldImages #{error}", tags: class: 'feeds' if error
+        global.logs.info 'Feeds -> Imagens antigas APAGADAS!', tags: class: 'feeds'
         return
       return
 

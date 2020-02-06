@@ -8,7 +8,7 @@ module.exports = ->
     data: {}
     getList: ->
       url = "#{ENV.API_SERVER_URL}/publicidades/grade.json?id=#{ENV.TV_ID}"
-      console.info "URL", url
+      global.logs.create "URL: #{url}"
 
       @getDataOffline()
       @data.offline = true
@@ -18,7 +18,7 @@ module.exports = ->
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
-          global.logs.error "Grade -> getList -> #{erro}"
+          global.logs.warning "Grade -> getList -> #{erro}", tags: class: 'grade'
           global.feeds.getList()
           return
 
@@ -35,7 +35,7 @@ module.exports = ->
         @saveDataJson()
 
         if atualizarPlayer
-          return @updatePlayer()
+          return global.versionsControl.init()
 
         global.feeds.getList()
         @setTimerUpdateWindow()
@@ -172,47 +172,17 @@ module.exports = ->
       dados = JSON.stringify @data, null, 2
       try
         fs.writeFile 'grade.json', dados, (error)->
-          return global.logs.error "Grade -> saveDataJson -> #{error}" if error
+          return global.logs.error "Grade -> saveDataJson -> #{error}", tags: class: 'grade' if error
           global.logs.create 'Grade -> grade.json salvo com sucesso!'
       catch e
-        global.logs.error "Grade -> saveDataJson -> #{e}"
+        global.logs.error "Grade -> saveDataJson -> #{e}", tags: class: 'grade'
       return
     getDataOffline: ->
-      console.info 'Grade -> Pegando grade de grade.json'
+      global.logs.create 'Grade -> Pegando grade de grade.json'
       try
         @data = JSON.parse(fs.readFileSync('grade.json', 'utf8') || '{}')
       catch e
-        global.logs.error "Grade -> getDataOffline -> #{e}"
-      return
-    updatePlayer: ->
-      global.logs.create 'Grade -> Atualizando Player!'
-      # se a versao do player for alterada sera executado a atualizacao
-      return if ENV.NODE_ENV == 'development'
-
-      # verificar se existe arquivo de update para esta versao
-      arquivo = path.join(__dirname, "../../tasks/updates/version-#{ctrl.data.versao_player}.sh")
-      fs.stat arquivo, (error)->
-        if !error
-          # se o arquivo existe entao executa a atualizacao
-          caminho = path.join(__dirname, '../../tasks/updates/')
-          shell.exec "#{caminho}./version-#{ctrl.data.versao_player}.sh", (code, grepOut, grepErr)->
-            if grepErr
-              global.logs.error "Erro ao atualizar: #{grepErr}!"
-            else
-              global.logs.info "Atualizado para #{ctrl.data.versao_player}!"
-
-        # execura o update do repositorio
-        caminho = path.join(__dirname, '../../tasks/')
-        shell.exec "#{caminho}./update.sh", (code, grepOut, grepErr)->
-          global.logs.error "Grade -> updatePlayer -> #{grepErr}" if grepErr
-          return
-      return
-    restartPlayer: ->
-      global.logs.create 'Grade -> Reiniciando Player!'
-
-      shell.exec 'sudo reboot', (code, grepOut, grepErr)->
-        if grepErr
-          global.logs.error "Grade -> restartPlayer -> #{grepErr}"
+        global.logs.error "Grade -> getDataOffline -> #{e}", tags: class: 'grade'
       return
     refreshWindow: ->
       # atualizar o app para limpar cache e sobrecarga de processos
@@ -228,12 +198,12 @@ module.exports = ->
       clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
   setInterval ->
-    console.info 'Grade -> Atualizando lista!'
+    global.logs.create 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
-    global.logs.info 'Grade -> Atualização preventiva (3h)!'
+    global.logs.info 'Grade -> Atualização preventiva (3h)!', tags: class: 'grade'
     ctrl.refreshWindow()
   , 1000 * 60 * 60 * 3 # 3 horas
 
