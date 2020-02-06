@@ -175,7 +175,7 @@ module.exports = ->
         unless imageURL
           global.logs.warning 'Feeds -> não encontrado imagem de InfoMoney!',
             extra: url: url
-            tags: class: 'feed'
+            tags: class: 'feeds'
           return
 
         imageURL             = imageURL.match(/(.*)[?]/)?[1]
@@ -195,7 +195,7 @@ module.exports = ->
         unless imageURL
           global.logs.warning 'Feeds -> não encontrado imagem de BBC!',
             extra: url: url
-            tags: class: 'feed'
+            tags: class: 'feeds'
           return
 
         imageURL = imageURL.replace(/news\/(\d+)\/cpsprodpb/, 'news/1024/cpsprodpb')
@@ -215,7 +215,7 @@ module.exports = ->
         unless imageURL
           global.logs.warning 'Feeds -> não encontrado imagem de O Globo!',
             extra: url: url
-            tags: class: 'feed'
+            tags: class: 'feeds'
           return
 
         image                = ctrl.mountImageData(params, imageURL)
