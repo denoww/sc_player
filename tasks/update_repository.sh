@@ -10,4 +10,5 @@ sudo chown pi:pi -R .
 
 # reiniciar player
 /home/pi/sc_player/tasks/./turn_off.sh
+sleep 2
 /home/pi/sc_player/tasks/./init.sh

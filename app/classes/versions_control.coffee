@@ -55,7 +55,7 @@ module.exports = ->
           if fileVersion
             fileVersion = parseFloat fileVersion
 
-            if fileVersion > ctrl.currentVersion
+            if fileVersion > ctrl.currentVersion && fileVersion <= ctrl.gradeVersion
               ctrl.versions.push version: fileVersion, fileName: file
 
         ctrl.versions = ctrl.versions.sortByField('version')
