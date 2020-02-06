@@ -45,7 +45,6 @@ module.exports = ->
         callback?()
       return
     getVersionsFile: (callback)->
-      console.log 'getVersionsFile'
       fs.readdir ctrl.pathUpdates, (error, files)->
         return ctrl.sendLog "getVersionsFile -> #{error}" if error
         ctrl.versions ||= []
@@ -60,7 +59,6 @@ module.exports = ->
               ctrl.versions.push version: fileVersion, fileName: file
 
         ctrl.versions = ctrl.versions.sortByField('version')
-        console.log 'ctrl.versions', ctrl.versions
         callback?()
       return
     callNextVersion: ->
@@ -91,7 +89,7 @@ module.exports = ->
 
           ctrl.sendLog "Atualizado para #{obj.version}!", 'info'
           ctrl.versions.removeByField('version', obj.version)
-          ctrl.saveCurrentVersion(obj.version)
+          ctrl.saveCurrentVersion(obj.version, !ctrl.versions.length)
       return
     execUpdateRepository: (callback)->
       return callback?() if ENV.NODE_ENV == 'development'
@@ -101,14 +99,14 @@ module.exports = ->
         return ctrl.sendLog "execUpdateRepository -> #{error}" if error
         callback?()
       return
-    saveCurrentVersion: (version)->
+    saveCurrentVersion: (version, updateRepository=false)->
       return unless version
       fs.writeFile ctrl.versionFile, version, 'utf8', (error)->
         return ctrl.sendLog "saveCurrentVersion -> #{error}" if error
         ctrl.currentVersion = version
 
         return ctrl.callNextVersion() if ctrl.versions.length
-        ctrl.execUpdateRepository()
+        ctrl.execUpdateRepository() if updateRepository
       return
     sendLog: (message, level='error', extra={})->
       global.logs[level] message, tags: { class: 'versions_control' }, extra: extra
