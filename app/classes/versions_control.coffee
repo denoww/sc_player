@@ -22,7 +22,7 @@ module.exports = ->
             ctrl.execUpdateRepository ->
               ctrl.callNextVersion()
           else
-            ctrl.saveCurrentVersion(ctrl.gradeVersion)
+            ctrl.saveCurrentVersion(ctrl.gradeVersion, forceUpdate)
       return
     getGradeVersion: ->
       return unless global.grade?.data?.versao_player
