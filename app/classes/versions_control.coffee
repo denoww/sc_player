@@ -1,6 +1,7 @@
 fs    = require 'fs'
 path  = require 'path'
 shell = require 'shelljs'
+{ app } = require 'electron'
 
 module.exports = ->
   ctrl =
@@ -106,7 +107,10 @@ module.exports = ->
         ctrl.currentVersion = version
 
         return ctrl.callNextVersion() if ctrl.versions.length
-        ctrl.execUpdateRepository() if updateRepository
+        if updateRepository
+          ctrl.execUpdateRepository ->
+            app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+            app.exit(0)
       return
     sendLog: (message, level='error', extra={})->
       global.logs[level] message, tags: { class: 'versions_control' }, extra: extra
