@@ -45,6 +45,7 @@ module.exports = ->
         callback?()
       return
     getVersionsFile: (callback)->
+      console.log 'getVersionsFile'
       fs.readdir ctrl.pathUpdates, (error, files)->
         return ctrl.sendLog "getVersionsFile -> #{error}" if error
         ctrl.versions ||= []
@@ -59,6 +60,7 @@ module.exports = ->
               ctrl.versions.push version: fileVersion, fileName: file
 
         ctrl.versions = ctrl.versions.sortByField('version')
+        console.log 'ctrl.versions', ctrl.versions
         callback?()
       return
     callNextVersion: ->
