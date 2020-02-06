@@ -117,7 +117,7 @@ restartPlayer = ->
   global.logs.create 'Reiniciando Player!'
   return if ENV.NODE_ENV == 'development'
 
-  shell.exec 'sudo reboot', (code, out, error)->
+  shell.exec '/usr/bin/sudo reboot', (code, out, error)->
     global.logs.error "restartPlayer -> #{error}", tags: class: 'application' if error
   return
 

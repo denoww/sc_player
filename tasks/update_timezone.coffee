@@ -17,7 +17,7 @@ do ->
     data = JSON.parse(body)
     return unless data.timezone
 
-    command = "sudo ln -f -s /usr/share/zoneinfo/#{data.timezone} /etc/localtime"
+    command = "/usr/bin/sudo ln -f -s /usr/share/zoneinfo/#{data.timezone} /etc/localtime"
     shell.exec command, (code, out, error)->
       return console.log 'Timezone -> Error:', error if error
       console.log 'Timezone atualizado!'

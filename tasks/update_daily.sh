@@ -9,4 +9,4 @@ sleep 2
 /home/pi/sc_player/tasks/./update_repository.sh
 
 # reinicia o equipamento
-sudo reboot
+/usr/bin/sudo reboot
