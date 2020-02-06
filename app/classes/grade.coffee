@@ -34,8 +34,7 @@ module.exports = ->
         @saveLogo(jsonData.logo_url)
         @saveDataJson()
 
-        if atualizarPlayer
-          return global.versionsControl.init()
+        return global.versionsControl.exec(atualizarPlayer)
 
         global.feeds.getList()
         @setTimerUpdateWindow()
@@ -53,6 +52,7 @@ module.exports = ->
         resolucao: jsonData.resolucao
         informacoes: jsonData.informacoes
         versao_player: jsonData.versao_player
+        current_version: global.versionsControl.currentVersion
 
       @data.finance = jsonData.finance if jsonData.finance
       @data.weather = jsonData.weather if jsonData.weather

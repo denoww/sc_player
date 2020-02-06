@@ -97,7 +97,7 @@ contextMenu(
       {
         label: 'Atualizar Equipamento',
         click: ->
-          global.versionsControl.init()
+          global.versionsControl.exec(true)
       }
       {
         label: 'Reiniciar Equipamento',
@@ -106,7 +106,7 @@ contextMenu(
       }
       { type: 'separator' }
       {
-        label: "Versão atual: #{global.grade?.data?.versao_player || '--'}"
+        label: "Versão atual: #{global.versionsControl?.currentVersion || '--'}"
         enabled: false
       }
     ]

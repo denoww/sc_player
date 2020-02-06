@@ -67,6 +67,15 @@ p {
   opacity: .8;
 }
 
+.current-version {
+  bottom: 0.2vh;
+  right: 0.2vw;
+  font-size: 0.55vw;
+  position: absolute;
+  opacity: 0.25;
+  font-family: monospace;
+}
+
 .layout-3 .offline {
   right: 15.8vw;
 }
@@ -174,7 +183,7 @@ p {
 }
 
 .content-player .feed-info {
-  height: 7vh;
+  height: 3.7vw;
   display: flex;
   justify-content: space-between;
 }
@@ -637,6 +646,7 @@ p {
 .content-footer {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .content-footer .content-logo {

@@ -5,21 +5,24 @@ shell = require 'shelljs'
 module.exports = ->
   ctrl =
     init: ->
-      ctrl.sendLog 'Atualizado Player!', 'create'
-      @versions       = []
       @versionFile    = path.join(__dirname, '../../.current_version')
       @pathUpdates    = path.join(__dirname, '../../tasks/updates/')
       @gradeVersion   = null
       @currentVersion = null
-
+      @getCurrentVersion()
+    exec: (forceUpdate=false)->
+      @versions = []
       @getGradeVersion()
       return unless @gradeVersion
 
-      @execUpdateRepository ->
-        ctrl.getCurrentVersion ->
-          ctrl.getVersionsFile ->
+      if @gradeVersion != @currentVersion || forceUpdate
+        @getVersionsFile ->
+          if ctrl.versions.length
+            ctrl.sendLog 'Atualizado Player!', 'create'
+            ctrl.execUpdateRepository ->
               ctrl.callNextVersion()
-
+          else
+            ctrl.saveCurrentVersion(ctrl.gradeVersion)
       return
     getGradeVersion: ->
       return unless global.grade?.data?.versao_player
@@ -107,4 +110,5 @@ module.exports = ->
       return
     sendLog: (message, level='error', extra={})->
       global.logs[level] message, tags: { class: 'versions_control' }, extra: extra
+  ctrl.init()
   global.versionsControl = ctrl
