@@ -33,10 +33,7 @@ module.exports = ->
 
       parserRSS.parseURL params.url,
       (error, feeds)=>
-        if error
-          return global.logs.warning "Feeds -> baixarFeeds #{error}",
-            extra: url: params.url
-            tags: class: 'feeds'
+        return global.logs.create "Feeds -> baixarFeeds #{error}" if error
         return if (feeds.items || []).empty()
 
         @data[params.fonte] ||= {}
@@ -237,7 +234,7 @@ module.exports = ->
       command = "find #{caminho} -type f ! \\( #{imagensAtuais.join(' -o ')} \\) -delete"
       shell.exec command, (code, out, error)->
         return global.logs.error "Feeds -> deleteOldImages #{error}", tags: class: 'feeds' if error
-        global.logs.info 'Feeds -> Imagens antigas APAGADAS!', tags: class: 'feeds'
+        global.logs.create 'Feeds -> Imagens antigas APAGADAS!'
         return
       return
 

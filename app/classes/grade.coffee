@@ -18,7 +18,7 @@ module.exports = ->
           erro = 'Request Failed.'
           erro += " Status Code: #{response.statusCode}." if response?.statusCode
           erro += " #{error}" if error
-          global.logs.warning "Grade -> getList -> #{erro}", tags: class: 'grade'
+          global.logs.create "Grade -> getList -> #{erro}"
           global.feeds.getList()
           return
 
@@ -191,7 +191,7 @@ module.exports = ->
       # caso o app pare de receber requisições será atualizado
       @clearTimerUpdateWindow()
       @timerUpdateWindow = setTimeout ->
-        global.logs.create 'Grade -> Atualizando Aplicação! :('
+        global.logs.warning 'Grade -> Atualizando Aplicação! :(', tags: class: 'grade'
         ctrl.refreshWindow()
       , 1000 * 60 * 2.5 # 2.5 minutos
     clearTimerUpdateWindow: ->
@@ -203,7 +203,7 @@ module.exports = ->
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
 
   setInterval ->
-    global.logs.info 'Grade -> Atualização preventiva (3h)!', tags: class: 'grade'
+    global.logs.create 'Grade -> Atualização preventiva (3h)!'
     ctrl.refreshWindow()
   , 1000 * 60 * 60 * 3 # 3 horas
 

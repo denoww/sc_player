@@ -71,7 +71,6 @@ createWindow = ->
   win.webContents.on 'paint', ->                           global.logs.debug 'webContents paint'
   win.webContents.on 'will-attach-webview', ->             global.logs.debug 'webContents will-attach-webview'
   win.webContents.on 'did-attach-webview', ->              global.logs.debug 'webContents did-attach-webview'
-  win.webContents.on 'console-message', ->                 global.logs.debug 'webContents console-message'
   win.webContents.on 'preload-error', ->                   global.logs.debug 'webContents preload-error'
   win.webContents.on 'ipc-message', ->                     global.logs.debug 'webContents ipc-message'
   win.webContents.on 'ipc-message-sync', ->                global.logs.debug 'webContents ipc-message-sync'
