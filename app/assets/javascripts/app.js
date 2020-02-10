@@ -312,6 +312,7 @@
       }
       currentItem.id = `${currentItem.id}${feed.nome_arquivo}`;
       currentItem.data = feed.data;
+      currentItem.qrcode = feed.qrcode;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
       currentItem.nome_arquivo = feed.nome_arquivo;
@@ -402,6 +403,7 @@
       }
       currentItem.id = `${currentItem.id}${feed.titulo}`;
       currentItem.data = feed.data;
+      currentItem.qrcode = feed.qrcode;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
       return currentItem;
@@ -483,9 +485,15 @@
     }
   });
 
-  Vue.filter('formatDate', function(value) {
+  Vue.filter('formatDayMonth', function(value) {
     if (value) {
       return moment(value).format('DD MMM');
+    }
+  });
+
+  Vue.filter('formatDate', function(value) {
+    if (value) {
+      return moment(value).format('DD/MM/YYYY');
     }
   });
 

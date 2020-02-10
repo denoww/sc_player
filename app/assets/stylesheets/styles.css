@@ -248,7 +248,7 @@ p {
 .content-player .playlist-content .feed-titulo {
   width: 100%;
   color: #fff;
-  padding: 1.2vw;
+  padding: 1.2vw 10.2vw 1.2vw 1.2vw;
   font-size: 2.5vw;
   line-height: 1.1;
   font-weight: 500;
@@ -271,7 +271,39 @@ p {
   z-index: 1;
   border-top-left-radius: 0.25vw;
   bottom: 0vw;
+  right: 9vw;
+}
+
+.content-player .playlist-content .feed-titulo .feed-qrcode {
+  position: absolute;
+  padding: 0;
+  background: #fff;
+  z-index: 2;
+  width: 9vw;
+  height: 9vw;
+  bottom: 0vw;
   right: 0vw;
+  background-size: contain;
+  background-position: center;
+}
+
+.content-player .playlist-content .feed-titulo .feed-qrcode:before {
+  content: "NOTÍCIA COMPLETA";
+  position: absolute;
+  display: block;
+  padding: 0;
+  background: #000;
+  color: #fff;
+  font-size: 0.8vw;
+  z-index: 3;
+  width: 9vw;
+  height: 1.2vw;
+  line-height: 1.2vw;
+  text-align: center;
+  text-shadow: none;
+  top: -1.2vw;
+  left: 0vw;
+  border-top-left-radius: 0.3vw;
 }
 /* transicao do titulo do feed */
 /*.content-player .playlist-content.active .feed-titulo {

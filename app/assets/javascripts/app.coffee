@@ -236,6 +236,7 @@ timelineConteudoSuperior =
     return unless feed
     currentItem.id     = "#{currentItem.id}#{feed.nome_arquivo}"
     currentItem.data   = feed.data
+    currentItem.qrcode = feed.qrcode
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
     currentItem.nome_arquivo = feed.nome_arquivo
@@ -302,6 +303,7 @@ timelineConteudoMensagem =
     return unless feed
     currentItem.id     = "#{currentItem.id}#{feed.titulo}"
     currentItem.data   = feed.data
+    currentItem.qrcode = feed.qrcode
     currentItem.titulo = feed.titulo
     currentItem.titulo_feed = feed.titulo_feed
     currentItem
@@ -362,8 +364,11 @@ vm = new Vue
           vm.loaded = true
     , 1000 * 60 * 2 # a cada 2 minutos
 
-Vue.filter 'formatDate', (value)->
+Vue.filter 'formatDayMonth', (value)->
   moment(value).format('DD MMM') if value
+
+Vue.filter 'formatDate', (value)->
+  moment(value).format('DD/MM/YYYY') if value
 
 Vue.filter 'formatDateTime', (value)->
   moment(value).format('DD/MM/YYYY HH:mm') if value

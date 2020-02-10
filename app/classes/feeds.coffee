@@ -3,6 +3,7 @@ md5       = require 'md5'
 RSS       = require 'rss-parser'
 path      = require 'path'
 shell     = require 'shelljs'
+QRCode    = require 'qrcode'
 request   = require 'request'
 UrlExists = require 'url-exists'
 
@@ -48,6 +49,7 @@ module.exports = ->
       feedObj =
         url:          imageObj.url
         data:         feed.isoDate
+        link:         feed.link
         titulo:       feed.title
         titulo_feed:  params.titulo
         nome_arquivo: imageObj.nome_arquivo
@@ -68,9 +70,16 @@ module.exports = ->
       @data[params.fonte] ||= {}
       dataFeeds = @data[params.fonte][params.categoria] || []
 
-      dataFeeds.unshift feedObj
-      dataFeeds = dataFeeds.slice 0, @totalItensPorCategoria
-      @data[params.fonte][params.categoria] = dataFeeds
+      @createQRCode feedObj, ->
+        dataFeeds.unshift feedObj
+        dataFeeds = dataFeeds.slice 0, ctrl.totalItensPorCategoria
+        ctrl.data[params.fonte][params.categoria] = dataFeeds
+    createQRCode: (feedObj, callback)->
+      QRCode.toDataURL feedObj.link, (error, dataUrl)->
+        global.logs.error "Feeds -> createQRCode #{error}", tags: class: 'feeds' if error
+        feedObj.qrcode = dataUrl
+        callback?()
+      return
     getImageData: (params, feed)->
       if feed.enclosure?.url && feed.enclosure?.type?.match(/image/)
         return @mountImageData(params, feed.enclosure.url)

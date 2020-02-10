@@ -26,7 +26,7 @@
             <!-- data e hora -->
             <div class="item-hora">
               <div class="dia-semana">
-                <div class="dia">{{now | formatDate}}</div>
+                <div class="dia">{{now | formatDayMonth}}</div>
                 <div class="semana">{{now | formatWeek}}</div>
               </div>
               <div id="hora">--:--</div>
@@ -113,8 +113,9 @@
                         </div>
                         <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? 'file://' + grade.data.path + 'downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
                         <div class="feed-titulo">
-                          <div class="feed-data" v-if="item.data">{{item.data | formatDateTime}}</div>
+                          <div class="feed-data" v-if="item.data">{{item.data | formatDate}}</div>
                           {{item.titulo}}
+                          <div class="feed-qrcode" v-if="item.qrcode" :style="{'background-image': 'url(' + item.qrcode + ')'}"></div>
                         </div>
                       </div>
                     </div>
