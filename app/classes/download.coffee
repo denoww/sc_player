@@ -44,9 +44,7 @@ class Download
       protocolo = https if params.url.match(/https/)
       global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
-      unless validURL(params.url)
-        global.logs.warning "URL INVÁLIDA: #{params.url}", tags: class: 'download'
-        return next()
+      return next() unless validURL(params.url)
 
       protocolo.get params.url, (res)->
         res.on 'data', (data)->

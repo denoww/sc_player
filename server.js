@@ -14,5 +14,6 @@ require('./app/classes/feeds')();
 require('./app/servers/web')();
 require('./application');
 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-process.env['ELECTRON_ENABLE_STACK_DUMPING'] = 'true';
+delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+process.env.ELECTRON_ENABLE_STACK_DUMPING = true;
