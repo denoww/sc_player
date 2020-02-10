@@ -248,7 +248,7 @@ p {
 .content-player .playlist-content .feed-titulo {
   width: 100%;
   color: #fff;
-  padding: 1.2vw 10.2vw 1.2vw 1.2vw;
+  padding: 1.2vw;
   font-size: 2.5vw;
   line-height: 1.1;
   font-weight: 500;
@@ -271,6 +271,14 @@ p {
   z-index: 1;
   border-top-left-radius: 0.25vw;
   bottom: 0vw;
+  right: 0vw;
+}
+
+.content-player .playlist-content .feed-titulo.com-qrcode {
+  padding: 1.2vw 10.2vw 1.2vw 1.2vw;
+}
+
+.content-player .playlist-content .feed-titulo.com-qrcode .feed-data {
   right: 9vw;
 }
 
