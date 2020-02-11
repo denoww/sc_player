@@ -291,6 +291,7 @@ p {
   height: 9vw;
   bottom: 0vw;
   right: 0vw;
+  image-rendering: pixelated;
   background-size: contain;
   background-position: center;
 }
