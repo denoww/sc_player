@@ -79,7 +79,7 @@ module.exports = ->
 
       # verificar se existe arquivo de update para esta versao
       fs.stat arquivo, (error)->
-        return ctrl.sendLog "Erro ao atualizar: #{obj.version} - #{error}" if error
+        return ctrl.sendLog "Erro ao pegar arquivo: #{obj.version} - #{error}" if error
 
         # evitando rodar .sh em development
         return ctrl.saveCurrentVersion(obj.version) if ENV.NODE_ENV == 'development'
