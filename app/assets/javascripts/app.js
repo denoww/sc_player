@@ -315,6 +315,7 @@
       currentItem.qrcode = feed.qrcode;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
+      currentItem.categoria_feed = feed.categoria_feed;
       currentItem.nome_arquivo = feed.nome_arquivo;
       return currentItem;
     },
@@ -406,6 +407,7 @@
       currentItem.qrcode = feed.qrcode;
       currentItem.titulo = feed.titulo;
       currentItem.titulo_feed = feed.titulo_feed;
+      currentItem.categoria_feed = feed.categoria_feed;
       return currentItem;
     }
   };

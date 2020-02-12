@@ -4,17 +4,21 @@ RSS       = require 'rss-parser'
 path      = require 'path'
 shell     = require 'shelljs'
 QRCode    = require 'qrcode'
+moment    = require 'moment'
 request   = require 'request'
 UrlExists = require 'url-exists'
 
 module.exports = ->
   ctrl =
     data: {}
+    diasDataMinima: -14
     totalItensPorCategoria: 15
     getList: ->
       feeds = []
       posicoes = ['conteudo_superior', 'conteudo_mensagem']
+      @dataMinima = moment().add(@diasDataMinima, 'days')
       @getDataOffline()
+      return if global.grade?.data?.offline
 
       for posicao in posicoes
         continue unless global.grade?.data?[posicao]?.length
@@ -27,32 +31,55 @@ module.exports = ->
             feeds.addOrExtend feed
 
       return if feeds.empty()
-      @baixarFeeds(feed) for feed in feeds
+      for params in feeds
+        switch params.fonte
+          when 'canaltech' then @baixarCanaltech(params)
+          else @baixarFeeds(params)
+      @sanitizarFeedsJson(feeds)
     baixarFeeds: (params)->
-      return if global.grade?.data?.offline
       parserRSS = new RSS(defaultRSS: 2.0)
-
-      parserRSS.parseURL params.url,
-      (error, feeds)=>
+      parserRSS.parseURL params.url, (error, feeds)=>
         return global.logs.create "Feeds -> baixarFeeds #{error}" if error
-        return if (feeds.items || []).empty()
-
-        @data[params.fonte] ||= {}
-        @data[params.fonte][params.categoria] ||= []
-        @handlelist(params, feed) for feed in feeds.items.splice(0, @totalItensPorCategoria)
-        @setTimerToSaveDataJson()
+        @handleFonte(params, feeds.items)
       return
-    handlelist: (params, feed)->
+    baixarCanaltech: (params)->
+      request params.url, (error, resp, body)=>
+        return global.logs.error "Feeds -> baixarCanaltech #{error}", tags: class: 'feeds' if error
+        jsonData = JSON.parse body
+        @handleFonte(params, jsonData?.items)
+      return
+    handleFonte: (params, feeds)->
+      return if (feeds || []).empty()
+
+      @data[params.fonte] ||= {}
+      @data[params.fonte][params.categoria] ||= []
+
+      keyData = 'data'
+      keyData = 'isoDate' if feeds[0].isoDate
+
+      for feed in feeds.sortByField(keyData, 'desc').splice(0, @totalItensPorCategoria)
+        # somente noticias de ate 2 semanas atras
+        data = feed.isoDate || feed.data
+        continue unless data
+
+        @handleFeed(params, feed) if moment(data) >= @dataMinima
+      @setTimerToSaveDataJson()
+    handleFeed: (params, feed)->
       imageObj = @getImageData(params, feed)
       return unless imageObj
 
+      if params.categoria == 'todas_noticias'
+        categoriaFeed = feed.categoria
+
       feedObj =
-        url:          imageObj.url
-        data:         feed.isoDate
-        link:         feed.link
-        titulo:       feed.title
-        titulo_feed:  params.titulo
-        nome_arquivo: imageObj.nome_arquivo
+        id:             md5 imageObj.url
+        url:            imageObj.url
+        data:           feed.isoDate || feed.data
+        link:           feed.link
+        titulo:         feed.title || feed.titulo
+        titulo_feed:    params.titulo
+        nome_arquivo:   imageObj.nome_arquivo
+        categoria_feed: categoriaFeed
 
       switch params.fonte
         when 'uol'
@@ -71,7 +98,8 @@ module.exports = ->
       dataFeeds = @data[params.fonte][params.categoria] || []
 
       @createQRCode feedObj, ->
-        dataFeeds.unshift feedObj
+        dataFeeds.addOrExtend feedObj
+        dataFeeds = dataFeeds.sortByField 'data', 'desc'
         dataFeeds = dataFeeds.slice 0, ctrl.totalItensPorCategoria
         ctrl.data[params.fonte][params.categoria] = dataFeeds
     createQRCode: (feedObj, callback)->
@@ -83,6 +111,9 @@ module.exports = ->
     getImageData: (params, feed)->
       if feed.enclosure?.url && feed.enclosure?.type?.match(/image/)
         return @mountImageData(params, feed.enclosure.url)
+
+      if feed.imagem
+        return @mountImageData(params, feed.imagem)
 
       # pegando o src da imagem
       regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
@@ -111,9 +142,9 @@ module.exports = ->
       return unless imageURL
       @mountImageData(params, imageURL)
     mountImageData: (params, url)->
-      extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
-      imageNome = url.split('/').pop().replace(extension, '').removeSpecialCharacters()
-      imageNome = "#{params.fonte}-#{params.categoria}-#{md5(imageNome)}"
+      extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || '.jpg'
+      # imageNome = url.split('/').pop().replace(extension, '').removeSpecialCharacters()
+      imageNome = "#{params.fonte}-#{params.categoria}-#{md5(url)}"
       imageNome = "#{imageNome}#{extension}"
 
       url: url, nome_arquivo: imageNome
@@ -148,6 +179,13 @@ module.exports = ->
       , 1000 * time # default 10 segundos
     clearTimerToSaveDataJson: ->
       clearTimeout @timerToSaveDataJson if @timerToSaveDataJson
+    sanitizarFeedsJson: (feeds)->
+      newFontes = feeds.map (e)-> e.fonte
+      oldFontes = Object.keys @data
+
+      oldFontes.remove newFonte for newFonte in newFontes
+      delete @data[oldFonte]    for oldFonte in oldFontes
+      return
     saveDataJson: ->
       dados = JSON.stringify @data, null, 2
       try

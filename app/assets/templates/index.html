@@ -108,7 +108,7 @@
                       <div class="feed-main">
                         <div class="feed-info">
                           <div class="feed-fonte" :style="{'background-image': 'url(/images/feeds/' + item.fonte + '.png)'}"></div>
-                          <div class="feed-categoria">{{item.titulo_feed}}</div>
+                          <div class="feed-categoria">{{item.categoria_feed || item.titulo_feed}}</div>
                           <div class="feed-out"></div>
                         </div>
                         <div class="feed-imagem" :style="{'background-image': 'url(' + (item.nome_arquivo ? 'file://' + grade.data.path + 'downloads/feeds/' + item.nome_arquivo : '/images/no-image.png') + ')'}">&nbsp;</div>
