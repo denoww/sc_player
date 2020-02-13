@@ -34,8 +34,7 @@ module.exports = ->
         @saveLogo(jsonData.logo_url)
         @saveDataJson()
 
-        return global.versionsControl.exec(atualizarPlayer)
-
+        global.versionsControl.exec(atualizarPlayer)
         global.feeds.getList()
         @setTimerUpdateWindow()
     handlelist: (jsonData)->
