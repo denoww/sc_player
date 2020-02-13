@@ -97,11 +97,14 @@ module.exports = ->
       @data[params.fonte] ||= {}
       dataFeeds = @data[params.fonte][params.categoria] || []
 
-      @createQRCode feedObj, ->
+      addData = ->
         dataFeeds.addOrExtend feedObj
         dataFeeds = dataFeeds.sortByField 'data', 'desc'
         dataFeeds = dataFeeds.slice 0, ctrl.totalItensPorCategoria
         ctrl.data[params.fonte][params.categoria] = dataFeeds
+
+      return addData() if feedObj.qrcode
+      @createQRCode feedObj, addData
     createQRCode: (feedObj, callback)->
       QRCode.toDataURL feedObj.link, (error, dataUrl)->
         global.logs.error "Feeds -> createQRCode #{error}", tags: class: 'feeds' if error
@@ -116,8 +119,9 @@ module.exports = ->
         return @mountImageData(params, feed.imagem)
 
       # pegando o src da imagem
-      regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
-      imageURL   = (feed.content || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
+      # regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
+      regexImg   = /<(\s+)?img(?:.+?src=["'](.*?)["'].*)/i
+      imageURL   = (feed.content || '').replace(/\t|\n|\r\n/g, '').match(regexImg)?[2] || ''
       imageURL ||= (feed['content:encoded'] || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
 
       # substituindo &amp; por &
@@ -139,7 +143,7 @@ module.exports = ->
         when 'o_globo'
           return url: feed.link, no_image: true if !imageURL
 
-      return unless imageURL
+      return if !imageURL || !Download.validURL(imageURL)
       @mountImageData(params, imageURL)
     mountImageData: (params, url)->
       extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || '.jpg'

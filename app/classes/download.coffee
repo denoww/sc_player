@@ -36,12 +36,12 @@ class Download
     fs.stat fullPath, (error, stats)=>
       return next() if !error && alreadyExists(params, stats.size)
       return Download.fila.push Object.assign {}, params, opts if Download.loading
-      return next() unless validURL(params.url)
+      return next() unless Download.validURL(params.url)
 
       Download.loading = true
       Jimp.read params.url, (error, image)->
         if error
-          global.logs.error "Download -> #{error}"
+          global.logs.error "Download -> Jimp #{error}", extra: params: params
           Download.loading = false
           return next()
 
@@ -51,17 +51,15 @@ class Download
           # .crop(0, 0, 1648, 927)
           .cover(1648, 927)
           .quality(80)
-          .writeAsync(fullPath).then ->
+          .write fullPath, (error, img)->
             Download.loading = false
             next()
-          .catch (e)->
-            Download.loading = false
-            next()
-            global.logs.error "Download -> Error: #{e}",
+            global.logs.error "Download -> image #{error}", extra: params: params if error
 
-  validURL = (url)->
+  @validURL: (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
-    !!pattern.test(url)
+    patternYoutube = new RegExp('youtube|youtu\\.be', 'i')
+    !!pattern.test(url) && !patternYoutube.test(url)
 
   next = ->
     return unless Download.fila.length
