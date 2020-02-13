@@ -34,6 +34,7 @@
     "electron": "^5.0.6",
     "electron-context-menu": "^0.13.0",
     "express": "^4.16.3",
+    "jimp": "^0.9.3",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
     "node-env-file": "^0.1.8",

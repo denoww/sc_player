@@ -1,6 +1,5 @@
 fs    = require 'fs'
-http  = require 'http'
-https = require 'https'
+Jimp  = require 'jimp'
 path  = require 'path'
 
 class Download
@@ -36,37 +35,29 @@ class Download
     fullPath = pasta + params.nome_arquivo
     fs.stat fullPath, (error, stats)=>
       return next() if !error && alreadyExists(params, stats.size)
-      return @fila.push Object.assign {}, params, opts if @loading
-      @loading = true
-
-      file      = fs.createWriteStream(fullPath)
-      protocolo = http
-      protocolo = https if params.url.match(/https/)
-      global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
-
+      return Download.fila.push Object.assign {}, params, opts if Download.loading
       return next() unless validURL(params.url)
 
-      protocolo.get params.url, (res)->
-        res.on 'data', (data)->
-          file.write data
-        .on 'end', ->
-          Download.loading = false
-          file.end()
-          next()
-        .on 'error', (error)->
-          Download.loading = false
-          next()
-          if error
-            global.logs.error "Download -> Error: #{error}",
-              extra: url: params.url
-              tags: class: 'download'
-      .on 'error', (error)->
-        Download.loading = false
-        next()
+      Download.loading = true
+      Jimp.read params.url, (error, image)->
         if error
-          global.logs.error "Download -> Error: #{error}",
-            extra: url: params.url
-            tags: class: 'download'
+          global.logs.error "Download -> #{error}"
+          Download.loading = false
+          return next()
+
+        global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+        image
+          # .resize(1648, Jimp.AUTO, Jimp.RESIZE_BICUBIC)
+          # .crop(0, 0, 1648, 927)
+          .cover(1648, 927)
+          .quality(80)
+          .writeAsync(fullPath).then ->
+            Download.loading = false
+            next()
+          .catch (e)->
+            Download.loading = false
+            next()
+            global.logs.error "Download -> Error: #{e}",
 
   validURL = (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
