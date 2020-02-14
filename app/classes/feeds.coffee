@@ -230,7 +230,7 @@ module.exports = ->
         # imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || '' # OLD VERSION
         imageURL = data.match(/figure(.|\n)*?<(\s+)?img(?:.*\ssrc=["'](.*?)["'].*)\/>?/i)?[3] || ''
         unless imageURL
-          global.logs.warning 'Feeds -> não encontrado imagem de InfoMoney!',
+          global.logs.create 'Feeds -> não encontrado imagem de InfoMoney!',
             extra: url: url
             tags: class: 'feeds'
           return
@@ -250,7 +250,7 @@ module.exports = ->
         imageURL ||= data.match(/gallery-images.+?gallery-images__image.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
         imageURL ||= data.match(/<metaproperty="og:image"content="(.+?)"/i)?[1] || ''
         unless imageURL
-          global.logs.warning 'Feeds -> não encontrado imagem de BBC!',
+          global.logs.create 'Feeds -> não encontrado imagem de BBC!',
             extra: url: url
             tags: class: 'feeds'
           return
@@ -270,7 +270,7 @@ module.exports = ->
         data     = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL = data.match(/figure.+?article-header__picture.+?<img.+?article__picture-image.+?src=["'](.+?)["']/i)?[1] || ''
         unless imageURL
-          global.logs.warning 'Feeds -> não encontrado imagem de O Globo!',
+          global.logs.create 'Feeds -> não encontrado imagem de O Globo!',
             extra: url: url
             tags: class: 'feeds'
           return
