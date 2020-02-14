@@ -1,6 +1,6 @@
 {
   "name": "sc_player",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Player de Publicidades do Seu Condomínio.",
   "main": "server.js",
   "private": true,
