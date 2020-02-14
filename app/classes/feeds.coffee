@@ -129,7 +129,7 @@ module.exports = ->
 
       # pegando o src da imagem
       # regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
-      regexImg   = /<(\s+)?img(?:.+?src=["'](.*?)["'].*)/i
+      regexImg   = /<(\s+)?(?:img|amp-img)(?:.+?src=["'](.*?)["'].*)/i
       imageURL   = (feed.content || '').replace(/\t|\n|\r\n/g, '').match(regexImg)?[2] || ''
       imageURL ||= (feed['content:encoded'] || '').replace(/\n|\r\n/g, '').match(regexImg)?[2] || ''
 
