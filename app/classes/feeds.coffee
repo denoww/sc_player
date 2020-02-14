@@ -37,7 +37,10 @@ module.exports = ->
           else @baixarFeeds(params)
       @sanitizarFeedsJson(feeds)
     baixarFeeds: (params)->
-      parserRSS = new RSS(defaultRSS: 2.0)
+      parserRSS = new RSS
+        defaultRSS: 2.0
+        customFields: item: ['mediaurl', 'media:content']
+
       parserRSS.parseURL params.url, (error, feeds)=>
         return global.logs.create "Feeds -> baixarFeeds #{error}" if error
         @handleFonte(params, feeds.items)
@@ -117,6 +120,12 @@ module.exports = ->
 
       if feed.imagem
         return @mountImageData(params, feed.imagem)
+
+      if feed.mediaurl
+        return @mountImageData(params, feed.mediaurl)
+
+      if feed['media:content']?['$']?.url && feed['media:content']?['$']?.medium == 'image'
+        return @mountImageData(params, feed['media:content']['$'].url)
 
       # pegando o src da imagem
       # regexImg   = /<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i
