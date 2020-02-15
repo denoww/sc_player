@@ -224,7 +224,7 @@ module.exports = ->
       @verificarUrls.exec params, feedObj, opcoesURLs
     getImageInfomoney: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageInfomoney #{error}", tags: class: 'feeds' if error
+        return global.logs.create "Feeds -> getImageInfomoney #{error}", tags: class: 'feeds' if error
 
         data = body.toString()
         # imageURL = data.match(/article-col-image(\W+)<(\s+)?img(?:.*src=["'](.*?)["'].*)\/>?/i)?[3] || '' # OLD VERSION
@@ -243,7 +243,7 @@ module.exports = ->
       return
     getImageBbc: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageBbc #{error}", tags: class: 'feeds' if error
+        return global.logs.create "Feeds -> getImageBbc #{error}", tags: class: 'feeds' if error
 
         data       = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL   = data.match(/story-body__inner.+?figure.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
@@ -265,7 +265,7 @@ module.exports = ->
       return
     getImageOGlobo: (params, feedObj, url)->
       request url, (error, res, body)->
-        return global.logs.error "Feeds -> getImageOGlobo #{error}", tags: class: 'feeds' if error
+        return global.logs.create "Feeds -> getImageOGlobo #{error}", tags: class: 'feeds' if error
 
         data     = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL = data.match(/figure.+?article-header__picture.+?<img.+?article__picture-image.+?src=["'](.+?)["']/i)?[1] || ''

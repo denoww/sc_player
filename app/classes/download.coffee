@@ -41,7 +41,7 @@ class Download
       Download.loading = true
       Jimp.read params.url, (error, image)->
         if error
-          global.logs.error "Download -> Jimp #{error}", extra: params: params
+          global.logs.create "Download -> Jimp #{error}", extra: params: params
           Download.loading = false
           return next()
 
