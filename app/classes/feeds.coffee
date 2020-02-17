@@ -48,8 +48,13 @@ module.exports = ->
     baixarCanaltech: (params)->
       request params.url, (error, resp, body)=>
         return global.logs.error "Feeds -> baixarCanaltech #{error}", tags: class: 'feeds' if error
-        jsonData = JSON.parse body
-        @handleFonte(params, jsonData?.items)
+        return global.logs.create "Feeds -> baixarCanaltech Error: #{resp.statusCode}" if resp.statusCode != 200
+
+        try
+          jsonData = JSON.parse body
+          @handleFonte(params, jsonData?.items)
+        catch e
+          global.logs.error "Feeds -> baixarCanaltech #{e}", tags: class: 'feeds'
       return
     handleFonte: (params, feeds)->
       return if (feeds || []).empty()
