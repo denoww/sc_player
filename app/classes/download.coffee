@@ -1,5 +1,7 @@
 fs    = require 'fs'
 Jimp  = require 'jimp'
+http  = require 'http'
+https = require 'https'
 path  = require 'path'
 
 class Download
@@ -39,27 +41,56 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      Jimp.read params.url, (error, image)->
-        if error
-          global.logs.create "Download -> Jimp #{error}", extra: params: params
-          Download.loading = false
-          return next()
-
-        global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
-        image
-          # .resize(1648, Jimp.AUTO, Jimp.RESIZE_BICUBIC)
-          # .crop(0, 0, 1648, 927)
-          .cover(1648, 927)
-          .quality(80)
-          .write fullPath, (error, img)->
-            Download.loading = false
-            next()
-            global.logs.error "Download -> image #{error}", extra: params: params if error
-
+      doDownload params, fullPath, ->
+        Download.loading = false
+        next()
   @validURL: (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
-    patternYoutube = new RegExp('youtube|youtu\\.be', 'i')
+    patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
     !!pattern.test(url) && !patternYoutube.test(url)
+
+  doDownload = (params, fullPath, callback)->
+    Jimp.read params.url, (error, image)->
+      if error
+        global.logs.create "Download -> Jimp #{error}", extra: params: params
+        doDownloadAlternative(params, fullPath, callback)
+        return
+
+      global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+
+      posicaoCover = Jimp.VERTICAL_ALIGN_MIDDLE
+      if image.bitmap.width / image.bitmap.height < 0.7
+        posicaoCover = Jimp.VERTICAL_ALIGN_TOP
+
+      image
+        .cover(1648, 927, Jimp.HORIZONTAL_ALIGN_CENTER | posicaoCover)
+        .quality(80)
+        .write fullPath, (error, img)->
+          return callback?() unless error
+          global.logs.error "Download -> image #{error}", extra: params: params
+          doDownloadAlternative(params, fullPath, callback)
+    return
+
+  doDownloadAlternative = (params, fullPath, callback)->
+    file      = fs.createWriteStream(fullPath)
+    protocolo = http
+    protocolo = https if params.url.match(/https/)
+    global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+
+    protocolo.get params.url, (res)->
+      res.on 'data', (data)->
+        file.write data
+      .on 'end', ->
+        file.end()
+        callback?()
+      .on 'error', (error)->
+        callback?()
+        if error
+          global.logs.error "Download -> Error: #{error}",
+            extra: url: params.url
+            tags: class: 'download'
+    .on 'error', (error)->
+      callback?()
 
   next = ->
     return unless Download.fila.length
@@ -67,7 +98,7 @@ class Download
 
   alreadyExists = (params, size=null)->
     return size > 1024 unless params.size
-    margem = 1
+    margem = 2
     size <= (params.size + margem) &&
     size >= (params.size - margem)
 

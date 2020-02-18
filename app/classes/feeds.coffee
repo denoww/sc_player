@@ -252,7 +252,11 @@ module.exports = ->
 
         data       = body.toString().replace(/\n|\s|\r\n|\r/g, '')
         imageURL   = data.match(/story-body__inner.+?figure.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
+        imageURL = null if imageURL.match /bbc_placeholder/
+        imageURL ||= data.match(/story-body__inner.+?js-delayed-image-load.+?data-src=["'](.+?)["']/i)?[1] || ''
+        imageURL = null if imageURL.match /bbc_placeholder/
         imageURL ||= data.match(/gallery-images.+?gallery-images__image.+?<img.+?src=["'](.+?)["']/i)?[1] || ''
+        imageURL = null if imageURL.match /bbc_placeholder/
         imageURL ||= data.match(/<metaproperty="og:image"content="(.+?)"/i)?[1] || ''
         unless imageURL
           global.logs.create 'Feeds -> não encontrado imagem de BBC!',
