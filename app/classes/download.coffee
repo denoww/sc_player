@@ -108,10 +108,10 @@ class Download
         callback?()
         return
 
-      convertToWebp(buffer, fullPath, callback)
+      convertBufferToWebp(buffer, fullPath, callback)
     return
 
-  convertToWebp = (buffer, fullPath, callback)->
+  convertBufferToWebp = (buffer, fullPath, callback)->
     image = sharp(buffer)
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
@@ -127,7 +127,7 @@ class Download
       .then (info)->
         callback?()
       .catch (error)->
-        global.logs.error "Download -> convertToWebp: #{error}",
+        global.logs.error "Download -> convertBufferToWebp: #{error}",
           extra: path: fullPath
           tags: class: 'download'
         callback?()
