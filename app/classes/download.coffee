@@ -1,8 +1,11 @@
-fs    = require 'fs'
-Jimp  = require 'jimp'
-http  = require 'http'
-https = require 'https'
-path  = require 'path'
+fs      = require 'fs'
+Jimp    = require 'jimp'
+http    = require 'http'
+path    = require 'path'
+https   = require 'https'
+sharp   = require 'sharp'
+request = require 'request'
+  .defaults encoding: null
 
 class Download
   @fila: []
@@ -41,7 +44,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      doDownload params, fullPath, ->
+      doDownloadToBuffer params, fullPath, ->
         Download.loading = false
         next()
   @validURL: (url)->
@@ -49,6 +52,7 @@ class Download
     patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
     !!pattern.test(url) && !patternYoutube.test(url)
 
+  # depracated
   doDownload = (params, fullPath, callback)->
     Jimp.read params.url, (error, image)->
       if error
@@ -71,6 +75,7 @@ class Download
           doDownloadAlternative(params, fullPath, callback)
     return
 
+  # depracated
   doDownloadAlternative = (params, fullPath, callback)->
     file      = fs.createWriteStream(fullPath)
     protocolo = http
@@ -91,6 +96,42 @@ class Download
             tags: class: 'download'
     .on 'error', (error)->
       callback?()
+
+  doDownloadToBuffer = (params, fullPath, callback)->
+    global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+
+    request.get params.url, (error, resp, buffer)->
+      if error || resp.statusCode != 200
+        global.logs.error "Download -> doDownloadToBuffer: #{error}",
+          extra: url: params.url
+          tags: class: 'download'
+        callback?()
+        return
+
+      convertToWebp(buffer, fullPath, callback)
+    return
+
+  convertToWebp = (buffer, fullPath, callback)->
+    image = sharp(buffer)
+    image.metadata().then (metadata) ->
+      position = sharp.gravity.center
+      position = sharp.gravity.north if metadata.width / metadata.height < 0.8
+
+      image.resize
+        fit:      sharp.fit.cover
+        width:    1648
+        height:   927
+        position: position
+      .webp quality: 75
+      .toFile fullPath
+      .then (info)->
+        callback?()
+      .catch (error)->
+        global.logs.error "Download -> convertToWebp: #{error}",
+          extra: path: fullPath
+          tags: class: 'download'
+        callback?()
+    return
 
   next = ->
     return unless Download.fila.length

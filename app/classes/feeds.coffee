@@ -160,10 +160,11 @@ module.exports = ->
       return if !imageURL || !Download.validURL(imageURL)
       @mountImageData(params, imageURL)
     mountImageData: (params, url)->
-      extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || '.jpg'
+      # extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.svg|\.webp/i)?[0] || ''
       # imageNome = url.split('/').pop().replace(extension, '').removeSpecialCharacters()
       imageNome = "#{params.fonte}-#{params.categoria}-#{md5(url)}"
-      imageNome = "#{imageNome}#{extension}"
+      imageNome = "#{imageNome}.webp"
+      # imageNome = "#{imageNome}#{extension}"
 
       url: url, nome_arquivo: imageNome
     verificarUrls:
