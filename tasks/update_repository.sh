@@ -7,3 +7,4 @@ sudo /bin/chown pi:pi -R .
 /usr/bin/git pull
 
 /usr/bin/npm install
+/usr/bin/npx electron-rebuild

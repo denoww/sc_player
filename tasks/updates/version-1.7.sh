@@ -1,4 +1,5 @@
 #!/bin/bash
 
-npm install
-npx electron-rebuild
+cd /home/pi/sc_player/
+/usr/bin/npm install
+/usr/bin/npx electron-rebuild
