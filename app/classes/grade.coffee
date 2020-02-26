@@ -197,6 +197,7 @@ module.exports = ->
       clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
   setInterval ->
+    return if global.versionsControl.updating
     global.logs.create 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
