@@ -8,6 +8,7 @@ module.exports = ->
     init: ->
       @versionFile    = path.join(__dirname, '../../.current_version')
       @pathUpdates    = path.join(__dirname, '../../tasks/updates/')
+      @updating       = false
       @gradeVersion   = null
       @currentVersion = null
       @getCurrentVersion()
@@ -84,11 +85,14 @@ module.exports = ->
         # evitando rodar .sh em development
         return ctrl.saveCurrentVersion(obj.version) if ENV.NODE_ENV == 'development'
 
+        ctrl.updating = true
         # se o arquivo existe entao executa a atualizacao
         shell.exec "#{ctrl.pathUpdates}./#{obj.fileName}", (code, out, error)->
           if error && error.match(/erro/gi)
+            ctrl.updating = false
             return ctrl.sendLog "Erro ao atualizar: #{obj.version} - #{error}"
 
+          ctrl.updating = false
           ctrl.sendLog "Atualizado para #{obj.version}!", 'info'
           ctrl.versions.removeByField('version', obj.version)
           ctrl.saveCurrentVersion(obj.version, !ctrl.versions.length)
