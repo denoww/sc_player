@@ -86,7 +86,8 @@ module.exports = ->
 
         # se o arquivo existe entao executa a atualizacao
         shell.exec "#{ctrl.pathUpdates}./#{obj.fileName}", (code, out, error)->
-          return ctrl.sendLog "Erro ao atualizar: #{obj.version} - #{error}" if error
+          if error && error.match(/erro/gi)
+            return ctrl.sendLog "Erro ao atualizar: #{obj.version} - #{error}"
 
           ctrl.sendLog "Atualizado para #{obj.version}!", 'info'
           ctrl.versions.removeByField('version', obj.version)

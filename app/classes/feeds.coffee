@@ -157,9 +157,9 @@ module.exports = ->
         when 'o_globo'
           return url: feed.link, no_image: true if !imageURL
 
-      return if !imageURL || !Download.validURL(imageURL)
-      @mountImageData(params, imageURL)
+      @mountImageData(params, imageURL) if imageURL
     mountImageData: (params, url)->
+      return if !Download.validURL(url)
       extension = url.match(/\.jpg|\.jpeg|\.png|\.gif|\.svg|\.webp/i)?[0] || ''
       # imageNome = url.split('/').pop().replace(extension, '').removeSpecialCharacters()
       imageNome = "#{params.fonte}-#{params.categoria}-#{md5(url)}"
@@ -241,8 +241,10 @@ module.exports = ->
             tags: class: 'feeds'
           return
 
-        imageURL             = imageURL.match(/(.*)[?]/)?[1]
-        image                = ctrl.mountImageData(params, imageURL)
+        imageURL = imageURL.match(/(.*)[?]/)?[1]
+        image    = ctrl.mountImageData(params, imageURL)
+        return unless image
+
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
         ctrl.addToData(params, feedObj)
@@ -268,7 +270,9 @@ module.exports = ->
         imageURL = imageURL.replace(/news\/(\d+)\/cpsprodpb/, 'news/1024/cpsprodpb')
         imageURL = imageURL.replace(/news\/(\d+)\/branded_portuguese/, 'news/1024/cpsprodpb')
 
-        image                = ctrl.mountImageData(params, imageURL)
+        image = ctrl.mountImageData(params, imageURL)
+        return unless image
+
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
         ctrl.addToData(params, feedObj)
@@ -285,7 +289,9 @@ module.exports = ->
             tags: class: 'feeds'
           return
 
-        image                = ctrl.mountImageData(params, imageURL)
+        image = ctrl.mountImageData(params, imageURL)
+        return unless image
+
         feedObj.url          = image.url
         feedObj.nome_arquivo = image.nome_arquivo
         ctrl.addToData(params, feedObj)

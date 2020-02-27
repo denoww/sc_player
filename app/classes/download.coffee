@@ -50,7 +50,8 @@ class Download
   @validURL: (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
     patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
-    !!pattern.test(url) && !patternYoutube.test(url)
+    patternScripts = new RegExp('\\.js|\\.css', 'i')
+    !!pattern.test(url) && !patternYoutube.test(url) && !patternScripts.test(url)
 
   # depracated
   doDownload = (params, fullPath, callback)->
