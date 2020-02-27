@@ -104,6 +104,8 @@ module.exports = ->
 
       @data[params.fonte] ||= {}
       dataFeeds = @data[params.fonte][params.categoria] || []
+      feedIds   = dataFeeds.map (e)-> e.id
+      return if feedIds.includes feedObj.id
 
       addData = ->
         dataFeeds.addOrExtend feedObj
