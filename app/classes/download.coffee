@@ -103,9 +103,10 @@ class Download
 
     request.get params.url, (error, resp, buffer)->
       if error || resp.statusCode != 200
-        global.logs.error "Download -> doDownloadToBuffer: #{error}",
-          extra: url: params.url
-          tags: class: 'download'
+        if error
+          global.logs.error "Download -> doDownloadToBuffer: #{error}",
+            extra: url: params.url
+            tags: class: 'download'
         callback?()
         return
 
