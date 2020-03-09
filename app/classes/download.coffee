@@ -101,7 +101,10 @@ class Download
   doDownloadToBuffer = (params, fullPath, callback)->
     global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
-    request.get params.url, (error, resp, buffer)->
+    return unless params.url
+    url = encodeURI params.url.trim()
+
+    request.get url, (error, resp, buffer)->
       if error || resp.statusCode != 200
         if error
           global.logs.error "Download -> doDownloadToBuffer: #{error}",
