@@ -44,7 +44,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      doDownload params, fullPath, ->
+      doDownloadToBuffer params, fullPath, ->
         Download.loading = false
         next()
   @validURL: (url)->

@@ -44,49 +44,49 @@ createWindow = ->
     try
       return callback(decodeURIComponent(url))
     catch error
-      console.error(error)
+      logs.error(error)
 
 
   win.webContents.on 'crashed', ->
-    global.logs.warning 'webContents crashed'
+    logs.warning 'webContents crashed'
     setTimeout (-> win.reload()), 500
 
-  win.webContents.on 'new-window', ->                      global.logs.debug 'webContents new-window'
-  win.webContents.on 'will-navigate', ->                   global.logs.debug 'webContents will-navigate'
-  win.webContents.on 'unresponsive', ->                    global.logs.debug 'webContents unresponsive'
-  win.webContents.on 'responsive', ->                      global.logs.debug 'webContents responsive'
-  win.webContents.on 'enter-html-full-screen', ->          global.logs.debug 'webContents enter-html-full-screen'
-  win.webContents.on 'leave-html-full-screen', ->          global.logs.debug 'webContents leave-html-full-screen'
-  win.webContents.on 'certificate-error', ->               global.logs.debug 'webContents certificate-error'
-  win.webContents.on 'select-client-certificate', ->       global.logs.debug 'webContents select-client-certificate'
-  win.webContents.on 'login', ->                           global.logs.debug 'webContents login'
-  win.webContents.on 'remote-require', ->                  global.logs.debug 'webContents remote-require'
-  win.webContents.on 'remote-get-global', ->               global.logs.debug 'webContents remote-get-global'
-  win.webContents.on 'remote-get-builtin', ->              global.logs.debug 'webContents remote-get-builtin'
-  win.webContents.on 'remote-get-current-window', ->       global.logs.debug 'webContents remote-get-current-window'
-  win.webContents.on 'did-fail-load', ->                   global.logs.debug 'webContents did-fail-load'
-  win.webContents.on 'did-fail-provisional-load', ->       global.logs.debug 'webContents did-fail-provisional-load'
-  win.webContents.on 'will-redirect', ->                   global.logs.debug 'webContents will-redirect'
-  win.webContents.on 'did-redirect-navigation', ->         global.logs.debug 'webContents did-redirect-navigation'
-  win.webContents.on 'did-navigate-in-page', ->            global.logs.debug 'webContents did-navigate-in-page'
-  win.webContents.on 'will-prevent-unload', ->             global.logs.debug 'webContents will-prevent-unload'
-  win.webContents.on 'plugin-crashed', ->                  global.logs.debug 'webContents plugin-crashed'
-  win.webContents.on 'destroyed', ->                       global.logs.debug 'webContents destroyed'
-  win.webContents.on 'zoom-changed', ->                    global.logs.debug 'webContents zoom-changed'
-  win.webContents.on 'found-in-page', ->                   global.logs.debug 'webContents found-in-page'
-  win.webContents.on 'did-change-theme-color', ->          global.logs.debug 'webContents did-change-theme-color'
-  win.webContents.on 'cursor-changed', ->                  global.logs.debug 'webContents cursor-changed'
-  win.webContents.on 'context-menu', ->                    global.logs.debug 'webContents context-menu'
-  win.webContents.on 'select-bluetooth-device', ->         global.logs.debug 'webContents select-bluetooth-device'
-  win.webContents.on 'paint', ->                           global.logs.debug 'webContents paint'
-  win.webContents.on 'will-attach-webview', ->             global.logs.debug 'webContents will-attach-webview'
-  win.webContents.on 'did-attach-webview', ->              global.logs.debug 'webContents did-attach-webview'
-  win.webContents.on 'preload-error', ->                   global.logs.debug 'webContents preload-error'
-  win.webContents.on 'ipc-message', ->                     global.logs.debug 'webContents ipc-message'
-  win.webContents.on 'ipc-message-sync', ->                global.logs.debug 'webContents ipc-message-sync'
-  win.webContents.on 'desktop-capturer-get-sources', ->    global.logs.debug 'webContents desktop-capturer-get-sources'
-  win.webContents.on 'remote-get-current-web-contents', -> global.logs.debug 'webContents remote-get-current-web-contents'
-  win.webContents.on 'remote-get-guest-web-contents', ->   global.logs.debug 'webContents remote-get-guest-web-contents'
+  win.webContents.on 'new-window', ->                      logs.debug 'webContents new-window'
+  win.webContents.on 'will-navigate', ->                   logs.debug 'webContents will-navigate'
+  win.webContents.on 'unresponsive', ->                    logs.debug 'webContents unresponsive'
+  win.webContents.on 'responsive', ->                      logs.debug 'webContents responsive'
+  win.webContents.on 'enter-html-full-screen', ->          logs.debug 'webContents enter-html-full-screen'
+  win.webContents.on 'leave-html-full-screen', ->          logs.debug 'webContents leave-html-full-screen'
+  win.webContents.on 'certificate-error', ->               logs.debug 'webContents certificate-error'
+  win.webContents.on 'select-client-certificate', ->       logs.debug 'webContents select-client-certificate'
+  win.webContents.on 'login', ->                           logs.debug 'webContents login'
+  win.webContents.on 'remote-require', ->                  logs.debug 'webContents remote-require'
+  win.webContents.on 'remote-get-global', ->               logs.debug 'webContents remote-get-global'
+  win.webContents.on 'remote-get-builtin', ->              logs.debug 'webContents remote-get-builtin'
+  win.webContents.on 'remote-get-current-window', ->       logs.debug 'webContents remote-get-current-window'
+  win.webContents.on 'did-fail-load', ->                   logs.debug 'webContents did-fail-load'
+  win.webContents.on 'did-fail-provisional-load', ->       logs.debug 'webContents did-fail-provisional-load'
+  win.webContents.on 'will-redirect', ->                   logs.debug 'webContents will-redirect'
+  win.webContents.on 'did-redirect-navigation', ->         logs.debug 'webContents did-redirect-navigation'
+  win.webContents.on 'did-navigate-in-page', ->            logs.debug 'webContents did-navigate-in-page'
+  win.webContents.on 'will-prevent-unload', ->             logs.debug 'webContents will-prevent-unload'
+  win.webContents.on 'plugin-crashed', ->                  logs.debug 'webContents plugin-crashed'
+  win.webContents.on 'destroyed', ->                       logs.debug 'webContents destroyed'
+  win.webContents.on 'zoom-changed', ->                    logs.debug 'webContents zoom-changed'
+  win.webContents.on 'found-in-page', ->                   logs.debug 'webContents found-in-page'
+  win.webContents.on 'did-change-theme-color', ->          logs.debug 'webContents did-change-theme-color'
+  win.webContents.on 'cursor-changed', ->                  logs.debug 'webContents cursor-changed'
+  win.webContents.on 'context-menu', ->                    logs.debug 'webContents context-menu'
+  win.webContents.on 'select-bluetooth-device', ->         logs.debug 'webContents select-bluetooth-device'
+  win.webContents.on 'paint', ->                           logs.debug 'webContents paint'
+  win.webContents.on 'will-attach-webview', ->             logs.debug 'webContents will-attach-webview'
+  win.webContents.on 'did-attach-webview', ->              logs.debug 'webContents did-attach-webview'
+  win.webContents.on 'preload-error', ->                   logs.debug 'webContents preload-error'
+  win.webContents.on 'ipc-message', ->                     logs.debug 'webContents ipc-message'
+  win.webContents.on 'ipc-message-sync', ->                logs.debug 'webContents ipc-message-sync'
+  win.webContents.on 'desktop-capturer-get-sources', ->    logs.debug 'webContents desktop-capturer-get-sources'
+  win.webContents.on 'remote-get-current-web-contents', -> logs.debug 'webContents remote-get-current-web-contents'
+  win.webContents.on 'remote-get-guest-web-contents', ->   logs.debug 'webContents remote-get-guest-web-contents'
 
   # Open the DevTools
   # win.webContents.openDevTools()
@@ -123,16 +123,16 @@ contextMenu(
 )
 
 restartPlayer = ->
-  global.logs.create 'Reiniciando Player!'
+  logs.create 'Reiniciando Player!'
   return if ENV.NODE_ENV == 'development'
 
   shell.exec 'sudo /sbin/reboot', (code, out, error)->
-    global.logs.error "restartPlayer -> #{error}", tags: class: 'application' if error
+    logs.error "restartPlayer -> #{error}", tags: class: 'application' if error
   return
 
 # Disable error dialogs by overriding
 dialog.showErrorBox = (title, content)->
-  global.logs.error "DIALOG -> #{title} #{content}"
+  logs.error "DIALOG -> #{title} #{content}"
 
 app.setName 'SC Player'
 
