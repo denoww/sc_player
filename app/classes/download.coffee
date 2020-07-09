@@ -3,7 +3,7 @@ Jimp    = require 'jimp'
 http    = require 'http'
 path    = require 'path'
 https   = require 'https'
-# sharp   = require 'sharp'
+sharp   = require 'sharp'
 request = require 'request'
   .defaults encoding: null
 

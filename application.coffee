@@ -4,7 +4,7 @@ if setupEvents.handleSquirrelEvent()
   # squirrel event handled and app will exit in 1000ms, so don't do anything else
   return
 
-{ app, dialog, BrowserWindow } = require 'electron'
+{ app, dialog, protocol, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
 shell = require 'shelljs'
 
@@ -21,7 +21,7 @@ createWindow = ->
     autoHideMenuBar: true
     backgroundColor: '#222'
     webPreferences:
-      webSecurity:     false
+      # webSecurity:     false
       nodeIntegration: true
 
   if ENV.NODE_ENV == 'development'
@@ -36,6 +36,16 @@ createWindow = ->
   win.focus()
   win.once 'ready-to-show', -> win.show()
   global.win = win
+
+  # criando protoco seguro para carregar arquivos locais
+  protocolName = 'sc-protocol'
+  protocol.registerFileProtocol protocolName, (request, callback)->
+    url = request.url.replace("#{protocolName}://", '')
+    try
+      return callback(decodeURIComponent(url))
+    catch error
+      console.error(error)
+
 
   win.webContents.on 'crashed', ->
     global.logs.warning 'webContents crashed'
