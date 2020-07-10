@@ -3,7 +3,7 @@ Jimp    = require 'jimp'
 http    = require 'http'
 path    = require 'path'
 https   = require 'https'
-# sharp   = require 'sharp'
+sharp   = require 'sharp'
 request = require 'request'
   .defaults encoding: null
 
@@ -44,7 +44,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      doDownload params, fullPath, ->
+      doDownloadToBuffer params, fullPath, ->
         Download.loading = false
         next()
   @validURL: (url)->
@@ -99,7 +99,7 @@ class Download
       callback?()
 
   doDownloadToBuffer = (params, fullPath, callback)->
-    global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+    global.logs.create "Download Buffer -> #{params.nome_arquivo}, URL: #{params.url}"
 
     return unless params.url
     url = encodeURI params.url.trim()

@@ -2,6 +2,9 @@ require('coffeescript').register();
 require('./env');
 require('sc-node-tools');
 
+// para corrigir problema com package sharp
+process.env.npm_config_arm_version = '7';
+
 global.homePath = (process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH) + '/';
 global.configPath = global.homePath + '.config/sc_player/';
 
