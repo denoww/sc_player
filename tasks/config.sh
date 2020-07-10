@@ -62,7 +62,7 @@ if [[ "$logo" == "y" || "$logo" == "Y" ]] ; then
   fi
 fi
 
-read -p '--> Atualizar autostart LXDE-pi? (y/N) ' atualizar_lxde
+read -p '--> Atualizar LXDE-pi para nao desligar a tela? (y/N) ' atualizar_lxde
 if [[ "$atualizar_lxde" == "y" || "$atualizar_lxde" == "Y" ]] ; then
   sh -c 'sudo cp ~/sc_player/device_configs/lxde-autostart /etc/xdg/lxsession/LXDE-pi/autostart'
 fi
@@ -74,7 +74,7 @@ fi
 
 read -p '--> Instalar nodejs? (y/N) ' instalar_node
 if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
-  sh -c 'curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -'
+  sh -c 'curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -'
   sh -c 'sudo apt update'
   sh -c 'sudo apt install -y nodejs'
 fi
