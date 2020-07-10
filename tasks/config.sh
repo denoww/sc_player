@@ -87,6 +87,7 @@ fi
 read -p '--> Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
+  sh -c 'npx electron-rebuild'
 fi
 
 read -p '--> Reiniciar o equipamento? (y/N) ' reiniciar
