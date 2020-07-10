@@ -110,6 +110,7 @@ module.exports = ->
       if feedIds.includes(feedObj.id)
         feedObjData = dataFeeds.getById(feedObj.id)
         return if feedObjData.nome_arquivo.match(/\.webp$/i)
+        Download.exec(feedObj, is_feed: true, force: true)
 
       addData = ->
         dataFeeds.addOrExtend feedObj

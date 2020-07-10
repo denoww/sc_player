@@ -39,7 +39,7 @@ class Download
 
     fullPath = pasta + params.nome_arquivo
     fs.stat fullPath, (error, stats)=>
-      return next() if !error && alreadyExists(params, stats.size)
+      return next() if !error && alreadyExists(params, stats.size) && !opts.force
       return Download.fila.push Object.assign {}, params, opts if Download.loading
       return next() unless Download.validURL(params.url)
 
