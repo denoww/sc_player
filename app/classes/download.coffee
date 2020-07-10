@@ -45,6 +45,7 @@ class Download
 
       Download.loading = true
       doDownloadToBuffer params, fullPath, ->
+        console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
         Download.loading = false
         next()
   @validURL: (url)->
