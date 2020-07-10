@@ -105,7 +105,11 @@ module.exports = ->
       @data[params.fonte] ||= {}
       dataFeeds = @data[params.fonte][params.categoria] || []
       feedIds   = dataFeeds.map (e)-> e.id
-      return if feedIds.includes feedObj.id
+
+      # ignorando feeds que já existem e as imagens são .webp
+      if feedIds.includes(feedObj.id)
+        feedObjData = dataFeeds.getById(feedObj.id)
+        return if feedObjData.nome_arquivo.match(/\.webp$/i)
 
       addData = ->
         dataFeeds.addOrExtend feedObj
