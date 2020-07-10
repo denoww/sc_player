@@ -43,6 +43,7 @@
     "qrcode": "^1.4.4",
     "rss-parser": "^3.8.0",
     "sc-node-tools": "^1.2.7",
+    "sharp": "^0.25.4",
     "shelljs": "^0.8.4",
     "url-exists": "^1.0.3"
   },
