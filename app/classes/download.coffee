@@ -3,7 +3,7 @@ Jimp    = require 'jimp'
 http    = require 'http'
 path    = require 'path'
 https   = require 'https'
-sharp   = require 'sharp'
+# sharp   = require 'sharp'
 request = require 'request'
   .defaults encoding: null
 
@@ -44,7 +44,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      doDownloadToBuffer params, fullPath, ->
+      doDownload params, fullPath, ->
         Download.loading = false
         next()
   @validURL: (url)->
