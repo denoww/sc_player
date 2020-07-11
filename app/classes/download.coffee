@@ -114,7 +114,13 @@ class Download
         callback?()
         return
 
-      convertBufferToWebp(buffer, fullPath, callback)
+      try
+        convertBufferToWebp(buffer, fullPath, callback)
+      catch (error)->
+        global.logs.error "Download -> doDownloadToBuffer: #{error}",
+          extra: path: fullPath
+          tags: class: 'download'
+        callback?()
     return
 
   convertBufferToWebp = (buffer, fullPath, callback)->
