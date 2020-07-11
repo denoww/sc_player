@@ -133,7 +133,7 @@ class Download
   convertBufferToWebp = (imageHex, fullPath, callback)->
     console.log 'convertBufferToWebp', fullPath
     console.log 'length', imageHex.length
-    if imageHex.length > 25000
+    if imageHex.length > 2500000
       console.log ' #####   ####  ######'
       console.log ' ##  ##   ##   ##    '
       console.log ' #####    ##   ## ###'
