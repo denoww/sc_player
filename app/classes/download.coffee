@@ -125,6 +125,13 @@ class Download
 
   convertBufferToWebp = (imageHex, fullPath, callback)->
     console.log 'convertBufferToWebp', fullPath
+    if (imageHex || '').slice(0, 4) != 'ffd8'
+      global.logs.error "Download -> convertBufferToWebp: Hexadecimal da imagem é inválido",
+        extra: path: fullPath
+        tags: class: 'download'
+      callback?()
+      return
+
     image = sharp(Buffer.from(imageHex, 'hex'))
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
@@ -132,14 +139,13 @@ class Download
       console.log 'metadata -> position', position
       console.log 'metadata -> sharp.fit.cover', sharp.fit.cover
 
-      # image.resize
-      #   fit:      sharp.fit.cover
-      #   width:    1648
-      #   height:   927
-      #   position: position
-      # .webp quality: 75
-
-      image.toFile fullPath
+      image.resize
+        fit:      sharp.fit.cover
+        width:    1648
+        height:   927
+        position: position
+      .webp quality: 75
+      .toFile fullPath
       .then (info)->
         console.log 'image.resize then', info
         callback?()
