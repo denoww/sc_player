@@ -105,6 +105,13 @@ class Download
     return unless params.url
     url = encodeURI params.url.trim()
 
+    if url.match /sulamerica-sede-rio\.jpg|AbyzNWSjaoqG1hoESViQ\/photo-5\.jpg/
+      global.logs.error "Download -> doDownloadToBuffer: Ignorando imagem problemática",
+        extra: url: params.url
+        tags: class: 'download'
+      callback?()
+      return
+
     request.get encoding: 'hex', url: url, (error, resp, imageHex)->
       if error || resp.statusCode != 200
         if error
@@ -125,6 +132,14 @@ class Download
 
   convertBufferToWebp = (imageHex, fullPath, callback)->
     console.log 'convertBufferToWebp', fullPath
+    console.log 'length', imageHex.length
+    if imageHex.length > 25000
+      console.log ' #####   ####  ######'
+      console.log ' ##  ##   ##   ##    '
+      console.log ' #####    ##   ## ###'
+      console.log ' ##  ##   ##   ##  ##'
+      console.log ' #####   ####  ######'
+
     console.log imageHex.slice(0,8), imageHex.slice(-8)
     if !(imageHex || '').match /^ffd8(.*)ffd9$/
       global.logs.error "Download -> convertBufferToWebp: Hexadecimal da imagem é inválido",
@@ -134,7 +149,6 @@ class Download
       return
     else
       console.log 'HEX da imagem é válido'
-      console.log 'length', imageHex.length
 
     image = sharp(Buffer.from(imageHex, 'hex'))
     # ---------------------------------------------------
