@@ -125,12 +125,15 @@ class Download
 
   convertBufferToWebp = (imageHex, fullPath, callback)->
     console.log 'convertBufferToWebp', fullPath
-    if (imageHex || '').slice(0, 4) != 'ffd8'
+    if (imageHex || '').match '^ffd8.*ffd9$'
       global.logs.error "Download -> convertBufferToWebp: Hexadecimal da imagem é inválido",
         extra: path: fullPath
         tags: class: 'download'
       callback?()
       return
+    else
+      console.log 'HEX da imagem é válido', (imageHex || '').match '^ffd8.*ffd9$'
+      console.log 'length', imageHex.length
 
     image = sharp(Buffer.from(imageHex, 'hex'))
     image.metadata().then (metadata) ->
