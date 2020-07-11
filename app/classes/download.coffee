@@ -105,7 +105,7 @@ class Download
     return unless params.url
     url = encodeURI params.url.trim()
 
-    request.get url, (error, resp, buffer)->
+    request.get encoding: 'hex', url: url, (error, resp, imageHex)->
       if error || resp.statusCode != 200
         if error
           global.logs.error "Download -> doDownloadToBuffer: #{error}",
@@ -115,7 +115,7 @@ class Download
         return
 
       try
-        convertBufferToWebp(buffer, fullPath, callback)
+        convertBufferToWebp(imageHex, fullPath, callback)
       catch error
         global.logs.error "Download -> doDownloadToBuffer: #{error}",
           extra: path: fullPath
@@ -123,9 +123,9 @@ class Download
         callback?()
     return
 
-  convertBufferToWebp = (buffer, fullPath, callback)->
+  convertBufferToWebp = (imageHex, fullPath, callback)->
     console.log 'convertBufferToWebp', fullPath
-    image = sharp(buffer)
+    image = sharp(Buffer.from(imageHex, 'hex'))
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
       position = sharp.gravity.north if metadata.width / metadata.height < 0.8
