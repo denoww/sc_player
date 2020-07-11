@@ -152,17 +152,17 @@ class Download
 
     image = sharp(Buffer.from(imageHex, 'hex'))
     # ---------------------------------------------------
-    image.toFile 'img.webp'
-    .then (info)->
-      console.log 'image.resize then', info
-      callback?()
-    .catch (error)->
-      console.log 'image.resize catch', error
-      global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: fullPath
-        tags: class: 'download'
-      callback?()
-    return
+    # image.toFile 'img.webp'
+    # .then (info)->
+    #   console.log 'image.resize then', info
+    #   callback?()
+    # .catch (error)->
+    #   console.log 'image.resize catch', error
+    #   global.logs.error "Download -> convertBufferToWebp: #{error}",
+    #     extra: path: fullPath
+    #     tags: class: 'download'
+    #   callback?()
+    # return
     # ---------------------------------------------------
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
