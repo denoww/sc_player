@@ -116,7 +116,7 @@ class Download
 
       try
         convertBufferToWebp(buffer, fullPath, callback)
-      catch (error)->
+      catch error
         global.logs.error "Download -> doDownloadToBuffer: #{error}",
           extra: path: fullPath
           tags: class: 'download'
