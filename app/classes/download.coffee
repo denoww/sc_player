@@ -137,6 +137,25 @@ class Download
       console.log 'length', imageHex.length
 
     image = sharp(Buffer.from(imageHex, 'hex'))
+    # ---------------------------------------------------
+    image.resize
+      fit:      sharp.fit.cover
+      width:    1648
+      height:   927
+      position: 0
+    .webp quality: 75
+    .toFile fullPath
+    .then (info)->
+      console.log 'image.resize then', info
+      callback?()
+    .catch (error)->
+      console.log 'image.resize catch', error
+      global.logs.error "Download -> convertBufferToWebp: #{error}",
+        extra: path: fullPath
+        tags: class: 'download'
+      callback?()
+    return
+    # ---------------------------------------------------
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
       position = sharp.gravity.north if metadata.width / metadata.height < 0.8
