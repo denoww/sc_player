@@ -132,13 +132,14 @@ class Download
       console.log 'metadata -> position', position
       console.log 'metadata -> sharp.fit.cover', sharp.fit.cover
 
-      image.resize
-        fit:      sharp.fit.cover
-        width:    1648
-        height:   927
-        position: position
-      .webp quality: 75
-      .toFile fullPath
+      # image.resize
+      #   fit:      sharp.fit.cover
+      #   width:    1648
+      #   height:   927
+      #   position: position
+      # .webp quality: 75
+
+      image.toFile fullPath
       .then (info)->
         console.log 'image.resize then', info
         callback?()
