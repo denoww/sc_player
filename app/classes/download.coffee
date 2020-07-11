@@ -138,13 +138,7 @@ class Download
 
     image = sharp(Buffer.from(imageHex, 'hex'))
     # ---------------------------------------------------
-    image.resize
-      fit:      sharp.fit.cover
-      width:    1648
-      height:   927
-      position: 0
-    .webp quality: 75
-    .toFile fullPath
+    image.toFile 'img.webp'
     .then (info)->
       console.log 'image.resize then', info
       callback?()
