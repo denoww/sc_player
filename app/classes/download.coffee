@@ -118,10 +118,13 @@ class Download
     return
 
   convertBufferToWebp = (buffer, fullPath, callback)->
+    console.log 'convertBufferToWebp', fullPath
     image = sharp(buffer)
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
       position = sharp.gravity.north if metadata.width / metadata.height < 0.8
+      console.log 'metadata -> position', position
+      console.log 'metadata -> sharp.fit.cover', sharp.fit.cover
 
       image.resize
         fit:      sharp.fit.cover
@@ -137,6 +140,11 @@ class Download
           extra: path: fullPath
           tags: class: 'download'
         callback?()
+    .catch (error)->
+      global.logs.error "Download -> convertBufferToWebp: #{error}",
+        extra: path: fullPath
+        tags: class: 'download'
+      callback?()
     return
 
   next = ->
