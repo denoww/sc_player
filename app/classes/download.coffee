@@ -140,13 +140,16 @@ class Download
       .webp quality: 75
       .toFile fullPath
       .then (info)->
+        console.log 'image.resize then', info
         callback?()
       .catch (error)->
+        console.log 'image.resize catch', error
         global.logs.error "Download -> convertBufferToWebp: #{error}",
           extra: path: fullPath
           tags: class: 'download'
         callback?()
     .catch (error)->
+      console.log 'metadata -> catch', error
       global.logs.error "Download -> convertBufferToWebp: #{error}",
         extra: path: fullPath
         tags: class: 'download'
