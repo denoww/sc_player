@@ -105,7 +105,7 @@ class Download
     return unless params.url
     url = encodeURI params.url.trim()
 
-    if url.match /sulamerica-sede-rio\.jpg/
+    if url.match /sulamerica-sede-rio\.jpg|AbyzNWSjaoqG1hoESViQ\/photo-5\.jpg/
       global.logs.error "Download -> doDownloadToBuffer: Ignorando imagem problemática",
         extra: url: params.url
         tags: class: 'download'
