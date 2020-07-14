@@ -105,13 +105,14 @@ class Download
     return unless params.url
     url = encodeURI params.url.trim()
 
-    if url.match /sulamerica-sede-rio\.jpg|AbyzNWSjaoqG1hoESViQ\/photo-5\.jpg/
+    if url.match /sulamerica-sede-rio\.jpg|AbyzNWSjaoqG1hoESViQ\/photo-5\.jpg|ZpKDMHRTATdCYodfeCbA\/foto-chamada\.jpg/
       global.logs.error "Download -> doDownloadToBuffer: Ignorando imagem problemática",
         extra: url: params.url
         tags: class: 'download'
       callback?()
       return
 
+    # request.get url, (error, resp, buffer)->
     request.get encoding: 'hex', url: url, (error, resp, imageHex)->
       if error || resp.statusCode != 200
         if error
