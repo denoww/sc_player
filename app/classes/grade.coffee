@@ -158,7 +158,8 @@ module.exports = ->
 
       extension = logoUrl.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
       imageNome = logoUrl.split('/').pop().replace(extension, '').removeSpecialCharacters()
-      imageNome = "#{imageNome}#{extension}"
+      # imageNome = "#{imageNome}#{extension}"
+      imageNome = "#{imageNome}.webp"
       @data.logo_nome = imageNome
 
       params =

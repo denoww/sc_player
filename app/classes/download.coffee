@@ -41,22 +41,28 @@ class Download
       global.logs.error "Download -> exec -> Nenhuma pasta encontrada para #{params.nome_arquivo}!"
       return
 
-    fullPath = pasta + params.nome_arquivo
-    fs.stat fullPath, (error, stats)=>
+    params.fullPath = pasta + params.nome_arquivo
+    fs.stat params.fullPath, (error, stats)=>
       return next() if !error && alreadyExists(params, stats.size) && !opts.force
       return Download.fila.push Object.assign {}, params, opts if Download.loading
       return next() unless Download.validURL(params.url)
 
+      if params.is_video || params.is_audio
+        doDownloadAlternative params, ->
+          Download.loading = false
+          next()
+        return
+
       Download.loading = true
       if ['5', 5].includes(ENV.TV_ID) && global.grade?.data && global.grade.data.versao_player < 1.8
-        doDownload params, fullPath, ->
+        doDownload params, ->
           console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
           Download.loading = false
           next()
         return
 
       sharp ||= require 'sharp'
-      doDownloadToBuffer params, fullPath, ->
+      doDownloadToBuffer params, ->
         console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
         Download.loading = false
         next()
@@ -67,11 +73,11 @@ class Download
     !!pattern.test(url) && !patternYoutube.test(url) && !patternScripts.test(url)
 
   # depracated
-  doDownload = (params, fullPath, callback)->
+  doDownload = (params, callback)->
     Jimp.read params.url, (error, image)->
       if error
         global.logs.create "Download -> Jimp #{error}", extra: params: params
-        doDownloadAlternative(params, fullPath, callback)
+        doDownloadAlternative(params, callback)
         return
 
       global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
@@ -83,15 +89,14 @@ class Download
       image
         .cover(1648, 927, Jimp.HORIZONTAL_ALIGN_CENTER | posicaoCover)
         .quality(80)
-        .write fullPath, (error, img)->
+        .write params.fullPath, (error, img)->
           return callback?() unless error
           global.logs.error "Download -> image #{error}", extra: params: params
-          doDownloadAlternative(params, fullPath, callback)
+          doDownloadAlternative(params, callback)
     return
 
-  # depracated
-  doDownloadAlternative = (params, fullPath, callback)->
-    file      = fs.createWriteStream(fullPath)
+  doDownloadAlternative = (params, callback)->
+    file      = fs.createWriteStream(params.fullPath)
     protocolo = http
     protocolo = https if params.url.match(/https/)
     global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
@@ -111,7 +116,7 @@ class Download
     .on 'error', (error)->
       callback?()
 
-  doDownloadToBuffer = (params, fullPath, callback)->
+  doDownloadToBuffer = (params, callback)->
     global.logs.create "Download Buffer -> #{params.nome_arquivo}, URL: #{params.url}"
 
     return unless params.url
@@ -134,16 +139,16 @@ class Download
         return
 
       try
-        convertBufferToWebp(buffer, fullPath, callback)
+        convertBufferToWebp(buffer, params, callback)
       catch error
         global.logs.error "Download -> doDownloadToBuffer: #{error}",
-          extra: path: fullPath
+          extra: path: params.fullPath
           tags: class: 'download'
         callback?()
     return
 
-  convertBufferToWebp = (buffer, fullPath, callback)->
-    console.log 'convertBufferToWebp', fullPath
+  convertBufferToWebp = (buffer, params, callback)->
+    console.log 'convertBufferToWebp', params.fullPath
     image = sharp(buffer)
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
@@ -155,26 +160,28 @@ class Download
       console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
       console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
 
-      image.resize
-        fit:      sharp.fit.cover
-        width:    1648
-        height:   927
-        position: position
-      .webp quality: 75
-      .toFile fullPath
+      unless params.is_logo
+        image.resize
+          fit:      sharp.fit.cover
+          width:    1648
+          height:   927
+          position: position
+        .webp quality: 75
+
+      image.toFile params.fullPath
       .then (info)->
         console.log 'image.resize then', info
         callback?()
       .catch (error)->
         console.log 'image.resize catch', error
         global.logs.error "Download -> convertBufferToWebp: #{error}",
-          extra: path: fullPath
+          extra: path: params.fullPath
           tags: class: 'download'
         callback?()
     .catch (error)->
       console.log 'metadata -> catch', error
       global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: fullPath
+        extra: path: params.fullPath
         tags: class: 'download'
       callback?()
     return
