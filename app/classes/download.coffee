@@ -138,13 +138,13 @@ class Download
         convertBufferToWebp(buffer, params, callback)
       catch error
         global.logs.error "Download -> doDownloadToBuffer: #{error}",
-          extra: path: params.fullPath
+          extra: path: params.url
           tags: class: 'download'
         callback?()
     return
 
   convertBufferToWebp = (buffer, params, callback)->
-    console.log 'convertBufferToWebp', params.fullPath
+    console.log 'convertBufferToWebp', params.url
     sharp ||= require 'sharp'
 
     sharp(buffer)
@@ -163,14 +163,14 @@ class Download
       fs.writeFile params.fullPath, outputBuffer, (error)->
         if (error)
           global.logs.error "Download -> convertBufferToWebp -> fs.writeFile: #{error}",
-            extra: path: params.fullPath
+            extra: path: params.url
             tags: class: 'download'
         console.log('------------------------------------> The file has been saved!');
 
       return
     .catch (error)->
       global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: params.fullPath
+        extra: path: params.url
         tags: class: 'download'
 
     return
@@ -196,18 +196,18 @@ class Download
 
       image.toFile params.fullPath
       .then (info)->
-        console.log 'image.resize then', info
+        # console.log 'image.resize then', info
         callback?()
       .catch (error)->
         console.log 'image.resize catch', error
         global.logs.error "Download -> convertBufferToWebp: #{error}",
-          extra: path: params.fullPath
+          extra: path: params.url
           tags: class: 'download'
         callback?()
     .catch (error)->
       console.log 'metadata -> catch', error
       global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: params.fullPath
+        extra: path: params.url
         tags: class: 'download'
       callback?()
     return
