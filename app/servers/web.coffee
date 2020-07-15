@@ -5,8 +5,8 @@ module.exports = (opt={}) ->
   app = express()
   server = app.listen(ENV.HTTP_PORT)
 
-  vercao = global.versionsControl?.currentVersion || global.grade?.data?.versao_player || '--'
-  global.logs.info "Iniciando servidor HTTP! Versão #{vercao}"
+  versao = global.versionsControl?.currentVersion || global.grade?.data?.versao_player || '--'
+  global.logs.info "Iniciando servidor HTTP! Versão #{versao}"
 
   app.use express.static(path.join( __dirname, '../assets/'))
 

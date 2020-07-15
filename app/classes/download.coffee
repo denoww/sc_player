@@ -4,12 +4,9 @@ http    = require 'http'
 path    = require 'path'
 https   = require 'https'
 # sharp   = require 'sharp'
+sharp = null
 request = require 'request'
   .defaults encoding: null
-
-sharp = null
-if !['5', 5].includes(ENV.TV_ID)
-  sharp   = require 'sharp'
 
 class Download
   @fila: []
@@ -61,7 +58,6 @@ class Download
           next()
         return
 
-      sharp ||= require 'sharp'
       doDownloadToBuffer params, ->
         console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
         Download.loading = false
@@ -149,6 +145,36 @@ class Download
 
   convertBufferToWebp = (buffer, params, callback)->
     console.log 'convertBufferToWebp', params.fullPath
+    sharp ||= require 'sharp'
+
+    sharp(buffer)
+    .resize
+      fit:      sharp.fit.cover
+      width:    1648
+      height:   927
+      position: 0
+    .flatten background: '#000000'
+    .sharpen()
+    .removeAlpha()
+    .withMetadata()
+    .webp quality: 75
+    .toBuffer()
+    .then (outputBuffer) ->
+      fs.writeFile params.fullPath, outputBuffer, (error)->
+        if (error)
+          global.logs.error "Download -> convertBufferToWebp -> fs.writeFile: #{error}",
+            extra: path: params.fullPath
+            tags: class: 'download'
+        console.log('------------------------------------> The file has been saved!');
+
+      return
+    .catch (error)->
+      global.logs.error "Download -> convertBufferToWebp: #{error}",
+        extra: path: params.fullPath
+        tags: class: 'download'
+
+    return
+
     image = sharp(buffer)
     image.metadata().then (metadata) ->
       position = sharp.gravity.center
