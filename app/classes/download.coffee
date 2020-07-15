@@ -7,7 +7,7 @@ https   = require 'https'
 request = require 'request'
   .defaults encoding: null
 
-if ['5', 5].includes(ENV.TV_ID) || global.grade.data.versao_player == 1.8
+if !['5', 5].includes(ENV.TV_ID) || global.grade?.data?.versao_player == 1.8
   sharp   = require 'sharp'
 
 class Download
