@@ -85,6 +85,11 @@ module.exports = ->
         # evitando rodar .sh em development
         return ctrl.saveCurrentVersion(obj.version) if ENV.NODE_ENV == 'development'
 
+        if !(obj.fileName == 'version-1.8.sh' && ENV.TV_ID == 5)
+          ctrl.sendLog "ignorando update para : #{ENV.TV_ID}"
+          ctrl.saveCurrentVersion(obj.version, !ctrl.versions.length)
+          return
+
         ctrl.updating = true
         # se o arquivo existe entao executa a atualizacao
         shell.exec "#{ctrl.pathUpdates}./#{obj.fileName}", (code, out, error)->
