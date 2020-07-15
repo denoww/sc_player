@@ -47,7 +47,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      if ['5', 5].includes(ENV.TV_ID)
+      if ['5', 5].includes(ENV.TV_ID) && global.grade?.data && global.grade.data.versao_player < 1.8
         doDownload params, fullPath, ->
           console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
           Download.loading = false
