@@ -7,7 +7,7 @@ https   = require 'https'
 request = require 'request'
   .defaults encoding: null
 
-if ENV.TV_ID != 5 || global.grade.data.versao_player == 1.8
+if ['5', 5].includes(ENV.TV_ID) || global.grade.data.versao_player == 1.8
   sharp   = require 'sharp'
 
 class Download
@@ -47,7 +47,7 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      if ENV.TV_ID == 5
+      if ['5', 5].includes(ENV.TV_ID)
         doDownload params, fullPath, ->
           console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
           Download.loading = false
