@@ -7,7 +7,8 @@ https   = require 'https'
 request = require 'request'
   .defaults encoding: null
 
-if !['5', 5].includes(ENV.TV_ID) || global.grade?.data?.versao_player == 1.8
+sharp = null
+if !['5', 5].includes(ENV.TV_ID)
   sharp   = require 'sharp'
 
 class Download
@@ -54,6 +55,7 @@ class Download
           next()
         return
 
+      sharp ||= require 'sharp'
       doDownloadToBuffer params, fullPath, ->
         console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
         Download.loading = false
