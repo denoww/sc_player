@@ -85,7 +85,7 @@ module.exports = ->
         # evitando rodar .sh em development
         return ctrl.saveCurrentVersion(obj.version) if ENV.NODE_ENV == 'development'
 
-        if !(obj.fileName == 'version-1.8.sh' && ENV.TV_ID == 5)
+        if !(obj.fileName == 'version-1.8.sh' && ['5', 5].includes(ENV.TV_ID))
           ctrl.sendLog "ignorando update para : #{ENV.TV_ID}"
           ctrl.saveCurrentVersion(obj.version, !ctrl.versions.length)
           return
