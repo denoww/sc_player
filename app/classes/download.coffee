@@ -165,8 +165,8 @@ class Download
           global.logs.error "Download -> convertBufferToWebp -> fs.writeFile: #{error}",
             extra: path: params.url
             tags: class: 'download'
-        console.log('------------------------------------> The file has been saved!');
-
+        callback?()
+        console.log '------------------------------------> The file has been saved!', params.url
       return
     .catch (error)->
       global.logs.error "Download -> convertBufferToWebp: #{error}",
