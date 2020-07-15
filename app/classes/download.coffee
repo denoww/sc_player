@@ -7,7 +7,7 @@ https   = require 'https'
 request = require 'request'
   .defaults encoding: null
 
-if !(ENV.TV_ID == 5)
+if ENV.TV_ID != 5 || global.grade.data.versao_player == 1.8
   sharp   = require 'sharp'
 
 class Download
@@ -52,11 +52,12 @@ class Download
           console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
           Download.loading = false
           next()
-      else
-        doDownloadToBuffer params, fullPath, ->
-          console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
-          Download.loading = false
-          next()
+        return
+
+      doDownloadToBuffer params, fullPath, ->
+        console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
+        Download.loading = false
+        next()
   @validURL: (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
     patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
