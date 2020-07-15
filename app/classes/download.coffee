@@ -3,9 +3,12 @@ Jimp    = require 'jimp'
 http    = require 'http'
 path    = require 'path'
 https   = require 'https'
-sharp   = require 'sharp'
+# sharp   = require 'sharp'
 request = require 'request'
   .defaults encoding: null
+
+if !(ENV.TV_ID == 5)
+  sharp   = require 'sharp'
 
 class Download
   @fila: []
@@ -44,10 +47,16 @@ class Download
       return next() unless Download.validURL(params.url)
 
       Download.loading = true
-      doDownloadToBuffer params, fullPath, ->
-        console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
-        Download.loading = false
-        next()
+      if ENV.TV_ID == 5
+        doDownload params, fullPath, ->
+          console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
+          Download.loading = false
+          next()
+      else
+        doDownloadToBuffer params, fullPath, ->
+          console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
+          Download.loading = false
+          next()
   @validURL: (url)->
     pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
     patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
