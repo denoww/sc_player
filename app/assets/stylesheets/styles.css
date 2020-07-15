@@ -704,24 +704,24 @@ p {
   height: 100%;
   max-width: 15vw;
   position: relative;
-  /* padding: 1.8vh 1.25vw;
+  padding: 1.8vh 1.25vw;
   display: flex;
   align-items: center;
-  justify-content: center; */
+  justify-content: center;
 }
 
 .content-footer .content-logo .logo {
   max-width: 100%;
   max-height: 100%;
   border-radius: .4em;
-  position: absolute;
+  /* position: absolute;
   top: 1.8vh;
   left: 1.25vw;
   right: 1.25vw;
   bottom: 1.8vh;
   background-size: contain;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
 }
 
 .content-footer .content-logo:before {

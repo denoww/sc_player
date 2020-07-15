@@ -171,10 +171,10 @@
 
         <div class="content-footer">
           <div class="content-logo" :class="[grade.data.cor == 'gray' ? 'black' : '']">
-            <!-- <img v-if="grade.data.logo_nome" class="logo" :src="'sc-protocol://' + grade.data.path + 'downloads/' + grade.data.logo_nome">
-            <img v-else="" class="logo" :src="'/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png'"> -->
-            <div v-if="grade.data.logo_nome" class="logo" :style="{'background-image': 'url(sc-protocol://' + grade.data.path + 'downloads/' + grade.data.logo_nome + ')'}"></div>
-            <div v-else="" class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div>
+            <img v-if="grade.data.logo_nome" class="logo" :src="'sc-protocol://' + grade.data.path + 'downloads/' + grade.data.logo_nome">
+            <img v-else="" class="logo" :src="'/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png'">
+            <!-- <div v-if="grade.data.logo_nome" class="logo" :style="{'background-image': 'url(sc-protocol://' + grade.data.path + 'downloads/' + grade.data.logo_nome + ')'}"></div>
+            <div v-else="" class="logo" :style="{'background-image': 'url(/images/seucondominio' + (grade.data.cor != 'gray' ? '-white' : '') + '.png)'}"></div> -->
           </div> <!-- content-logo -->
 
           <div class="content-mensagem">
