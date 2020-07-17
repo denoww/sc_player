@@ -372,6 +372,7 @@ vm = new Vue
 
     window.addEventListener 'online',  updateOnlineStatus
     window.addEventListener 'offline',  updateOnlineStatus
+    return
 
 Vue.filter 'formatDayMonth', (value)->
   moment(value).format('DD MMM') if value
