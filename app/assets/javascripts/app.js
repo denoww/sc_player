@@ -29,6 +29,7 @@
     grade: {
       data: {
         cor: 'black',
+        online: true,
         layout: 'layout-2',
         weather: {}
       }
@@ -466,10 +467,17 @@
       this.loading = true;
       this.mouse();
       relogio.exec();
+      updateOnlineStatus = function() {
+        console.log('updateOnlineStatus', navigator.onLine);
+        if (vm.grade.data) {
+          return vm.grade.data.online = navigator.onLine;
+        }
+      };
       setTimeout(function() {
         if (vm.loaded) {
           return;
         }
+        updateOnlineStatus();
         return gradeObj.get(function() {
           return feedsObj.get(function() {
             vm.loading = false;
@@ -478,6 +486,7 @@
         });
       }, 1000 * 1); // 1 segundo
       setInterval(function() {
+        updateOnlineStatus();
         return gradeObj.get(function() {
           return feedsObj.get(function() {
             vm.loading = false;
@@ -485,12 +494,6 @@
           });
         });
       }, 1000 * 60 * 2); // a cada 2 minutos
-      updateOnlineStatus = function() {
-        console.log('updateOnlineStatus', navigator.onLine);
-        if (vm.grade.data) {
-          return vm.grade.data.offline = !navigator.onLine;
-        }
-      };
       window.addEventListener('online', updateOnlineStatus);
       window.addEventListener('offline', updateOnlineStatus);
     }

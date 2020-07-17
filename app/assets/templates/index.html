@@ -18,6 +18,7 @@
     <div id="main-player" :class="[grade.data.layout, grade.data.cor]" @mousemove="mouse">
       <div id="content-main" class="content-main" v-show="loaded">
         <!-- offline -->
+        <div class="offline" v-if="!grade.data.online">Sem Internet</div>
         <div class="offline" v-if="grade.data.offline">Sem Conexão</div>
         <!-- offline -->
 

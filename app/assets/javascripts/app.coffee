@@ -19,6 +19,7 @@ data =
   grade:
     data:
       cor: 'black'
+      online: true
       layout: 'layout-2'
       weather: {}
 
@@ -351,8 +352,13 @@ vm = new Vue
     @mouse()
     relogio.exec()
 
+    updateOnlineStatus = ->
+      console.log 'updateOnlineStatus', navigator.onLine
+      vm.grade.data.online = navigator.onLine if vm.grade.data
+
     setTimeout ->
       return if vm.loaded
+      updateOnlineStatus()
       gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
@@ -360,15 +366,12 @@ vm = new Vue
     , 1000 * 1 # 1 segundo
 
     setInterval ->
+      updateOnlineStatus()
       gradeObj.get ->
         feedsObj.get ->
           vm.loading = false
           vm.loaded = true
     , 1000 * 60 * 2 # a cada 2 minutos
-
-    updateOnlineStatus = ->
-      console.log 'updateOnlineStatus', navigator.onLine
-      vm.grade.data.offline = !navigator.onLine if vm.grade.data
 
     window.addEventListener 'online',  updateOnlineStatus
     window.addEventListener 'offline',  updateOnlineStatus
