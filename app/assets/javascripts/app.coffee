@@ -16,10 +16,11 @@ data =
   listaConteudoSuperior: []
   listaConteudoMensagem: []
 
+  online: true
+
   grade:
     data:
       cor: 'black'
-      online: true
       layout: 'layout-2'
       weather: {}
 
@@ -353,8 +354,7 @@ vm = new Vue
     relogio.exec()
 
     updateOnlineStatus = ->
-      console.log 'updateOnlineStatus', navigator.onLine
-      vm.grade.data.online = navigator.onLine if vm.grade.data
+      vm.online = navigator.onLine
 
     setTimeout ->
       return if vm.loaded

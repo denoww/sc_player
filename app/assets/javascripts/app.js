@@ -26,10 +26,10 @@
     indexConteudoMensagem: 0,
     listaConteudoSuperior: [],
     listaConteudoMensagem: [],
+    online: true,
     grade: {
       data: {
         cor: 'black',
-        online: true,
         layout: 'layout-2',
         weather: {}
       }
@@ -468,10 +468,7 @@
       this.mouse();
       relogio.exec();
       updateOnlineStatus = function() {
-        console.log('updateOnlineStatus', navigator.onLine);
-        if (vm.grade.data) {
-          return vm.grade.data.online = navigator.onLine;
-        }
+        return vm.online = navigator.onLine;
       };
       setTimeout(function() {
         if (vm.loaded) {
