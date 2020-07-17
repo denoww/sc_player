@@ -366,6 +366,13 @@ vm = new Vue
           vm.loaded = true
     , 1000 * 60 * 2 # a cada 2 minutos
 
+    updateOnlineStatus = ->
+      console.log 'updateOnlineStatus', navigator.onLine
+      vm.grade.data.offline = !navigator.onLine if vm.grade.data
+
+    window.addEventListener 'online',  updateOnlineStatus
+    window.addEventListener 'offline',  updateOnlineStatus
+
 Vue.filter 'formatDayMonth', (value)->
   moment(value).format('DD MMM') if value
 
