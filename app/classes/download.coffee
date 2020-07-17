@@ -3,80 +3,78 @@ Jimp    = require 'jimp'
 http    = require 'http'
 path    = require 'path'
 https   = require 'https'
-# sharp   = require 'sharp'
-sharp = null
+sharp   = null
 request = require 'request'
   .defaults encoding: null
 
-class Download
-  @fila: []
-  @loading: false
-  @init: ->
-    folders  = []
-    folders.push global.homePath + '.config/'
-    basePath = global.homePath + '.config/sc_player/'
+module.exports = ->
+  ctrl =
+    fila: []
+    loading: false
+    init: ->
+      folders  = []
+      folders.push global.homePath + '.config/'
+      basePath = global.homePath + '.config/sc_player/'
 
-    folders.push basePath
-    folders.push basePath + 'downloads'
-    folders.push basePath + ENV.DOWNLOAD_VIDEOS
-    folders.push basePath + ENV.DOWNLOAD_IMAGES
-    folders.push basePath + ENV.DOWNLOAD_AUDIOS
-    folders.push basePath + ENV.DOWNLOAD_FEEDS
+      folders.push basePath
+      folders.push basePath + 'downloads'
+      folders.push basePath + ENV.DOWNLOAD_VIDEOS
+      folders.push basePath + ENV.DOWNLOAD_IMAGES
+      folders.push basePath + ENV.DOWNLOAD_AUDIOS
+      folders.push basePath + ENV.DOWNLOAD_FEEDS
 
-    for folder in folders
-      if !fs.existsSync(folder)
-        fs.mkdirSync(folder)
-    return
-  @exec: (params, opts={})->
-    pasta = global.configPath + ENV.DOWNLOAD_VIDEOS if params.is_video
-    pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image
-    pasta = global.configPath + ENV.DOWNLOAD_AUDIOS if params.is_audio
-    pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if params.is_feed || opts.is_feed
-    pasta = global.configPath + 'downloads/' if params.is_logo || opts.is_logo
-
-    unless pasta
-      global.logs.error "Download -> exec -> Nenhuma pasta encontrada para #{params.nome_arquivo}!"
+      for folder in folders
+        if !fs.existsSync(folder)
+          fs.mkdirSync(folder)
       return
+    exec: (params, opts={})->
+      pasta = global.configPath + ENV.DOWNLOAD_VIDEOS if params.is_video
+      pasta = global.configPath + ENV.DOWNLOAD_IMAGES if params.is_image
+      pasta = global.configPath + ENV.DOWNLOAD_AUDIOS if params.is_audio
+      pasta = global.configPath + ENV.DOWNLOAD_FEEDS  if params.is_feed || opts.is_feed
+      pasta = global.configPath + 'downloads/' if params.is_logo || opts.is_logo
 
-    params.fullPath = pasta + params.nome_arquivo
-    fs.stat params.fullPath, (error, stats)=>
-      return next() if !error && alreadyExists(params, stats.size) && !opts.force
-      return Download.fila.push Object.assign {}, params, opts if Download.loading
-      return next() unless Download.validURL(params.url)
-
-      if params.is_video || params.is_audio
-        doDownloadAlternative params, ->
-          Download.loading = false
-          next()
+      unless pasta
+        logs.error "Download -> exec -> Nenhuma pasta encontrada para #{params.nome_arquivo}!"
         return
 
-      Download.loading = true
-      if ['5', 5].includes(ENV.TV_ID) && global.grade?.data && global.grade.data.versao_player < 1.8
-        doDownload params, ->
-          console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
-          Download.loading = false
-          next()
-        return
+      fullPath = pasta + params.nome_arquivo
+      fs.stat fullPath, (error, stats)=>
+        return next() if !error && alreadyExists(params, stats.size) && !opts.force
+        return ctrl.fila.push Object.assign {}, params, opts if ctrl.loading
+        return next() unless ctrl.validURL(params.url)
 
-      doDownloadToBuffer params, ->
-        console.log '    >>>> BAIXADO A FORCA', params.nome_arquivo if opts.force
-        Download.loading = false
-        next()
-  @validURL: (url)->
-    pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
-    patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
-    patternScripts = new RegExp('\\.js|\\.css', 'i')
-    !!pattern.test(url) && !patternYoutube.test(url) && !patternScripts.test(url)
+        if params.is_video || params.is_audio
+          doDownloadAlternative params, fullPath, ->
+            ctrl.loading = false
+            next()
+          return
+
+        ctrl.loading = true
+        if ['5', 5].includes(ENV.TV_ID) && global.grade?.data && global.grade.data.versao_player < 1.8
+          doDownload params, fullPath, ->
+            ctrl.loading = false
+            next()
+          return
+
+        doDownloadToBuffer params, fullPath, ->
+          ctrl.loading = false
+          next()
+    validURL: (url)->
+      pattern = new RegExp('^(http|https):\\/\\/(\\w+:{0,1}\\w*)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%!\\-\\/]))?', 'i')
+      patternYoutube = new RegExp('youtube\\.com|youtu\\.be', 'i')
+      patternScripts = new RegExp('\\.js|\\.css', 'i')
+      !!pattern.test(url) && !patternYoutube.test(url) && !patternScripts.test(url)
 
   # depracated
-  doDownload = (params, callback)->
+  doDownload = (params, fullPath, callback)->
     Jimp.read params.url, (error, image)->
       if error
-        global.logs.create "Download -> Jimp #{error}", extra: params: params
+        logs.create "Download -> Jimp #{error}", extra: params: params
         doDownloadAlternative(params, callback)
         return
 
-      global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+      logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
       posicaoCover = Jimp.VERTICAL_ALIGN_MIDDLE
       if image.bitmap.width / image.bitmap.height < 0.7
@@ -85,17 +83,17 @@ class Download
       image
         .cover(1648, 927, Jimp.HORIZONTAL_ALIGN_CENTER | posicaoCover)
         .quality(80)
-        .write params.fullPath, (error, img)->
+        .write fullPath, (error, img)->
           return callback?() unless error
-          global.logs.error "Download -> image #{error}", extra: params: params
+          logs.error "Download -> image #{error}", extra: params: params
           doDownloadAlternative(params, callback)
     return
 
-  doDownloadAlternative = (params, callback)->
-    file      = fs.createWriteStream(params.fullPath)
+  doDownloadAlternative = (params, fullPath, callback)->
+    file      = fs.createWriteStream(fullPath)
     protocolo = http
     protocolo = https if params.url.match(/https/)
-    global.logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
+    logs.create "Download -> #{params.nome_arquivo}, URL: #{params.url}"
 
     protocolo.get params.url, (res)->
       res.on 'data', (data)->
@@ -104,117 +102,64 @@ class Download
         file.end()
         callback?()
       .on 'error', (error)->
-        callback?()
-        if error
-          global.logs.error "Download -> Error: #{error}",
-            extra: url: params.url
-            tags: class: 'download'
+        createLogError('doDownloadAlternative', error, params, callback)
     .on 'error', (error)->
-      callback?()
+      createLogError('doDownloadAlternative', error, params, callback)
 
-  doDownloadToBuffer = (params, callback)->
-    global.logs.create "Download Buffer -> #{params.nome_arquivo}, URL: #{params.url}"
+  doDownloadToBuffer = (params, fullPath, callback)->
+    logs.create "Download Buffer -> #{params.nome_arquivo}, URL: #{params.url}"
 
     return unless params.url
     url = encodeURI params.url.trim()
 
-    if url.match /sulamerica-sede-rio\.jpg|AbyzNWSjaoqG1hoESViQ\/photo-5\.jpg|ZpKDMHRTATdCYodfeCbA\/foto-chamada\.jpg/
-      console.log " - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA "
-      console.log " - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA "
-      console.log url
-      console.log " - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA "
-      console.log " - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA - - - PROBLEMATICA "
-
     request.get url, encoding: null, (error, resp, buffer)->
       if error || resp.statusCode != 200
-        if error
-          global.logs.error "Download -> doDownloadToBuffer: #{error}",
-            extra: url: params.url
-            tags: class: 'download'
-        callback?()
-        return
+        return createLogError('doDownloadToBuffer', error, params, callback)
 
       try
-        convertBufferToWebp(buffer, params, callback)
+        convertBufferToWebp(buffer, params, fullPath, callback)
       catch error
-        global.logs.error "Download -> doDownloadToBuffer: #{error}",
-          extra: path: params.url
-          tags: class: 'download'
-        callback?()
+        createLogError('doDownloadToBuffer', error, params, callback)
     return
 
-  convertBufferToWebp = (buffer, params, callback)->
-    console.log 'convertBufferToWebp', params.url
+  convertBufferToWebp = (buffer, params, fullPath, callback)->
     sharp ||= require 'sharp'
+    image = sharp buffer.toFormat('webp').webp(quality: 75)
 
-    sharp(buffer)
-    .resize
-      fit:      sharp.fit.cover
-      width:    1648
-      height:   927
-      position: 0
-    .flatten background: '#000000'
-    .sharpen()
-    .removeAlpha()
-    .withMetadata()
-    .webp quality: 75
-    .toBuffer()
-    .then (outputBuffer) ->
-      fs.writeFile params.fullPath, outputBuffer, (error)->
-        if (error)
-          global.logs.error "Download -> convertBufferToWebp -> fs.writeFile: #{error}",
-            extra: path: params.url
-            tags: class: 'download'
+    if params.is_logo
+      image.toFile fullPath, (error, info)->
+        createLogError('convertBufferToWebp', error, params)
         callback?()
-        console.log '------------------------------------> The file has been saved!', params.url
       return
-    .catch (error)->
-      global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: params.url
-        tags: class: 'download'
 
-    return
+    image.metadata (error, metadata) ->
+      return if createLogError('convertBufferToWebp', error, params, callback)
 
-    image = sharp(buffer)
-    image.metadata().then (metadata) ->
       position = sharp.gravity.center
       position = sharp.gravity.north if metadata.width / metadata.height < 0.8
 
-      console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
-      console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
-      console.log metadata
-      console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
-      console.log '---------------- METADATA ---------------- METADATA ---------------- METADATA '
-
-      unless params.is_logo
-        image.resize
-          fit:      sharp.fit.cover
-          width:    1648
-          height:   927
-          position: position
-        .webp quality: 75
-
-      image.toFile params.fullPath
-      .then (info)->
-        # console.log 'image.resize then', info
+      image.resize
+        fit:      sharp.fit.cover
+        width:    1648
+        height:   927
+        position: position
+      .flatten background: '#000000'
+      .toFile fullPath, (error, info)->
+        createLogError('convertBufferToWebp', error, params)
         callback?()
-      .catch (error)->
-        console.log 'image.resize catch', error
-        global.logs.error "Download -> convertBufferToWebp: #{error}",
-          extra: path: params.url
-          tags: class: 'download'
-        callback?()
-    .catch (error)->
-      console.log 'metadata -> catch', error
-      global.logs.error "Download -> convertBufferToWebp: #{error}",
-        extra: path: params.url
-        tags: class: 'download'
-      callback?()
     return
 
+  createLogError = (method, error, params, callback)->
+    return unless error
+    logs.error "Download -> #{method}: #{error}",
+      extra: path: params.url
+      tags: class: 'download'
+    callback?()
+    return true
+
   next = ->
-    return unless Download.fila.length
-    Download.exec(Download.fila.shift())
+    return unless ctrl.fila.length
+    ctrl.exec(ctrl.fila.shift())
 
   alreadyExists = (params, size=null)->
     return size > 1024 unless params.size
@@ -222,5 +167,6 @@ class Download
     size <= (params.size + margem) &&
     size >= (params.size - margem)
 
-Download.init()
-global.Download = Download
+  ctrl.init()
+
+  global.Download = ctrl

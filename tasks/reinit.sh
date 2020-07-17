@@ -1,12 +1,35 @@
 #!/bin/bash
-SERVICE="node"
 
-if pgrep -f "$SERVICE" >/dev/null
-then
-  echo "$SERVICE is running"
-else
-  echo "starting $SERVICE"
+verify_servers(){
+  SERVICE_NODE="node server.js"
+  SERVICE_ELECTRON="node_modules/electron"
 
-  export DISPLAY=":0"
-  /home/pi/sc_player/tasks/./init.sh
-fi
+  NODE_RUNNING="$(pgrep -f "$SERVICE_NODE")"
+  ELECTRON_RUNNING="$(pgrep -f "$SERVICE_ELECTRON")"
+
+  if [ -z "$NODE_RUNNING" ] && [ -z "$ELECTRON_RUNNING" ]; then
+    echo "starting servers!"
+
+    export DISPLAY=":0"
+    /home/pi/sc_player/tasks/./init.sh
+
+  elif [ -z "$NODE_RUNNING" ]; then
+    echo "starting node server!"
+
+    export DISPLAY=":0"
+    cd /home/pi/sc_player/
+    /usr/bin/npm run start-node
+
+  elif [ -z "$ELECTRON_RUNNING" ]; then
+    echo "starting electron server!"
+
+    export DISPLAY=":0"
+    cd /home/pi/sc_player/
+    /usr/bin/npm run start-electron
+
+  else
+    echo "servers are running!"
+  fi
+}
+
+verify_servers

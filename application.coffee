@@ -6,7 +6,6 @@ if setupEvents.handleSquirrelEvent()
 
 { app, dialog, protocol, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
-shell = require 'shelljs'
 
 createWindow = ->
   windowOptions =
@@ -31,12 +30,12 @@ createWindow = ->
     windowOptions.height      = 360
     windowOptions.alwaysOnTop = true
 
+  logs.info "Iniciando janela do Electron!"
   win = new BrowserWindow windowOptions
 
   win.loadURL 'http://localhost:3001'
   win.focus()
   win.once 'ready-to-show', -> win.show()
-  global.win = win
 
   # criando protoco seguro para carregar arquivos locais
   protocolName = 'sc-protocol'
@@ -47,10 +46,19 @@ createWindow = ->
     catch error
       logs.error(error)
 
+  # atualizar a tela a cada 3 horas para limpar o cache
+  setInterval ->
+    logs.create 'Electron -> Atualização preventiva (3h)!'
+    win.reload()
+  , 1000 * 60 * 60 * 3 # 3 horas
 
   win.webContents.on 'crashed', ->
     logs.warning 'webContents crashed'
     setTimeout (-> win.reload()), 500
+
+  win.webContents.on 'did-fail-load', ->
+    logs.warning 'webContents did-fail-load'
+    setTimeout (-> win.reload()), 1000
 
   win.webContents.on 'new-window', ->                      logs.debug 'webContents new-window'
   win.webContents.on 'will-navigate', ->                   logs.debug 'webContents will-navigate'
@@ -65,7 +73,6 @@ createWindow = ->
   win.webContents.on 'remote-get-global', ->               logs.debug 'webContents remote-get-global'
   win.webContents.on 'remote-get-builtin', ->              logs.debug 'webContents remote-get-builtin'
   win.webContents.on 'remote-get-current-window', ->       logs.debug 'webContents remote-get-current-window'
-  win.webContents.on 'did-fail-load', ->                   logs.debug 'webContents did-fail-load'
   win.webContents.on 'did-fail-provisional-load', ->       logs.debug 'webContents did-fail-provisional-load'
   win.webContents.on 'will-redirect', ->                   logs.debug 'webContents will-redirect'
   win.webContents.on 'did-redirect-navigation', ->         logs.debug 'webContents did-redirect-navigation'
@@ -88,53 +95,68 @@ createWindow = ->
   win.webContents.on 'desktop-capturer-get-sources', ->    logs.debug 'webContents desktop-capturer-get-sources'
   win.webContents.on 'remote-get-current-web-contents', -> logs.debug 'webContents remote-get-current-web-contents'
   win.webContents.on 'remote-get-guest-web-contents', ->   logs.debug 'webContents remote-get-guest-web-contents'
+  win.webContents.on 'did-finish-load', ->                 logs.debug 'webContents remote-get-guest-web-contents'
+
+  win.onerror = (error, url, lineNumber)->
+    logs.error "Error: #{error} Script: #{url} Line: #{lineNumber}"
 
   # Open the DevTools
   # win.webContents.openDevTools()
 
-contextMenu(
-  prepend: (defaultActions, params, browserWindow)->
-    [
-      { role: 'toggleFullScreen', label: 'Tela cheia' }
-      { type: 'separator' }
-      { role: 'reload', label: 'Atualizar Player' }
-      {
-        label: 'Reiniciar Player',
-        click: ->
-          app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
-          app.exit(0)
-      }
-      { type: 'separator' }
-      {
-        label: 'Atualizar Equipamento',
-        click: ->
-          global.versionsControl.exec(true)
-      }
-      {
-        label: 'Reiniciar Equipamento',
-        click: ->
-          restartPlayer()
-      }
-      { type: 'separator' }
-      {
-        label: "Versão atual: #{global.versionsControl?.currentVersion || '--'}"
-        enabled: false
-      }
-    ]
-)
+# definindo o nome do app
+app.setName 'SC Player'
 
-restartPlayer = ->
+# criar janela quando estiver pronto
+app.whenReady().then ->
+  createWindow()
+
+# criar janela quando for ativado e nao existir nenhuma
+app.on 'activate', ->
+  createWindow() unless BrowserWindow.getAllWindows().length
+
+# encerrar o app se não existir nenhuma janela aberta
+app.on 'window-all-closed', -> app.quit()
+
+# opcoes do menu do botão direito do mouse no app
+contextMenu prepend: (defaultActions, params, browserWindow)->
+  [
+    { role: 'toggleFullScreen', label: 'Tela cheia' }
+    { type: 'separator' }
+    { role: 'reload', label: 'Atualizar Player' }
+    {
+      label: 'Reiniciar Player',
+      click: ->
+        app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+        app.exit(0)
+    }
+    { type: 'separator' }
+    # {
+    #   label: 'Atualizar Equipamento',
+    #   click: ->
+    #     versionsControl.exec(true)
+    # }
+    {
+      label: 'Reiniciar Equipamento',
+      click: ->
+        restartDevice()
+    }
+    # { type: 'separator' }
+    # {
+    #   label: "Versão atual: #{versionsControl?.currentVersion || '--'}"
+    #   enabled: false
+    # }
+  ]
+
+# reiniciar equipamento
+restartDevice = ->
   logs.create 'Reiniciando Player!'
   return if ENV.NODE_ENV == 'development'
 
+  shell = require 'shelljs'
   shell.exec 'sudo /sbin/reboot', (code, out, error)->
-    logs.error "restartPlayer -> #{error}", tags: class: 'application' if error
+    logs.error "restartDevice -> #{error}", tags: class: 'application' if error
   return
 
 # Disable error dialogs by overriding
 dialog.showErrorBox = (title, content)->
   logs.error "DIALOG -> #{title} #{content}"
-
-app.setName 'SC Player'
-
-app.on 'ready', createWindow

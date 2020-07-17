@@ -13,7 +13,9 @@
     "node": ">=6.2.0"
   },
   "scripts": {
-    "start": "electron --disable-gpu .",
+    "start": "npm run start-node & npm run start-electron",
+    "start-node": "node server.js",
+    "start-electron": "electron --disable-gpu .",
     "start-nodemon": "nodemon --inspect server.js",
     "delete_old_images": "coffee ./tasks/delete_old_images.coffee",
     "update_timezone": "coffee ./tasks/update_timezone.coffee",

@@ -36,7 +36,6 @@ module.exports = ->
 
         global.versionsControl.exec(atualizarPlayer)
         global.feeds.getList()
-        @setTimerUpdateWindow()
     handlelist: (jsonData)->
       configPath = global.configPath
       configPath = configPath.split('\\').join('/') if process.platform == 'win32'
@@ -88,6 +87,7 @@ module.exports = ->
       item.is_video = vinculo.midia.is_video
       item.content_type = vinculo.midia.content_type
       item.nome_arquivo = "#{vinculo.midia.id}.#{vinculo.midia.extension}"
+      item.nome_arquivo = @ajustImageNameToWebp item if item.is_image
 
       lista ||= @data
       lista[vinculo.posicao] ||= []
@@ -153,19 +153,21 @@ module.exports = ->
       lista[vinculo.posicao] ||= []
       lista[vinculo.posicao].push item
       return
+    ajustImageNameToWebp: (imageObj)->
+      return null unless imageObj.nome_arquivo
+
+      extension = imageObj.nome_arquivo.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
+      imageNome = imageObj.nome_arquivo.split('/').pop().replace(extension, '').removeSpecialCharacters()
+      # "#{imageNome}#{extension}"
+      "#{imageNome}.webp"
     saveLogo: (logoUrl)->
       return @data.logo_nome = null unless logoUrl
-
-      extension = logoUrl.match(/\.jpg|\.jpeg|\.png|\.gif|\.webp/i)?[0] || ''
-      imageNome = logoUrl.split('/').pop().replace(extension, '').removeSpecialCharacters()
-      # imageNome = "#{imageNome}#{extension}"
-      imageNome = "#{imageNome}.webp"
-      @data.logo_nome = imageNome
+      @data.logo_nome = @ajustImageNameToWebp nome_arquivo: logoUrl
 
       params =
         url: logoUrl
         is_logo: true
-        nome_arquivo: imageNome
+        nome_arquivo: @data.logo_nome
 
       Download.exec(params)
     saveDataJson: ->
@@ -184,29 +186,12 @@ module.exports = ->
       catch e
         global.logs.error "Grade -> getDataOffline -> #{e}", tags: class: 'grade'
       return
-    refreshWindow: ->
-      # atualizar o app para limpar cache e sobrecarga de processos
-      global.win?.reload?()
-    setTimerUpdateWindow: ->
-      # caso o app pare de receber requisições será atualizado
-      @clearTimerUpdateWindow()
-      @timerUpdateWindow = setTimeout ->
-        global.logs.warning 'Grade -> Atualizando Aplicação! :(', tags: class: 'grade'
-        ctrl.refreshWindow()
-      , 1000 * 60 * 2.5 # 2.5 minutos
-    clearTimerUpdateWindow: ->
-      clearTimeout @timerUpdateWindow if @timerUpdateWindow
 
   setInterval ->
     return if global.versionsControl.updating
     global.logs.create 'Grade -> Atualizando lista!'
     ctrl.getList()
   , 1000 * 60 * (ENV.TEMPO_ATUALIZAR || 5)
-
-  setInterval ->
-    global.logs.create 'Grade -> Atualização preventiva (3h)!'
-    ctrl.refreshWindow()
-  , 1000 * 60 * 60 * 3 # 3 horas
 
   ctrl.getList()
   global.grade = ctrl
