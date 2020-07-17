@@ -124,7 +124,7 @@ module.exports = ->
 
   convertBufferToWebp = (buffer, params, fullPath, callback)->
     sharp ||= require 'sharp'
-    image = sharp buffer.toFormat('webp').webp(quality: 75)
+    image = sharp(buffer).toFormat('webp').webp(quality: 75)
 
     if params.is_logo
       image.toFile fullPath, (error, info)->
