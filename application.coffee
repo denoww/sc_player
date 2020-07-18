@@ -128,7 +128,7 @@ app.on 'activate', ->
   createWindow() unless BrowserWindow.getAllWindows().length
 
 # encerrar o app se não existir nenhuma janela aberta
-app.on 'window-all-closed', -> app.quit()
+app.on 'window-all-closed', -> app.exit(0)
 
 # opcoes do menu do botão direito do mouse no app
 contextMenu prepend: (defaultActions, params, browserWindow)->
