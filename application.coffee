@@ -6,6 +6,7 @@ if setupEvents.handleSquirrelEvent()
 
 { app, dialog, protocol, BrowserWindow } = require 'electron'
 contextMenu = require 'electron-context-menu'
+appWindow = null
 
 createWindow = ->
   windowOptions =
@@ -31,11 +32,11 @@ createWindow = ->
     windowOptions.alwaysOnTop = true
 
   logs.info "Iniciando janela do Electron!"
-  win = new BrowserWindow windowOptions
+  appWindow = new BrowserWindow windowOptions
 
-  win.loadURL 'http://localhost:3001'
-  win.focus()
-  win.once 'ready-to-show', -> win.show()
+  appWindow.loadURL 'http://localhost:3001'
+  appWindow.focus()
+  appWindow.once 'ready-to-show', -> appWindow.show()
 
   # criando protoco seguro para carregar arquivos locais
   protocolName = 'sc-protocol'
@@ -49,59 +50,71 @@ createWindow = ->
   # atualizar a tela a cada 3 horas para limpar o cache
   setInterval ->
     logs.create 'Electron -> Atualização preventiva (3h)!'
-    win.reload()
+    appWindow.reload()
   , 1000 * 60 * 60 * 3 # 3 horas
 
-  win.webContents.on 'crashed', ->
+  appWindow.webContents.on 'crashed', ->
     logs.warning 'webContents crashed'
-    setTimeout (-> win.reload()), 500
+    setTimeout (-> appWindow.reload()), 500
 
-  win.webContents.on 'did-fail-load', ->
+  appWindow.webContents.on 'did-fail-load', ->
     logs.warning 'webContents did-fail-load'
-    setTimeout (-> win.reload()), 1000
+    setTimeout (-> appWindow.reload()), 1000
 
-  win.webContents.on 'new-window', ->                      logs.debug 'webContents new-window'
-  win.webContents.on 'will-navigate', ->                   logs.debug 'webContents will-navigate'
-  win.webContents.on 'unresponsive', ->                    logs.debug 'webContents unresponsive'
-  win.webContents.on 'responsive', ->                      logs.debug 'webContents responsive'
-  win.webContents.on 'enter-html-full-screen', ->          logs.debug 'webContents enter-html-full-screen'
-  win.webContents.on 'leave-html-full-screen', ->          logs.debug 'webContents leave-html-full-screen'
-  win.webContents.on 'certificate-error', ->               logs.debug 'webContents certificate-error'
-  win.webContents.on 'select-client-certificate', ->       logs.debug 'webContents select-client-certificate'
-  win.webContents.on 'login', ->                           logs.debug 'webContents login'
-  win.webContents.on 'remote-require', ->                  logs.debug 'webContents remote-require'
-  win.webContents.on 'remote-get-global', ->               logs.debug 'webContents remote-get-global'
-  win.webContents.on 'remote-get-builtin', ->              logs.debug 'webContents remote-get-builtin'
-  win.webContents.on 'remote-get-current-window', ->       logs.debug 'webContents remote-get-current-window'
-  win.webContents.on 'did-fail-provisional-load', ->       logs.debug 'webContents did-fail-provisional-load'
-  win.webContents.on 'will-redirect', ->                   logs.debug 'webContents will-redirect'
-  win.webContents.on 'did-redirect-navigation', ->         logs.debug 'webContents did-redirect-navigation'
-  win.webContents.on 'did-navigate-in-page', ->            logs.debug 'webContents did-navigate-in-page'
-  win.webContents.on 'will-prevent-unload', ->             logs.debug 'webContents will-prevent-unload'
-  win.webContents.on 'plugin-crashed', ->                  logs.debug 'webContents plugin-crashed'
-  win.webContents.on 'destroyed', ->                       logs.debug 'webContents destroyed'
-  win.webContents.on 'zoom-changed', ->                    logs.debug 'webContents zoom-changed'
-  win.webContents.on 'found-in-page', ->                   logs.debug 'webContents found-in-page'
-  win.webContents.on 'did-change-theme-color', ->          logs.debug 'webContents did-change-theme-color'
-  win.webContents.on 'cursor-changed', ->                  logs.debug 'webContents cursor-changed'
-  win.webContents.on 'context-menu', ->                    logs.debug 'webContents context-menu'
-  win.webContents.on 'select-bluetooth-device', ->         logs.debug 'webContents select-bluetooth-device'
-  win.webContents.on 'paint', ->                           logs.debug 'webContents paint'
-  win.webContents.on 'will-attach-webview', ->             logs.debug 'webContents will-attach-webview'
-  win.webContents.on 'did-attach-webview', ->              logs.debug 'webContents did-attach-webview'
-  win.webContents.on 'preload-error', ->                   logs.debug 'webContents preload-error'
-  win.webContents.on 'ipc-message', ->                     logs.debug 'webContents ipc-message'
-  win.webContents.on 'ipc-message-sync', ->                logs.debug 'webContents ipc-message-sync'
-  win.webContents.on 'desktop-capturer-get-sources', ->    logs.debug 'webContents desktop-capturer-get-sources'
-  win.webContents.on 'remote-get-current-web-contents', -> logs.debug 'webContents remote-get-current-web-contents'
-  win.webContents.on 'remote-get-guest-web-contents', ->   logs.debug 'webContents remote-get-guest-web-contents'
-  win.webContents.on 'did-finish-load', ->                 logs.debug 'webContents remote-get-guest-web-contents'
+  appWindow.webContents.on 'new-window', ->                      logs.debug 'webContents new-window'
+  appWindow.webContents.on 'will-navigate', ->                   logs.debug 'webContents will-navigate'
+  appWindow.webContents.on 'unresponsive', ->                    logs.debug 'webContents unresponsive'
+  appWindow.webContents.on 'responsive', ->                      logs.debug 'webContents responsive'
+  appWindow.webContents.on 'enter-html-full-screen', ->          logs.debug 'webContents enter-html-full-screen'
+  appWindow.webContents.on 'leave-html-full-screen', ->          logs.debug 'webContents leave-html-full-screen'
+  appWindow.webContents.on 'certificate-error', ->               logs.debug 'webContents certificate-error'
+  appWindow.webContents.on 'select-client-certificate', ->       logs.debug 'webContents select-client-certificate'
+  appWindow.webContents.on 'login', ->                           logs.debug 'webContents login'
+  appWindow.webContents.on 'remote-require', ->                  logs.debug 'webContents remote-require'
+  appWindow.webContents.on 'remote-get-global', ->               logs.debug 'webContents remote-get-global'
+  appWindow.webContents.on 'remote-get-builtin', ->              logs.debug 'webContents remote-get-builtin'
+  appWindow.webContents.on 'remote-get-current-window', ->       logs.debug 'webContents remote-get-current-window'
+  # appWindow.webContents.on 'did-fail-provisional-load', ->       logs.debug 'webContents did-fail-provisional-load'
+  appWindow.webContents.on 'will-redirect', ->                   logs.debug 'webContents will-redirect'
+  appWindow.webContents.on 'did-redirect-navigation', ->         logs.debug 'webContents did-redirect-navigation'
+  appWindow.webContents.on 'did-navigate-in-page', ->            logs.debug 'webContents did-navigate-in-page'
+  appWindow.webContents.on 'will-prevent-unload', ->             logs.debug 'webContents will-prevent-unload'
+  appWindow.webContents.on 'plugin-crashed', ->                  logs.debug 'webContents plugin-crashed'
+  appWindow.webContents.on 'destroyed', ->                       logs.debug 'webContents destroyed'
+  appWindow.webContents.on 'zoom-changed', ->                    logs.debug 'webContents zoom-changed'
+  appWindow.webContents.on 'found-in-page', ->                   logs.debug 'webContents found-in-page'
+  appWindow.webContents.on 'did-change-theme-color', ->          logs.debug 'webContents did-change-theme-color'
+  appWindow.webContents.on 'cursor-changed', ->                  logs.debug 'webContents cursor-changed'
+  appWindow.webContents.on 'context-menu', ->                    logs.debug 'webContents context-menu'
+  appWindow.webContents.on 'select-bluetooth-device', ->         logs.debug 'webContents select-bluetooth-device'
+  appWindow.webContents.on 'paint', ->                           logs.debug 'webContents paint'
+  appWindow.webContents.on 'will-attach-webview', ->             logs.debug 'webContents will-attach-webview'
+  appWindow.webContents.on 'did-attach-webview', ->              logs.debug 'webContents did-attach-webview'
+  appWindow.webContents.on 'preload-error', ->                   logs.debug 'webContents preload-error'
+  appWindow.webContents.on 'ipc-message', ->                     logs.debug 'webContents ipc-message'
+  appWindow.webContents.on 'ipc-message-sync', ->                logs.debug 'webContents ipc-message-sync'
+  appWindow.webContents.on 'desktop-capturer-get-sources', ->    logs.debug 'webContents desktop-capturer-get-sources'
+  appWindow.webContents.on 'remote-get-current-web-contents', -> logs.debug 'webContents remote-get-current-web-contents'
+  appWindow.webContents.on 'remote-get-guest-web-contents', ->   logs.debug 'webContents remote-get-guest-web-contents'
+  # appWindow.webContents.on 'did-finish-load', ->                 logs.debug 'webContents did-finish-load'
 
-  win.onerror = (error, url, lineNumber)->
+  appWindow.onerror = (error, url, lineNumber)->
     logs.error "Error: #{error} Script: #{url} Line: #{lineNumber}"
 
   # Open the DevTools
-  # win.webContents.openDevTools()
+  # appWindow.webContents.openDevTools()
+
+# garantindo uma unica instancia do app aberta
+if !app.requestSingleInstanceLock()
+  logs.warning 'Ignorando segunda instancia do app', tags: class: 'application'
+  app.exit(0)
+  return
+
+# se tentar abrir uma segunda instancia, devemos focar nossa janela
+app.on 'second-instance', (event, commandLine, workingDirectory)->
+  if appWindow
+    appWindow.restore() if appWindow.isMinimized()
+    appWindow.focus()
 
 # definindo o nome do app
 app.setName 'SC Player'
