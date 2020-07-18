@@ -120,9 +120,8 @@ module.exports = ->
           ctrl.execUpdateRepository ->
             try
               { app } = require 'electron'
-              return unless app
-              app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
-              app.exit(0)
+              app?.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+              app?.exit(0)
             catch e
               ctrl.sendLog "saveCurrentVersion -> #{e}"
       return
