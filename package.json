@@ -1,7 +1,7 @@
 {
   "name": "sc_player",
-  "version": "1.9.0",
-  "description": "Player de Mídias",
+  "version": "2.1.0",
+  "description": "Player",
   "main": "server.js",
   "private": true,
   "engines": {
