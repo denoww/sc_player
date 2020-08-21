@@ -34,7 +34,7 @@ createWindow = ->
   logs.info "Iniciando janela do Electron!"
   appWindow = new BrowserWindow windowOptions
 
-  appWindow.loadURL 'http://localhost:3001'
+  appWindow.loadURL "http://localhost:#{ENV.HTTP_PORT}"
   appWindow.focus()
   appWindow.once 'ready-to-show', -> appWindow.show()
 

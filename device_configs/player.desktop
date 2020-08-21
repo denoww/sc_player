@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Player Seu Condomínio
+Name=Player de Mídias
 # Exec=lxterminal -e bash /home/pi/sc_player/tasks/init.sh
 Exec=lxterminal --command="/home/pi/sc_player/tasks/init.sh"
 Type=Application

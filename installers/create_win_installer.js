@@ -15,7 +15,6 @@ function getInstallerConfig () {
 
   return Promise.resolve({
     appDirectory: path.join(outPath, 'sc_player-win32-ia32/'),
-    authors: 'Seu Condomínio',
     noMsi: true,
     outputDirectory: path.join(outPath, 'windows-installer'),
     exe: 'sc_player.exe',

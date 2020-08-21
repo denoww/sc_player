@@ -8,7 +8,6 @@
     "changelog-file-missing-in-native-package"
   ],
   "options": {
-    "productName": "SC Player",
-    "maintainer": "Seu Condomínio"
+    "productName": "SC Player"
   }
 }

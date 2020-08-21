@@ -1,14 +1,9 @@
 {
   "name": "sc_player",
-  "version": "1.6.0",
-  "description": "Player de Publicidades do Seu Condomínio.",
+  "version": "1.9.0",
+  "description": "Player de Mídias",
   "main": "server.js",
   "private": true,
-  "author": {
-    "name": "Seu Condomínio",
-    "email": "contato@seucondominio.com.br",
-    "url": "http://seucondominio.com.br"
-  },
   "engines": {
     "node": ">=6.2.0"
   },
