@@ -117,7 +117,7 @@ app.on 'second-instance', (event, commandLine, workingDirectory)->
     appWindow.focus()
 
 # definindo o nome do app
-app.setName 'SC Player'
+app.setName 'Player'
 
 # criar janela quando estiver pronto
 app.whenReady().then ->

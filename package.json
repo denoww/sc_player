@@ -19,7 +19,7 @@
     "package-deb": "electron-packager . --overwrite --platform linux --arch x64 --icon=app/assets/images/icon.png --prune=true --out dist",
     "deb": "electron-installer-debian --src dist/sc_player-linux-x64/ --arch amd64 --config installers/deb_config.json",
     "build-win": "npm run package-win && npm run win",
-    "package-win": "electron-packager . --overwrite --asar --platform=win32 --arch=ia32 --icon=app/assets/images/icon.ico --prune=true --out=dist --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SC Player\"",
+    "package-win": "electron-packager . --overwrite --asar --platform=win32 --arch=ia32 --icon=app/assets/images/icon.ico --prune=true --out=dist --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Player\"",
     "win": "node installers/create_win_installer.js"
   },
   "dependencies": {

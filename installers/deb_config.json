@@ -8,6 +8,6 @@
     "changelog-file-missing-in-native-package"
   ],
   "options": {
-    "productName": "SC Player"
+    "productName": "Player"
   }
 }
