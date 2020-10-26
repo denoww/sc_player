@@ -31,7 +31,7 @@ onLoaded = ->
   timelineConteudoSuperior.init()
   timelineConteudoMensagem.init()
 
-gradeObj =
+@gradeObj =
   tentar: 10
   tentativas: 0
   get: (onSuccess, onError)->
@@ -86,7 +86,7 @@ gradeObj =
     vm.grade.data.weather.proximos_dias = vm.grade.data.weather.proximos_dias.slice(0,4)
     return
 
-feedsObj =
+@feedsObj =
   data: {}
   tentar: 10
   tentativas: 0
@@ -146,7 +146,7 @@ feedsObj =
             vm.grade.data[posicao].removeById item.id for item in items || []
     return
 
-timelineConteudoSuperior =
+@timelineConteudoSuperior =
   promessa:  null
   nextIndex: 0
   feedIndex: {}
@@ -158,7 +158,7 @@ timelineConteudoSuperior =
     clearTimeout @promessa if @promessa
 
     itemAtual = @getNextItem()
-    return unless itemAtual
+    return console.error "@getNextItem() - itemAtual é indefinido!", itemAtual unless itemAtual
 
     vm.indexConteudoSuperior = vm.listaConteudoSuperior.getIndexByField 'id', itemAtual.id
     if !vm.indexConteudoSuperior?
@@ -199,7 +199,7 @@ timelineConteudoSuperior =
   getNextItem: ->
     lista = vm.grade.data.conteudo_superior || []
     total = lista.length
-    return unless total
+    return console.warn "vm.grade.data.conteudo_superior está vazio!", lista unless total
 
     index = @nextIndex
     index = 0 if index >= total
@@ -215,8 +215,9 @@ timelineConteudoSuperior =
   getItemFeed: (currentItem)->
     feedItems = feedsObj.data[currentItem.fonte]?[currentItem.categoria] || []
     if feedItems.empty()
-      timelineConteudoMensagem.promessa = setTimeout ->
-        timelineConteudoMensagem.executar()
+      console.warn "Feeds de #{currentItem.fonte} #{currentItem.categoria} está vazio"
+      timelineConteudoSuperior.promessa = setTimeout ->
+        timelineConteudoSuperior.executar()
       , 2000
       return
 
@@ -258,7 +259,7 @@ timelineConteudoSuperior =
     return currentItem if currentItem.tipo_midia != 'feed'
     @getItemFeed(currentItem)
 
-timelineConteudoMensagem =
+@timelineConteudoMensagem =
   promessa:  null
   nextIndex: 0
   playlistIndex: {}
@@ -333,7 +334,7 @@ relogio =
     # setTimeout relogio.exec, 1000
     return
 
-vm = new Vue
+@vm = new Vue
   el:   '#main-player'
   data: data
   methods:
