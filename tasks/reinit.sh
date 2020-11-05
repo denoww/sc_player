@@ -24,8 +24,7 @@ verify_servers(){
     echo "starting electron server!"
 
     export DISPLAY=":0"
-    cd /home/pi/sc_player/
-    /usr/bin/npm run start-electron
+    /home/pi/sc_player/tasks/./init_electron.sh
 
   else
     echo "servers are running!"
