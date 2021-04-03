@@ -89,6 +89,11 @@ Plugin {
   }
 }
 Plugin {
+  type=tray
+  Config {
+  }
+}
+Plugin {
   type=dhcpcdui
   Config {
   }
