@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  node-electron:
+    command: npm run start
+    build: .
+    restart: on-failure
+    # container_name: node-electron
+    network_mode: host
+    volumes:
+      - .:/src/
+      - player_data:/player_data
+    # ports:
+      # - "3002:3002"
+    env_file:
+      /etc/environment
+    environment:
+      - DISPLAY=${DISPLAY}
+
+
+
+#  node:
+#    command: npm run start-node
+#    build: .
+#    restart: on-failure
+#    # container_name: node
+#    network_mode: host
+#    volumes:
+#      - .:/src/ # deve ficar ligado em builds de docker em development
+#      - player_data:/player_data # fica guardando sqlite e config.json
+#    # ports:
+#      # - "3002:3002"
+#    env_file:
+#      /etc/environment
+#  electron:
+#    # image: electronjs
+#    build: .
+#    command: npm init -y && npm run start-electron
+#    # container_name: electron
+#    restart: on-failure
+#    network_mode: host
+#    environment:
+#      - DISPLAY=${DISPLAY}
+#    volumes:
+#      - .:/src/ # deve ficar ligado em builds de docker em development
+#      - /tmp/.X11-unix:/tmp/.X11-unix
+volumes:
+  player_data:
