@@ -89,10 +89,15 @@ fi
 
 read -p '--> Instalar nvm? (y/N) ' instalar_nvm
 if [[ "$instalar_nvm" == "y" || "$instalar_nvm" == "Y" ]] ; then
-  sh -c 'wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash'
-  sh -c 'source ~/.bashrc'
-  sh -c 'nvm install'
-  sh -c 'nvm use'
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+fi
+
+read -p '--> Rodar nvm install? (y/N) ' instalar_npm_install
+if [[ "$instalar_npm_install" == "y" || "$instalar_npm_install" == "Y" ]] ; then
+  echo ""
+  echo "Execute o comando abaixo:"
+  echo "source ~/.bashrc && nvm install && nvm use"
+  exit
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
