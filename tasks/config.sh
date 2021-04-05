@@ -72,11 +72,27 @@ if [[ "$instalar_xdo" == "y" || "$instalar_xdo" == "Y" ]] ; then
   sh -c 'sudo apt install xdotool -y'
 fi
 
-read -p '--> Instalar nodejs? (y/N) ' instalar_node
-if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
-  sh -c 'curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -'
-  sh -c 'sudo apt update'
-  sh -c 'sudo apt install -y nodejs'
+read -p '--> Instalar TeamViewer? (y/N) ' instalar_teamv
+if [[ "$instalar_teamv" == "y" || "$instalar_teamv" == "Y" ]] ; then
+  sh -c 'sudo apt-get update'
+  sh -c 'wget https://download.teamviewer.com/download/linux/teamviewer-host_armhf.deb'
+  sh -c 'sudo dpkg -i teamviewer-host_armhf.deb'
+  sh -c 'sudo apt --fix-broken install'
+fi
+
+# read -p '--> Instalar nodejs? (y/N) ' instalar_node
+# if [[ "$instalar_node" == "y" || "$instalar_node" == "Y" ]] ; then
+#   sh -c 'curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -'
+#   sh -c 'sudo apt update'
+#   sh -c 'sudo apt install -y nodejs'
+# fi
+
+read -p '--> Instalar nvm? (y/N) ' instalar_nvm
+if [[ "$instalar_nvm" == "y" || "$instalar_nvm" == "Y" ]] ; then
+  sh -c 'wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash'
+  sh -c 'source ~/.bashrc'
+  sh -c 'nvm install'
+  sh -c 'nvm use'
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
