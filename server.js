@@ -10,7 +10,7 @@ global.configPath = global.homePath + '.config/sc_player/';
 require('coffeescript').register();
 require('./env');
 require('sc-node-tools');
-require('./app/classes/logs')();
+require('./app/classes/logs')(true);
 
 if (process.versions.electron) {
   require('./application');
