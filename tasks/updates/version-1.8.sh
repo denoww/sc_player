@@ -4,4 +4,4 @@
 # rm -rf node_modules/sharp
 # npm remove sharp
 # npm install sharp
-# /usr/local/bin/npx electron-rebuild
+# /usr/bin/npx electron-rebuild

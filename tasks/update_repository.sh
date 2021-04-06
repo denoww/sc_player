@@ -6,5 +6,5 @@ sudo /bin/chown pi:pi -R .
 /usr/bin/git clean -f
 /usr/bin/git pull
 
-/usr/local/bin/npm install
-/usr/local/bin/npx electron-rebuild
+/usr/bin/npm install
+/usr/bin/npx electron-rebuild

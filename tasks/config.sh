@@ -102,9 +102,9 @@ fi
 
 read -p '--> Criar atalho para node, npm e npx em /usr/bin (v12.22.0)? (y/N) ' instalar_atalho
 if [[ "$instalar_atalho" == "y" || "$instalar_atalho" == "Y" ]] ; then
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/node" "/usr/local/bin/node"
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npm" "/usr/local/bin/npm"
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npx" "/usr/local/bin/npx"
+  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/node" "/usr/bin/node"
+  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npm" "/usr/bin/npm"
+  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npx" "/usr/bin/npx"
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
