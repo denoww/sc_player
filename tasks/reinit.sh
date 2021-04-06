@@ -18,7 +18,8 @@ verify_servers(){
 
     export DISPLAY=":0"
     cd /home/pi/sc_player/
-    npm run start-node
+    _npm=$(which npm)
+    $_npm run start-node
 
   elif [ -z "$ELECTRON_RUNNING" ]; then
     echo "starting electron server!"

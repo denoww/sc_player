@@ -2,10 +2,11 @@
 cd /home/pi/sc_player/
 
 # atualiza o npm
-sudo npm install -g npm
+# sudo npm install -g npm
 
 # apaga as imagens antigas dos feeds
-npm run delete_old_images
+_npm=$(which npm)
+$_npm run delete_old_images
 sleep 2
 
 # atualiza o repositorio
