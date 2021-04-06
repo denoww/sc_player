@@ -9,7 +9,5 @@ sudo chown pi:pi -R .
 rm -r node_modules
 rm package-lock.json
 
-_npm=$(which npm)
-_npx=$(which npx)
-$_npm install
-$_npx electron-rebuild
+/usr/bin/npm install
+/usr/bin/npx electron-rebuild

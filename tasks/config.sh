@@ -100,6 +100,12 @@ if [[ "$instalar_npm_install" == "y" || "$instalar_npm_install" == "Y" ]] ; then
   exit
 fi
 
+read -p '--> Criar atalho para npm e npx em /usr/bin (v12.22.0)? (y/N) ' instalar_atalho
+if [[ "$instalar_atalho" == "y" || "$instalar_atalho" == "Y" ]] ; then
+  sudo ln -s /home/pi/.nvm/versions/node/v12.22.0/bin/npm /usr/bin/npm
+  sudo ln -s /home/pi/.nvm/versions/node/v12.22.0/bin/npx /usr/bin/npx
+fi
+
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
 # if [[ "$instalar_npm" == "y" || "$instalar_npm" == "Y" ]] ; then
 #   sh -c 'sudo apt install npm -y'
@@ -113,5 +119,5 @@ fi
 
 read -p '--> Reiniciar o equipamento? (y/N) ' reiniciar
 if [[ "$reiniciar" == "y" || "$reiniciar" == "Y" ]] ; then
-  sh -c 'reboot'
+  sh -c 'sudo reboot'
 fi
