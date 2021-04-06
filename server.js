@@ -25,4 +25,3 @@ if (process.versions.electron) {
 process.on('uncaughtException', function (error) {
   logs.error("UncaughtException: " + error);
 });
-
