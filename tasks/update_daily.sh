@@ -1,5 +1,6 @@
 #!/bin/bash
 cd /home/pi/sc_player/
+rm cron.log # remover arquivo de logs
 
 # atualiza o npm
 # sudo npm install -g npm
