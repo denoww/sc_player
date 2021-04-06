@@ -100,10 +100,11 @@ if [[ "$instalar_npm_install" == "y" || "$instalar_npm_install" == "Y" ]] ; then
   exit
 fi
 
-read -p '--> Criar atalho para npm e npx em /usr/bin (v12.22.0)? (y/N) ' instalar_atalho
+read -p '--> Criar atalho para node, npm e npx em /usr/bin (v12.22.0)? (y/N) ' instalar_atalho
 if [[ "$instalar_atalho" == "y" || "$instalar_atalho" == "Y" ]] ; then
-  sudo ln -s /home/pi/.nvm/versions/node/v12.22.0/bin/npm /usr/bin/npm
-  sudo ln -s /home/pi/.nvm/versions/node/v12.22.0/bin/npx /usr/bin/npx
+  sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/node" "/usr/local/bin/node"
+  sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npm" "/usr/local/bin/npm"
+  sudo ln -s "$NVM_DIR/versions/node/$(nvm version)/bin/npx" "/usr/local/bin/npx"
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
