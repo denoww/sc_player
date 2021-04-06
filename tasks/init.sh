@@ -3,9 +3,9 @@ export DISPLAY=":0"
 /usr/bin/xdotool mousemove --sync 4000 4000
 
 cd /home/pi/sc_player/
-/usr/bin/git pull &
-/usr/bin/npm run update_timezone &
-/usr/bin/npm start &
+git pull &
+npm run update_timezone &
+npm start &
 
 # cliques na tela para simular acao do usuario para corrigir problema
 # de play nos videos

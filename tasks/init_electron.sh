@@ -3,7 +3,7 @@ export DISPLAY=":0"
 /usr/bin/xdotool mousemove --sync 4000 4000
 
 cd /home/pi/sc_player/
-/usr/bin/npm run start-electron &
+npm run start-electron &
 
 # cliques na tela para simular acao do usuario para corrigir problema
 # de play nos videos
