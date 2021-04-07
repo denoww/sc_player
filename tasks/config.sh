@@ -34,20 +34,6 @@ if [[ "$increase_swap" == "y" || "$increase_swap" == "Y" ]] ; then
   sh -c 'sudo /etc/init.d/dphys-swapfile restart'
 fi
 
-# configurando crontab para reiniciar server
-read -p '--> Configurando CRONTAB para reiniciar server? (y/N) ' config_crontab
-if [[ "$config_crontab" == "y" || "$config_crontab" == "Y" ]] ; then
-  sh -c 'sudo cp ~/sc_player/device_configs/crontab-sc-player /etc/cron.d/'
-  sh -c 'sudo chown root:root /etc/cron.d/crontab-sc-player'
-fi
-
-# configurando variaveis de ambiente
-read -p '--> Configurar Reinício Automático diário? (y/N) ' cron
-if [[ "$cron" == "y" || "$cron" == "Y" ]] ; then
-  sh -c 'sudo cp ~/sc_player/device_configs/tarefa_diaria /etc/cron.daily/'
-  sh -c 'sudo chown root:root /etc/cron.daily/tarefa_diaria'
-fi
-
 read -p '--> Alterar logo da tela de abertura? (y/N) ' logo
 if [[ "$logo" == "y" || "$logo" == "Y" ]] ; then
   # copia a logo para a pasta
@@ -116,6 +102,20 @@ read -p '--> Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
   sh -c 'npx electron-rebuild'
+fi
+
+# configurando crontab para reiniciar server
+read -p '--> Configurando CRONTAB para reiniciar server? (y/N) ' config_crontab
+if [[ "$config_crontab" == "y" || "$config_crontab" == "Y" ]] ; then
+  sh -c 'sudo cp ~/sc_player/device_configs/crontab-sc-player /etc/cron.d/'
+  sh -c 'sudo chown root:root /etc/cron.d/crontab-sc-player'
+fi
+
+# configurando variaveis de ambiente
+read -p '--> Configurar Reinício Automático diário? (y/N) ' cron
+if [[ "$cron" == "y" || "$cron" == "Y" ]] ; then
+  sh -c 'sudo cp ~/sc_player/device_configs/tarefa_diaria /etc/cron.daily/'
+  sh -c 'sudo chown root:root /etc/cron.daily/tarefa_diaria'
 fi
 
 read -p '--> Reiniciar o equipamento? (y/N) ' reiniciar
