@@ -1,4 +1,5 @@
 #!/bin/bash
+sleep 10 # esperar uma conexao com a internet
 export DISPLAY=":0"
 /usr/bin/xdotool mousemove --sync 4000 4000
 
