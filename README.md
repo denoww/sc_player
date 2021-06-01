@@ -75,3 +75,22 @@ coffee -wc app/assets/javascripts/*.coffee
 npm config set registry https://registry.npmjs.org
 sudo npm install -g npm
 ```
+
+## Corrigir Timezone
+
+```
+sudo timedatectl set-timezone America/Sao_Paulo
+```
+
+--- OU ---
+
+```
+sudo dpkg-reconfigure tzdata
+```
+
+--- OU ---
+
+```
+sudo ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+ls -l /etc/localtime
+```
