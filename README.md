@@ -4,13 +4,13 @@
 
 Primeiramente clone o repositório
 ```
-git clone https://github.com/denoww/sc_player.git; cd sc_player/
+cd ~; git clone https://github.com/denoww/sc_player.git; cd ~/sc_player/
 ```
 
 Execute a tarefa .config
 
 ```
-cd sc_player/; tasks/./config.sh
+cd ~/sc_player/; tasks/./config.sh
 ```
 
 Siga os passos de configuração, pode aceitar todas as opções na primeira instalação.
