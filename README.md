@@ -13,6 +13,12 @@ Execute a tarefa .config
 cd ~/sc_player/; tasks/./config.sh
 ```
 
+Caso queira ligar o servidor na mão
+
+```
+cd ~/sc_player/; npm start
+```
+
 Siga os passos de configuração, pode aceitar todas as opções na primeira instalação.
 
 > Na opção `--> Rodar nvm install? (y/N)` será printado um comando a ser executado manualmente (porque o source ~/.bashrc não roda dentro do sh - mas deve ter um jeito de concertar), então depois de executar o comando manualmente, deve executar o `tasks/./config.sh` e dar ENTER até a próxima opção. (sinta-se à vontade para melhorar esse comportamento 😉)
