@@ -111,6 +111,7 @@ module.exports = ->
       return
     saveCurrentVersion: (version, updateRepository=false)->
       return unless version
+      version = version + ''
       fs.writeFile ctrl.versionFile, version, 'utf8', (error)->
         return ctrl.sendLog "saveCurrentVersion -> #{error}" if error
         ctrl.currentVersion = version
