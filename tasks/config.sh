@@ -99,10 +99,15 @@ fi
 #   sh -c 'sudo apt install npm -y'
 # fi
 
-read -p '--> Executar o npm install + npx electron-rebuild? (y/N) ' executar_npm
+# read -p '--> Executar o npm install + npx electron-rebuild? (y/N) ' executar_npm
+# if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
+#   sh -c 'npm install'
+#   sh -c 'npx electron-rebuild'
+# fi
+
+read -p '--> Executar o npm install? (y/N) ' executar_npm
 if [[ "$executar_npm" == "y" || "$executar_npm" == "Y" ]] ; then
   sh -c 'npm install'
-  sh -c 'npx electron-rebuild'
 fi
 
 # configurando crontab para reiniciar server
