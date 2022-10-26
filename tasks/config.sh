@@ -79,19 +79,20 @@ if [[ "$instalar_nvm" == "y" || "$instalar_nvm" == "Y" ]] ; then
   wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 fi
 
-read -p '--> Rodar nvm install? (y/N) ' instalar_npm_install
+nodeVersion=14.20.1
+read -p "--> Instalar node $nodeVersion? (y/N) " instalar_npm_install
 if [[ "$instalar_npm_install" == "y" || "$instalar_npm_install" == "Y" ]] ; then
   echo ""
   echo "Execute o comando abaixo:"
-  echo "source ~/.bashrc && nvm install && nvm use"
+  echo "source ~/.bashrc && nvm install $nodeVersion && nvm use $nodeVersion && nvm alias default $nodeVersion"
   exit
 fi
 
-read -p '--> Criar atalho para node, npm e npx em /usr/bin (v12.22.0)? (y/N) ' instalar_atalho
+read -p "--> Criar atalho para node, npm e npx em /usr/bin (v${nodeVersion})? (y/N) " instalar_atalho
 if [[ "$instalar_atalho" == "y" || "$instalar_atalho" == "Y" ]] ; then
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/node" "/usr/bin/node"
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npm" "/usr/bin/npm"
-  sudo ln -s "$NVM_DIR/versions/node/v12.22.0/bin/npx" "/usr/bin/npx"
+  sudo ln -s "$NVM_DIR/versions/node/v$nodeVersion/bin/node" "/usr/bin/node"
+  sudo ln -s "$NVM_DIR/versions/node/v$nodeVersion/bin/npm" "/usr/bin/npm"
+  sudo ln -s "$NVM_DIR/versions/node/v$nodeVersion/bin/npx" "/usr/bin/npx"
 fi
 
 # read -p '--> Instalar npm? (y/N) ' instalar_npm
