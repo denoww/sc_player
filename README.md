@@ -1,3 +1,7 @@
+## ============================================================
+MOVIDO PARA https://github.com/denoww/midia_indoor_player
+## ============================================================
+
 # SC_Player
 
 ## TUTORIAL DE CONFIGURAÇÃO
