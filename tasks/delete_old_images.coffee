@@ -3,7 +3,7 @@ global.homePath = '/home/pi/' if global.homePath == '/root/'
 global.configPath = global.homePath + '.config/sc_player/'
 
 require('../env')
-require('sc-node-tools')
+require('../lib/sc_node_tools')
 require('../app/classes/logs')()
 require('../app/classes/feeds')()
 global.feeds.deleteOldImages()

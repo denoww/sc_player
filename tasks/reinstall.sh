@@ -10,4 +10,3 @@ rm -r node_modules
 rm package-lock.json
 
 /usr/bin/npm install
-/usr/bin/npx electron-rebuild
